@@ -3,7 +3,6 @@ import {
   FolderKanban,
   LayoutTemplate,
   Palette,
-  Settings2,
   UserRound,
   UsersRound,
 } from 'lucide-react';
@@ -26,8 +25,8 @@ export interface NavigationItem {
 export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { id: 'home', label: 'Home', icon: FolderKanban },
   { id: 'templates', label: 'Templates', icon: LayoutTemplate },
-  { id: 'profile', label: 'Driver Profile', icon: UserRound },
+  { id: 'profile', label: 'Profile', icon: UserRound },
   { id: 'branding', label: 'Branding', icon: Palette },
   { id: 'sponsors', label: 'Sponsors', icon: UsersRound },
-  { id: 'saved', label: 'Saved Graphics', icon: Settings2 },
+  { id: 'saved', label: 'Saved Graphics', icon: FolderKanban },
 ] as const;
