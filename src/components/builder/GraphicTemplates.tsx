@@ -1,6 +1,10 @@
 import type { Branding, DriverProfile, Project } from '../../types';
 import { formatEventDate } from '../../utils/format';
-import { getEventTemplateLayout } from './rendererCalculations';
+import {
+  getEventTemplateLayout,
+  getStandardTemplateLayout,
+  getTemplateExtraLayout,
+} from './rendererCalculations';
 
 type TemplateSharedProps = {
   project: Project;
@@ -180,6 +184,16 @@ export function StandardTemplate({
   bodyFont,
 }: TemplateSharedProps & { h: number; title: string; sub: string }) {
   const details = project.details;
+  const {
+    titleY,
+    titleSize,
+    subY,
+    detailY,
+    dateY,
+    resultY,
+    showRaceDetails,
+    showResult,
+  } = getStandardTemplateLayout(h, project);
 
   return (
     <g fontFamily={bodyFont} fill={branding.accent}>
@@ -197,31 +211,31 @@ export function StandardTemplate({
       </text>
       <text
         x="70"
-        y={h * 0.57}
+        y={titleY}
         fontFamily={headingFont}
-        fontSize={project.format === 'story' ? 82 : 68}
+        fontSize={titleSize}
         fontWeight="900"
         letterSpacing="-2"
       >
         {String(title).toUpperCase()}
       </text>
-      <text x="74" y={h * 0.57 + 55} fontSize="28" letterSpacing="4" opacity=".88">
+      <text x="74" y={subY} fontSize="28" letterSpacing="4" opacity=".88">
         {String(sub).toUpperCase()}
       </text>
-      {project.template !== 'bio' && (
+      {showRaceDetails && (
         <>
-          <text x="74" y={h * 0.57 + 130} fontSize="27" fontWeight="700">
+          <text x="74" y={detailY} fontSize="27" fontWeight="700">
             {details.round}
             {details.round && details.circuit ? ' · ' : ''}
             {details.circuit}
           </text>
-          <text x="74" y={h * 0.57 + 174} fontSize="24">
+          <text x="74" y={dateY} fontSize="24">
             {details.date} {details.time}
           </text>
         </>
       )}
-      {['qualifying', 'results'].includes(project.template) && (
-        <text x="74" y={h * 0.57 + 230} fontSize="34" fontWeight="900">
+      {showResult && (
+        <text x="74" y={resultY} fontSize="34" fontWeight="900">
           {details.position} {details.result}
         </text>
       )}
@@ -281,51 +295,40 @@ export function TemplateExtras({
   headingFont,
   bodyFont,
 }: TemplateSharedProps & { h: number }) {
-  const details = project.details;
+  const extra = getTemplateExtraLayout(h, project, profile);
 
   return (
     <>
-      {project.template === 'bio' && (
+      {extra.kind === 'bio' && (
         <g fill={branding.accent} fontFamily={bodyFont} fontSize="26">
-          <text x="74" y={h * 0.8}>
-            {'TEAM  '}
-            {profile.team || '—'}
-          </text>
-          <text x="74" y={h * 0.8 + 42}>
-            {'LOCATION  '}
-            {profile.location || '—'}
-          </text>
-          <text x="74" y={h * 0.8 + 84}>
-            {'AGE  '}
-            {profile.age || '—'}
-          </text>
-          <text x="74" y={h * 0.8 + 126}>
-            {'CAR  '}
-            {profile.car || '—'}
-          </text>
+          {extra.rows.map(row => (
+            <text key={row.y} x="74" y={row.y}>
+              {row.text}
+            </text>
+          ))}
         </g>
       )}
-      {project.template === 'schedule' && (
+      {extra.kind === 'schedule' && (
         <text
           x="74"
-          y={h * 0.75}
+          y={extra.y}
           fill={branding.accent}
           fontFamily={bodyFont}
           fontSize="28"
           style={{ whiteSpace: 'pre' }}
         >
-          {details.scheduleLines || 'ADD SESSION TIMES'}
+          {extra.text}
         </text>
       )}
-      {project.template === 'sponsor' && (
+      {extra.kind === 'sponsor' && (
         <text
           x="74"
-          y={h * 0.74}
+          y={extra.y}
           fill={branding.accent}
           fontFamily={headingFont}
           fontSize="45"
         >
-          {details.sponsorName.toUpperCase() || 'SPONSOR NAME'}
+          {extra.text}
         </text>
       )}
     </>

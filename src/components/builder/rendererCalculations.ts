@@ -8,7 +8,7 @@ import type {
 
 type Size = { width: number; height: number };
 
-const templateTitles = {
+export const templateTitles = {
   event: 'RACE WEEKEND',
   announcement: 'ANNOUNCEMENT',
   bio: 'DRIVER PROFILE',
@@ -17,6 +17,73 @@ const templateTitles = {
   results: 'RACE RESULT',
   sponsor: 'PROUDLY SUPPORTED BY',
 } satisfies Record<TemplateId, string>;
+
+export function getStandardTemplateLayout(
+  h: number,
+  project: Pick<Project, 'format' | 'template'>,
+) {
+  const titleY = h * 0.57;
+
+  return {
+    titleY,
+    titleSize: project.format === 'story' ? 82 : 68,
+    subY: titleY + 55,
+    detailY: titleY + 130,
+    dateY: titleY + 174,
+    resultY: titleY + 230,
+    showRaceDetails: project.template !== 'bio',
+    showResult:
+      project.template === 'qualifying' || project.template === 'results',
+  };
+}
+
+export function getTemplateExtraLayout(
+  h: number,
+  project: Project,
+  profile: DriverProfile,
+) {
+  if (project.template === 'bio') {
+    return {
+      kind: 'bio' as const,
+      rows: [
+        { y: h * 0.8, text: `TEAM  ${profile.team || '—'}` },
+        { y: h * 0.8 + 42, text: `LOCATION  ${profile.location || '—'}` },
+        { y: h * 0.8 + 84, text: `AGE  ${profile.age || '—'}` },
+        { y: h * 0.8 + 126, text: `CAR  ${profile.car || '—'}` },
+      ],
+    };
+  }
+
+  if (project.template === 'schedule') {
+    return {
+      kind: 'schedule' as const,
+      y: h * 0.75,
+      text: project.details.scheduleLines || 'ADD SESSION TIMES',
+    };
+  }
+
+  if (project.template === 'sponsor') {
+    return {
+      kind: 'sponsor' as const,
+      y: h * 0.74,
+      text: project.details.sponsorName.toUpperCase() || 'SPONSOR NAME',
+    };
+  }
+
+  return { kind: 'none' as const };
+}
+
+export function getBrandLogoLayout(w: number, template: TemplateId) {
+  if (template === 'event') return null;
+
+  return {
+    competitionX: w - 370,
+    teamX: w - 195,
+    y: 35,
+    width: 150,
+    height: 150,
+  };
+}
 
 export function getGraphicCopy(
   project: Project,

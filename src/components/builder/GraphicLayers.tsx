@@ -2,6 +2,7 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
 import {
   getBackgroundLayout,
+  getBrandLogoLayout,
   getSponsorLayout,
 } from './rendererCalculations';
 
@@ -239,27 +240,28 @@ export function BrandLogos({
   project: Project;
   profile: DriverProfile;
 }) {
-  if (project.template === 'event') return null;
+  const layout = getBrandLogoLayout(w, project.template);
+  if (!layout) return null;
 
   return (
     <>
       {profile.competitionLogo && (
         <image
           href={profile.competitionLogo}
-          x={w - 370}
-          y="35"
-          width="150"
-          height="150"
+          x={layout.competitionX}
+          y={layout.y}
+          width={layout.width}
+          height={layout.height}
           preserveAspectRatio="xMidYMid meet"
         />
       )}
       {profile.teamLogo && (
         <image
           href={profile.teamLogo}
-          x={w - 195}
-          y="35"
-          width="150"
-          height="150"
+          x={layout.teamX}
+          y={layout.y}
+          width={layout.width}
+          height={layout.height}
           preserveAspectRatio="xMidYMid meet"
         />
       )}

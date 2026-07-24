@@ -2,10 +2,15 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   getBackgroundLayout,
+  getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
   getSponsorLayout,
+  getStandardTemplateLayout,
+  getTemplateExtraLayout,
+  templateTitles,
 } from '../src/components/builder/rendererCalculations.ts';
+import type { TemplateId } from '../src/types.ts';
 
 const details = {
   eventName: '',
@@ -147,6 +152,133 @@ test('derived headings and achievement labels remain template-specific', () => {
       bodyFont: 'Aldrich, Arial, sans-serif',
     },
   );
+});
+
+test('every template retains its default title and standard layout behaviour', () => {
+  const expectedTitles: Record<TemplateId, string> = {
+    event: 'RACE WEEKEND',
+    announcement: 'ANNOUNCEMENT',
+    bio: 'DRIVER PROFILE',
+    schedule: 'RACE SCHEDULE',
+    qualifying: 'QUALIFYING RESULT',
+    results: 'RACE RESULT',
+    sponsor: 'PROUDLY SUPPORTED BY',
+  };
+
+  assert.deepEqual(templateTitles, expectedTitles);
+
+  for (const template of Object.keys(expectedTitles) as TemplateId[]) {
+    const copy = getGraphicCopy(
+      { ...project, template },
+      { ...profile, team: '', car: '' },
+      branding,
+    );
+    assert.equal(copy.title, expectedTitles[template]);
+    assert.equal(copy.sub, 'MOTORSPORT');
+  }
+
+  assert.deepEqual(getStandardTemplateLayout(1920, project), {
+    titleY: 1094.3999999999999,
+    titleSize: 82,
+    subY: 1149.3999999999999,
+    detailY: 1224.3999999999999,
+    dateY: 1268.3999999999999,
+    resultY: 1324.3999999999999,
+    showRaceDetails: true,
+    showResult: false,
+  });
+  assert.equal(
+    getStandardTemplateLayout(1350, {
+      format: 'portrait',
+      template: 'bio',
+    }).showRaceDetails,
+    false,
+  );
+  assert.equal(
+    getStandardTemplateLayout(1350, {
+      format: 'portrait',
+      template: 'qualifying',
+    }).showResult,
+    true,
+  );
+  assert.equal(
+    getStandardTemplateLayout(1350, {
+      format: 'portrait',
+      template: 'results',
+    }).showResult,
+    true,
+  );
+});
+
+test('template extras retain bio, schedule and sponsor content', () => {
+  assert.deepEqual(
+    getTemplateExtraLayout(
+      1350,
+      { ...project, template: 'bio' },
+      profile,
+    ),
+    {
+      kind: 'bio',
+      rows: [
+        { y: 1080, text: 'TEAM  T6 Msport' },
+        { y: 1122, text: 'LOCATION  West Yorkshire' },
+        { y: 1164, text: 'AGE  40' },
+        { y: 1206, text: 'CAR  Cupra' },
+      ],
+    },
+  );
+  assert.deepEqual(
+    getTemplateExtraLayout(
+      1350,
+      {
+        ...project,
+        template: 'schedule',
+        details: { ...details, scheduleLines: 'QUALIFYING · 19:30' },
+      },
+      profile,
+    ),
+    { kind: 'schedule', y: 1012.5, text: 'QUALIFYING · 19:30' },
+  );
+  assert.deepEqual(
+    getTemplateExtraLayout(
+      1350,
+      {
+        ...project,
+        template: 'sponsor',
+        details: { ...details, sponsorName: 'Corbeau' },
+      },
+      profile,
+    ),
+    { kind: 'sponsor', y: 999, text: 'CORBEAU' },
+  );
+  assert.deepEqual(
+    getTemplateExtraLayout(
+      1350,
+      { ...project, template: 'announcement' },
+      profile,
+    ),
+    { kind: 'none' },
+  );
+});
+
+test('brand logo positions remain shared across non-event templates', () => {
+  assert.equal(getBrandLogoLayout(1080, 'event'), null);
+  for (const template of [
+    'announcement',
+    'bio',
+    'schedule',
+    'qualifying',
+    'results',
+    'sponsor',
+  ] as TemplateId[]) {
+    assert.deepEqual(getBrandLogoLayout(1080, template), {
+      competitionX: 710,
+      teamX: 885,
+      y: 35,
+      width: 150,
+      height: 150,
+    });
+  }
 });
 
 test('sponsor logos retain their adaptive row and contain calculations', () => {
