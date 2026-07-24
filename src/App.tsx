@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, Download, FolderKanban, ImagePlus, LayoutTemplate, Palette, Settings2, Trash2, UserRound, UsersRound } from 'lucide-react';
-import { emptyDetails, id, load, save, starter } from './store';
+import { ChevronLeft, Download, FolderKanban, ImagePlus, Settings2, Trash2, UserRound } from 'lucide-react';
+import { emptyDetails, id, load, save } from './store';
 import type { Data, DriverProfile, FormatId, Project, Sponsor, TemplateId } from './types';
 import { Sidebar } from './components/navigation/Sidebar';
 import { PageHeader } from './components/ui';
