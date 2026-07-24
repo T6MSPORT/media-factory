@@ -1,9 +1,168 @@
-import { useEffect, useState } from 'react';
-import type { Data, FormatId, Project, Sponsor } from '../../types';
-import { formatEventDate, getCanvasDimensions } from '../../utils/format';
+import { useEffect, useState, type PointerEvent as ReactPointerEvent, type Ref } from 'react';
+import type { Data, Project, Sponsor } from '../../types';
+import { getCanvasDimensions } from '../../utils/format';
 import { getImageDimensions } from '../../utils/images';
+import {
+  BackgroundLayers,
+  BrandLogos,
+  DragSurface,
+  SponsorBar,
+} from './GraphicLayers';
+import {
+  AchievementBadge,
+  EventTemplate,
+  StandardTemplate,
+  TemplateExtras,
+} from './GraphicTemplates';
 
-const dims=(format:FormatId)=>{const {width,height}=getCanvasDimensions(format);return {w:width,h:height}};
+type GraphicProps = {
+  project: Project;
+  data: Data;
+  sponsors: Sponsor[];
+  ref: Ref<SVGSVGElement>;
+  onBackgroundPointerDown?: (event: ReactPointerEvent<SVGRectElement>) => void;
+  onBackgroundPointerMove?: (event: ReactPointerEvent<SVGRectElement>) => void;
+  onBackgroundPointerUp?: (event: ReactPointerEvent<SVGRectElement>) => void;
+};
 
-export function Graphic({project,data,sponsors,ref,onBackgroundPointerDown,onBackgroundPointerMove,onBackgroundPointerUp}:{project:Project;data:Data;sponsors:Sponsor[];ref:any;onBackgroundPointerDown?:(e:any)=>void;onBackgroundPointerMove?:(e:any)=>void;onBackgroundPointerUp?:(e:any)=>void}){const {w,h}=dims(project.format);const p=data.profile,b=data.branding,d=project.details;const backgroundHero=project.heroImage;const [loadedHeroSize,setLoadedHeroSize]=useState<{width:number;height:number}|null>(null);useEffect(()=>{let active=true;if(!backgroundHero){setLoadedHeroSize(null);return}if(project.heroImageWidth&&project.heroImageHeight){setLoadedHeroSize({width:project.heroImageWidth,height:project.heroImageHeight});return}getImageDimensions(backgroundHero).then(size=>{if(active)setLoadedHeroSize(size)}).catch(()=>{if(active)setLoadedHeroSize(null)});return()=>{active=false}},[backgroundHero,project.heroImageWidth,project.heroImageHeight]);const driverImage=p.driverImage;const numericPosition=Number(String(d.position).replace(/\D/g,''));const isPole=project.template==='qualifying'&&numericPosition===1;const isPodium=project.template==='results'&&numericPosition>=1&&numericPosition<=3;const achievement=isPole?'POLE POSITION':isPodium?(numericPosition===1?'RACE WINNER':`PODIUM · P${numericPosition}`):'';const title=d.headline||({event:'RACE WEEKEND',announcement:'ANNOUNCEMENT',bio:'DRIVER PROFILE',schedule:'RACE SCHEDULE',qualifying:'QUALIFYING RESULT',results:'RACE RESULT',sponsor:'PROUDLY SUPPORTED BY'} as any)[project.template];const sub=d.subheadline||p.team||p.car||'MOTORSPORT';const logoSize=150;const heroWidth=loadedHeroSize?.width||project.heroImageWidth||w;const heroHeight=loadedHeroSize?.height||project.heroImageHeight||h;const fillScale=Math.max(w/heroWidth,h/heroHeight);const renderedHeroWidth=heroWidth*fillScale*project.heroScale;const renderedHeroHeight=heroHeight*fillScale*project.heroScale;const renderedHeroX=(w-renderedHeroWidth)/2+project.heroX;const renderedHeroY=(h-renderedHeroHeight)/2+project.heroY;const driverTransform=`translate(${project.driverX||0} ${project.driverY||0}) translate(${w*.66} ${h*.46}) scale(${project.driverScale||1}) translate(${-w*.66} ${-h*.46})`;const eventTop=project.format==='story'?70:58;const eventBlockX=70;const eventIdentityY=eventTop+(project.format==='story'?46:40);const eventNumberW=project.format==='story'?138:122;const eventNumberH=project.format==='story'?58:52;const eventNameSize=project.format==='story'?46:40;const eventNameX=eventBlockX+eventNumberW+22;const eventNameText=(p.name||'DRIVER NAME').toUpperCase();const eventNameApprox=Math.min(project.format==='story'?470:410,eventNameText.length*eventNameSize*.57);const eventTeamW=project.format==='story'?260:220;const eventTeamX=w-eventBlockX-eventTeamW;const eventCompetitionY=eventIdentityY+(project.format==='story'?84:74);const eventHeadingY=eventCompetitionY+(p.competitionLogo?(project.format==='story'?310:255):(project.format==='story'?135:112));const eventNextSize=project.format==='story'?64:54;const eventRoundSize=project.format==='story'?43:37;const eventTrackSize=project.format==='story'?198:167;const eventDateSize=project.format==='story'?42:36;const eventGap=project.format==='story'?36:30;const eventRoundY=eventHeadingY+eventNextSize+eventGap;const eventTrackY=eventRoundY+eventRoundSize+eventGap;const eventDateY=eventTrackY+eventTrackSize+eventGap;const stripeLeftTop=project.template==='event'?h*.76:h*.68;const stripeRightTop=project.template==='event'?h*.50:h*.42;const stripeRightBottom=project.template==='event'?h*.65:h*.57;const stripeLeftBottom=project.template==='event'?h*.90:h*.82;const stripeLineLeft=project.template==='event'?h*.79:h*.71;const stripeLineRight=project.template==='event'?h*.53:h*.45;const roundValue=(d.round||'').trim();const roundIsPlural=/[,/&+]|\b(?:and|to|-)\b/i.test(roundValue)||roundValue.split(/\s+/).filter(Boolean).length>1;const roundLabel=roundValue?`${roundIsPlural?'ROUNDS':'ROUND'} ${roundValue}`:'ROUND';const headingFont=`${b.headingFont}, Arial, sans-serif`;const bodyFont=`${b.bodyFont}, Arial, sans-serif`;return <svg ref={ref} viewBox={`0 0 ${w} ${h}`} xmlns="http://www.w3.org/2000/svg" className="graphic"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stopColor={b.secondary}/><stop offset="1" stopColor="#050607"/></linearGradient><linearGradient id="driverFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0.78" stopColor="white"/><stop offset="0.94" stopColor="black"/></linearGradient><mask id="driverMask"><rect width={w} height={h} fill="url(#driverFade)"/></mask><clipPath id="driverZone"><rect x={w*.30} y={h*.05} width={w*.70} height={h*.82}/></clipPath><linearGradient id="bgOverlay" x1="0" y1="0" x2="0" y2="1"><stop stopColor={b.secondary} stopOpacity=".18"/><stop offset="1" stopColor="#050607" stopOpacity=".45"/></linearGradient><linearGradient id="bottomFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#000000" stopOpacity="0"/><stop offset="0.58" stopColor="#000000" stopOpacity="0"/><stop offset="1" stopColor="#000000" stopOpacity=".94"/></linearGradient><linearGradient id="eventTopFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#000000" stopOpacity=".88"/><stop offset="0.44" stopColor="#000000" stopOpacity=".62"/><stop offset="1" stopColor="#000000" stopOpacity="0"/></linearGradient></defs><rect width={w} height={h} fill="url(#bg)"/>{backgroundHero&&loadedHeroSize&&<><image href={backgroundHero} x={renderedHeroX} y={renderedHeroY} width={renderedHeroWidth} height={renderedHeroHeight} preserveAspectRatio="none"/><rect width={w} height={h} fill="url(#bgOverlay)"/></>}{project.template==='event'&&<rect width={w} height={h*(project.format==='story'?.38:.36)} fill="url(#eventTopFade)" pointerEvents="none"/>}<path d={`M0 ${stripeLeftTop} L${w} ${stripeRightTop} L${w} ${stripeRightBottom} L0 ${stripeLeftBottom}Z`} fill={b.primary} opacity=".9"/><path d={`M0 ${stripeLineLeft} L${w} ${stripeLineRight}`} stroke={b.accent} strokeWidth="5" opacity=".8"/>{driverImage&&project.driverVisible!==false&&<g transform={driverTransform}><image href={driverImage} x={w*.30} y={h*.05} width={w*.72} height={h*.82} preserveAspectRatio="xMidYMax meet" clipPath="url(#driverZone)" mask="url(#driverMask)"/></g>}<rect width={w} height={h} fill="url(#bottomFade)" pointerEvents="none"/>{project.template==='event'?<g fill={b.accent}><g textAnchor="start"><g transform={`translate(${eventBlockX} ${eventIdentityY-eventNumberH/2}) skewX(-10)`}><rect width={eventNumberW} height={eventNumberH} rx="5" fill={b.primary}/><rect x="5" y="5" width={eventNumberW-10} height={eventNumberH-10} rx="3" fill="none" stroke={b.accent} strokeWidth="2" opacity=".75"/><text x={project.format==='story'?15:13} y={project.format==='story'?43:39} fontFamily={headingFont} fontSize={project.format==='story'?39:35} fontWeight="900" fill={b.accent} transform="skewX(10)">#{p.number||'00'}</text></g><text x={eventNameX} y={eventIdentityY+eventNameSize*.34} fontFamily={headingFont} fontSize={eventNameSize} fontWeight="900" letterSpacing="-1">{eventNameText}</text>{p.teamLogo?<image href={p.teamLogo} x={eventTeamX} y={eventIdentityY-(project.format==='story'?45:39)} width={eventTeamW} height={project.format==='story'?90:78} preserveAspectRatio="xMaxYMid meet"/>:p.team?<text x={w-eventBlockX} y={eventIdentityY+(project.format==='story'?10:8)} textAnchor="end" fontFamily={bodyFont} fontSize={project.format==='story'?24:21} fontWeight="700" letterSpacing="2">{p.team.toUpperCase()}</text>:null}{p.competitionLogo&&<image href={p.competitionLogo} x={eventBlockX} y={eventCompetitionY} width={project.format==='story'?300:250} height={project.format==='story'?180:150} preserveAspectRatio="xMinYMid meet"/>}</g><text x={eventBlockX} y={eventHeadingY} dominantBaseline="hanging" fontFamily={headingFont} fontSize={eventNextSize} fontWeight="900" letterSpacing="-2">NEXT RACE</text><text x={eventBlockX+4} y={eventRoundY} dominantBaseline="hanging" fontFamily={bodyFont} fontSize={eventRoundSize} fontWeight="700" letterSpacing="5">{roundLabel}</text><text x={eventBlockX} y={eventTrackY} dominantBaseline="hanging" fontFamily={headingFont} fontSize={eventTrackSize} fontWeight="900" fill={b.primary} letterSpacing="-3">{(d.circuit||'TRACK NAME').toUpperCase()}</text><text x={eventBlockX+4} y={eventDateY} dominantBaseline="hanging" fontFamily={bodyFont} fontSize={eventDateSize} fontWeight="700" letterSpacing="3">{formatEventDate(d.date)}</text></g>:<g fontFamily={bodyFont} fill={b.accent}><text x="70" y="95" fontSize="28" fontWeight="700" letterSpacing="5">#{p.number}</text><text x="70" y="145" fontFamily={headingFont} fontSize="46" fontWeight="900">{p.name.toUpperCase()}</text><text x="70" y={h*.57} fontFamily={headingFont} fontSize={project.format==='story'?82:68} fontWeight="900" letterSpacing="-2">{String(title).toUpperCase()}</text><text x="74" y={h*.57+55} fontSize="28" letterSpacing="4" opacity=".88">{String(sub).toUpperCase()}</text>{project.template!=='bio'&&<><text x="74" y={h*.57+130} fontSize="27" fontWeight="700">{d.round}{d.round&&d.circuit?' · ':''}{d.circuit}</text><text x="74" y={h*.57+174} fontSize="24">{d.date} {d.time}</text></>}{['qualifying','results'].includes(project.template)&&<text x="74" y={h*.57+230} fontSize="34" fontWeight="900">{d.position} {d.result}</text>}</g>}{achievement&&<g transform={`translate(${w-350} ${h*.61})`}><path d="M0 0 H280 L250 88 H0 Z" fill={b.primary}/><path d="M0 0 H280" stroke={b.accent} strokeWidth="5"/><text x="22" y="38" fill={b.accent} fontFamily={headingFont} fontSize="27" fontWeight="900">{achievement}</text><text x="22" y="70" fill={b.accent} fontFamily={bodyFont} fontSize="18">ACHIEVEMENT</text></g>}{project.template==='bio'&&<g fill={b.accent} fontFamily={bodyFont} fontSize="26"><text x="74" y={h*.80}>TEAM  {p.team||'—'}</text><text x="74" y={h*.80+42}>LOCATION  {p.location||'—'}</text><text x="74" y={h*.80+84}>AGE  {p.age||'—'}</text><text x="74" y={h*.80+126}>CAR  {p.car||'—'}</text></g>}{project.template==='schedule'&&<text x="74" y={h*.75} fill={b.accent} fontFamily={bodyFont} fontSize="28" style={{whiteSpace:'pre'}}>{d.scheduleLines||'ADD SESSION TIMES'}</text>}{project.template==='sponsor'&&<text x="74" y={h*.74} fill={b.accent} fontFamily={headingFont} fontSize="45">{d.sponsorName.toUpperCase()||'SPONSOR NAME'}</text>}<g>{sponsors.length?sponsors.slice(0,10).map((s,i)=>{const visibleSponsors=sponsors.slice(0,10);const row=Math.floor(i/5);const rowStart=row*5;const rowCount=Math.min(5,visibleSponsors.length-rowStart);const col=i-rowStart;const cellW=w/5;const rowWidth=rowCount*cellW;const rowX=(w-rowWidth)/2;const rowH=82;const barTop=h-(visibleSponsors.length>5?164:92);const cellX=rowX+col*cellW;const logoScale=Math.min(1.4,Math.max(.65,b.sponsorLogoScale||1));const naturalW=s.logoWidth||160;const naturalH=s.logoHeight||60;const aspect=Math.max(.15,Math.min(8,naturalW/naturalH));const maxW=(cellW-36)*logoScale;const maxH=66*logoScale;const targetArea=7600*logoScale*logoScale;let logoW=Math.sqrt(targetArea*aspect);let logoH=Math.sqrt(targetArea/aspect);const contain=Math.min(1,maxW/logoW,maxH/logoH);logoW*=contain;logoH*=contain;const logoX=cellX+(cellW-logoW)/2;const logoY=barTop+row*rowH+8+(66-logoH)/2;return s.logo?<image key={s.id} href={s.logo} x={logoX} y={logoY} width={logoW} height={logoH} preserveAspectRatio="xMidYMid meet"/>:<text key={s.id} x={cellX+cellW/2} y={barTop+row*rowH+48} textAnchor="middle" fontSize="17" fill={b.accent}>{s.name}</text>}):<text x={w/2} y={h-48} textAnchor="middle" fontFamily={bodyFont} fontSize="20" fill={b.accent} opacity=".7" letterSpacing="4">SPONSOR BAR</text>}</g>{backgroundHero&&onBackgroundPointerDown&&<rect width={w} height={h} fill="transparent" style={{cursor:"grab",touchAction:"none"}} onPointerDown={onBackgroundPointerDown} onPointerMove={onBackgroundPointerMove} onPointerUp={onBackgroundPointerUp} onPointerCancel={onBackgroundPointerUp}/>} {p.competitionLogo&&project.template!=='event'&&<image href={p.competitionLogo} x={w-370} y="35" width={logoSize} height={logoSize} preserveAspectRatio="xMidYMid meet"/>}{p.teamLogo&&project.template!=='event'&&<image href={p.teamLogo} x={w-195} y="35" width={logoSize} height={logoSize} preserveAspectRatio="xMidYMid meet"/>}</svg>}
+const templateTitles = {
+  event: 'RACE WEEKEND',
+  announcement: 'ANNOUNCEMENT',
+  bio: 'DRIVER PROFILE',
+  schedule: 'RACE SCHEDULE',
+  qualifying: 'QUALIFYING RESULT',
+  results: 'RACE RESULT',
+  sponsor: 'PROUDLY SUPPORTED BY',
+} satisfies Record<Project['template'], string>;
 
+export function Graphic({
+  project,
+  data,
+  sponsors,
+  ref,
+  onBackgroundPointerDown,
+  onBackgroundPointerMove,
+  onBackgroundPointerUp,
+}: GraphicProps) {
+  const { width: w, height: h } = getCanvasDimensions(project.format);
+  const profile = data.profile;
+  const branding = data.branding;
+  const details = project.details;
+  const backgroundHero = project.heroImage;
+  const [loadedHeroSize, setLoadedHeroSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    if (!backgroundHero) {
+      setLoadedHeroSize(null);
+      return;
+    }
+    if (project.heroImageWidth && project.heroImageHeight) {
+      setLoadedHeroSize({
+        width: project.heroImageWidth,
+        height: project.heroImageHeight,
+      });
+      return;
+    }
+    getImageDimensions(backgroundHero)
+      .then(size => {
+        if (active) setLoadedHeroSize(size);
+      })
+      .catch(() => {
+        if (active) setLoadedHeroSize(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [backgroundHero, project.heroImageWidth, project.heroImageHeight]);
+
+  const numericPosition = Number(String(details.position).replace(/\D/g, ''));
+  const isPole = project.template === 'qualifying' && numericPosition === 1;
+  const isPodium =
+    project.template === 'results' && numericPosition >= 1 && numericPosition <= 3;
+  const achievement = isPole
+    ? 'POLE POSITION'
+    : isPodium
+      ? numericPosition === 1
+        ? 'RACE WINNER'
+        : `PODIUM · P${numericPosition}`
+      : '';
+  const title = details.headline || templateTitles[project.template];
+  const sub = details.subheadline || profile.team || profile.car || 'MOTORSPORT';
+  const headingFont = `${branding.headingFont}, Arial, sans-serif`;
+  const bodyFont = `${branding.bodyFont}, Arial, sans-serif`;
+
+  return (
+    <svg
+      ref={ref}
+      viewBox={`0 0 ${w} ${h}`}
+      xmlns="http://www.w3.org/2000/svg"
+      className="graphic"
+    >
+      <BackgroundLayers
+        w={w}
+        h={h}
+        project={project}
+        branding={branding}
+        loadedHeroSize={loadedHeroSize}
+        driverImage={profile.driverImage}
+      />
+      {project.template === 'event' ? (
+        <EventTemplate
+          w={w}
+          project={project}
+          profile={profile}
+          branding={branding}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+      ) : (
+        <StandardTemplate
+          h={h}
+          project={project}
+          profile={profile}
+          branding={branding}
+          title={title}
+          sub={sub}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+      )}
+      <AchievementBadge
+        w={w}
+        h={h}
+        achievement={achievement}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
+      <TemplateExtras
+        h={h}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
+      <SponsorBar
+        w={w}
+        h={h}
+        sponsors={sponsors}
+        branding={branding}
+        bodyFont={bodyFont}
+      />
+      <DragSurface
+        w={w}
+        h={h}
+        backgroundHero={backgroundHero}
+        onPointerDown={onBackgroundPointerDown}
+        onPointerMove={onBackgroundPointerMove}
+        onPointerUp={onBackgroundPointerUp}
+      />
+      <BrandLogos w={w} project={project} profile={profile} />
+    </svg>
+  );
+}
