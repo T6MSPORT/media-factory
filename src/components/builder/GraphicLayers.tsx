@@ -1,5 +1,9 @@
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
+import {
+  getBackgroundLayout,
+  getSponsorLayout,
+} from './rendererCalculations';
 
 type Size = { width: number; height: number };
 
@@ -18,20 +22,19 @@ export function BackgroundLayers({
   loadedHeroSize: Size | null;
   driverImage?: string;
 }) {
-  const heroWidth = loadedHeroSize?.width || project.heroImageWidth || w;
-  const heroHeight = loadedHeroSize?.height || project.heroImageHeight || h;
-  const fillScale = Math.max(w / heroWidth, h / heroHeight);
-  const renderedHeroWidth = heroWidth * fillScale * project.heroScale;
-  const renderedHeroHeight = heroHeight * fillScale * project.heroScale;
-  const renderedHeroX = (w - renderedHeroWidth) / 2 + project.heroX;
-  const renderedHeroY = (h - renderedHeroHeight) / 2 + project.heroY;
-  const driverTransform = `translate(${project.driverX || 0} ${project.driverY || 0}) translate(${w * 0.66} ${h * 0.46}) scale(${project.driverScale || 1}) translate(${-w * 0.66} ${-h * 0.46})`;
-  const stripeLeftTop = project.template === 'event' ? h * 0.76 : h * 0.68;
-  const stripeRightTop = project.template === 'event' ? h * 0.5 : h * 0.42;
-  const stripeRightBottom = project.template === 'event' ? h * 0.65 : h * 0.57;
-  const stripeLeftBottom = project.template === 'event' ? h * 0.9 : h * 0.82;
-  const stripeLineLeft = project.template === 'event' ? h * 0.79 : h * 0.71;
-  const stripeLineRight = project.template === 'event' ? h * 0.53 : h * 0.45;
+  const {
+    renderedHeroWidth,
+    renderedHeroHeight,
+    renderedHeroX,
+    renderedHeroY,
+    driverTransform,
+    stripeLeftTop,
+    stripeRightTop,
+    stripeRightBottom,
+    stripeLeftBottom,
+    stripeLineLeft,
+    stripeLineRight,
+  } = getBackgroundLayout(w, h, project, loadedHeroSize);
 
   return (
     <>
@@ -136,33 +139,24 @@ export function SponsorBar({
     <g>
       {sponsors.length ? (
         visibleSponsors.map((sponsor, index) => {
-          const row = Math.floor(index / 5);
-          const rowStart = row * 5;
-          const rowCount = Math.min(5, visibleSponsors.length - rowStart);
-          const col = index - rowStart;
-          const cellW = w / 5;
-          const rowWidth = rowCount * cellW;
-          const rowX = (w - rowWidth) / 2;
-          const rowH = 82;
-          const barTop = h - (visibleSponsors.length > 5 ? 164 : 92);
-          const cellX = rowX + col * cellW;
-          const logoScale = Math.min(
-            1.4,
-            Math.max(0.65, branding.sponsorLogoScale || 1),
+          const {
+            cellW,
+            cellX,
+            barTop,
+            row,
+            rowH,
+            logoW,
+            logoH,
+            logoX,
+            logoY,
+          } = getSponsorLayout(
+            w,
+            h,
+            visibleSponsors.length,
+            index,
+            sponsor,
+            branding.sponsorLogoScale,
           );
-          const naturalW = sponsor.logoWidth || 160;
-          const naturalH = sponsor.logoHeight || 60;
-          const aspect = Math.max(0.15, Math.min(8, naturalW / naturalH));
-          const maxW = (cellW - 36) * logoScale;
-          const maxH = 66 * logoScale;
-          const targetArea = 7600 * logoScale * logoScale;
-          let logoW = Math.sqrt(targetArea * aspect);
-          let logoH = Math.sqrt(targetArea / aspect);
-          const contain = Math.min(1, maxW / logoW, maxH / logoH);
-          logoW *= contain;
-          logoH *= contain;
-          const logoX = cellX + (cellW - logoW) / 2;
-          const logoY = barTop + row * rowH + 8 + (66 - logoH) / 2;
 
           return sponsor.logo ? (
             <image

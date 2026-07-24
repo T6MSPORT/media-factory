@@ -14,6 +14,7 @@ import {
   StandardTemplate,
   TemplateExtras,
 } from './GraphicTemplates';
+import { getGraphicCopy } from './rendererCalculations';
 
 type GraphicProps = {
   project: Project;
@@ -24,16 +25,6 @@ type GraphicProps = {
   onBackgroundPointerMove?: (event: ReactPointerEvent<SVGRectElement>) => void;
   onBackgroundPointerUp?: (event: ReactPointerEvent<SVGRectElement>) => void;
 };
-
-const templateTitles = {
-  event: 'RACE WEEKEND',
-  announcement: 'ANNOUNCEMENT',
-  bio: 'DRIVER PROFILE',
-  schedule: 'RACE SCHEDULE',
-  qualifying: 'QUALIFYING RESULT',
-  results: 'RACE RESULT',
-  sponsor: 'PROUDLY SUPPORTED BY',
-} satisfies Record<Project['template'], string>;
 
 export function Graphic({
   project,
@@ -47,7 +38,6 @@ export function Graphic({
   const { width: w, height: h } = getCanvasDimensions(project.format);
   const profile = data.profile;
   const branding = data.branding;
-  const details = project.details;
   const backgroundHero = project.heroImage;
   const [loadedHeroSize, setLoadedHeroSize] = useState<{
     width: number;
@@ -79,21 +69,11 @@ export function Graphic({
     };
   }, [backgroundHero, project.heroImageWidth, project.heroImageHeight]);
 
-  const numericPosition = Number(String(details.position).replace(/\D/g, ''));
-  const isPole = project.template === 'qualifying' && numericPosition === 1;
-  const isPodium =
-    project.template === 'results' && numericPosition >= 1 && numericPosition <= 3;
-  const achievement = isPole
-    ? 'POLE POSITION'
-    : isPodium
-      ? numericPosition === 1
-        ? 'RACE WINNER'
-        : `PODIUM · P${numericPosition}`
-      : '';
-  const title = details.headline || templateTitles[project.template];
-  const sub = details.subheadline || profile.team || profile.car || 'MOTORSPORT';
-  const headingFont = `${branding.headingFont}, Arial, sans-serif`;
-  const bodyFont = `${branding.bodyFont}, Arial, sans-serif`;
+  const { achievement, title, sub, headingFont, bodyFont } = getGraphicCopy(
+    project,
+    profile,
+    branding,
+  );
 
   return (
     <svg

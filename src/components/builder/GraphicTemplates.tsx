@@ -1,5 +1,6 @@
 import type { Branding, DriverProfile, Project } from '../../types';
 import { formatEventDate } from '../../utils/format';
+import { getEventTemplateLayout } from './rendererCalculations';
 
 type TemplateSharedProps = {
   project: Project;
@@ -18,36 +19,28 @@ export function EventTemplate({
   bodyFont,
 }: TemplateSharedProps & { w: number }) {
   const details = project.details;
-  const isStory = project.format === 'story';
-  const eventTop = isStory ? 70 : 58;
-  const eventBlockX = 70;
-  const eventIdentityY = eventTop + (isStory ? 46 : 40);
-  const eventNumberW = isStory ? 138 : 122;
-  const eventNumberH = isStory ? 58 : 52;
-  const eventNameSize = isStory ? 46 : 40;
-  const eventNameX = eventBlockX + eventNumberW + 22;
-  const eventNameText = (profile.name || 'DRIVER NAME').toUpperCase();
-  const eventTeamW = isStory ? 260 : 220;
-  const eventTeamX = w - eventBlockX - eventTeamW;
-  const eventCompetitionY = eventIdentityY + (isStory ? 84 : 74);
-  const eventHeadingY =
-    eventCompetitionY +
-    (profile.competitionLogo ? (isStory ? 310 : 255) : isStory ? 135 : 112);
-  const eventNextSize = isStory ? 64 : 54;
-  const eventRoundSize = isStory ? 43 : 37;
-  const eventTrackSize = isStory ? 198 : 167;
-  const eventDateSize = isStory ? 42 : 36;
-  const eventGap = isStory ? 36 : 30;
-  const eventRoundY = eventHeadingY + eventNextSize + eventGap;
-  const eventTrackY = eventRoundY + eventRoundSize + eventGap;
-  const eventDateY = eventTrackY + eventTrackSize + eventGap;
-  const roundValue = (details.round || '').trim();
-  const roundIsPlural =
-    /[,/&+]|\b(?:and|to|-)\b/i.test(roundValue) ||
-    roundValue.split(/\s+/).filter(Boolean).length > 1;
-  const roundLabel = roundValue
-    ? `${roundIsPlural ? 'ROUNDS' : 'ROUND'} ${roundValue}`
-    : 'ROUND';
+  const {
+    isStory,
+    eventBlockX,
+    eventIdentityY,
+    eventNumberW,
+    eventNumberH,
+    eventNameSize,
+    eventNameX,
+    eventNameText,
+    eventTeamW,
+    eventTeamX,
+    eventCompetitionY,
+    eventHeadingY,
+    eventNextSize,
+    eventRoundSize,
+    eventTrackSize,
+    eventDateSize,
+    eventRoundY,
+    eventTrackY,
+    eventDateY,
+    roundLabel,
+  } = getEventTemplateLayout(w, project, profile);
 
   return (
     <g fill={branding.accent}>
