@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
@@ -21,7 +22,7 @@ function TemplateCard({
         <span>{template.name}</span>
       </div>
       <b>{template.name}</b>
-      <p>{template.desc}</p>
+      <p>{template.description}</p>
     </button>
   );
 }
@@ -31,7 +32,7 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
     '--brand-primary': data.branding.primary,
     '--brand-secondary': data.branding.secondary,
     '--brand-accent': data.branding.accent,
-  } as React.CSSProperties;
+  } as CSSProperties;
 
   return (
     <div className="page branded-home" style={brandStyle}>
@@ -67,7 +68,10 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
       <div className="stats">
         <StatCard value={TEMPLATE_CATALOGUE.length} label="Templates" />
         <StatCard value={data.sponsors.length} label="Sponsors" />
-        <StatCard value={data.projects.filter(project => project.exportedAt).length} label="Saved graphics" />
+        <StatCard
+          value={data.projects.filter(project => project.exportedAt).length}
+          label="Saved graphics"
+        />
       </div>
 
       <h3>Popular templates</h3>
