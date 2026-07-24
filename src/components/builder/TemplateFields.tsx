@@ -1,5 +1,35 @@
+import { TEMPLATE_FIELDS } from '../../config/templates';
 import type { Project } from '../../types';
 import { TextField } from '../forms/PropertyEditor';
 
-export function TemplateFields({project,setDetails}:{project:Project;setDetails:(x:any)=>void}){const d=project.details;const common=<>{project.template!=='bio'&&<><TextField label="Round(s)" value={d.round} onChange={v=>setDetails({round:v})}/><TextField label="Track name" value={d.circuit} onChange={v=>setDetails({circuit:v})}/><TextField label="Date" value={d.date} type="date" onChange={v=>setDetails({date:v})}/>{project.template!=='event'&&<TextField label="Time" value={d.time} type="time" onChange={v=>setDetails({time:v})}/>}</>}</>;
- return <>{common}{project.template==='schedule'&&<label>Schedule lines<textarea value={d.scheduleLines} placeholder={'QUALIFYING · 19:30\nRACE 1 · 20:00'} onChange={e=>setDetails({scheduleLines:e.target.value})}/></label>}{['qualifying','results'].includes(project.template)&&<><TextField label="Position" value={d.position} onChange={v=>setDetails({position:v})}/><TextField label={project.template==='qualifying'?'Lap time':'Result or gap'} value={d.result} onChange={v=>setDetails({result:v})}/></>}{project.template==='sponsor'&&<TextField label="Sponsor name" value={d.sponsorName} onChange={v=>setDetails({sponsorName:v})}/>} {project.template!=='event'&&<><TextField label="Headline override" value={d.headline} onChange={v=>setDetails({headline:v})}/><TextField label="Subheadline override" value={d.subheadline} onChange={v=>setDetails({subheadline:v})}/></>}</>}
+type TemplateFieldsProps = {
+  project: Project;
+  setDetails: (details: Partial<Project['details']>) => void;
+};
+
+export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
+  return (
+    <>
+      {TEMPLATE_FIELDS[project.template].map(field =>
+        field.type === 'textarea' ? (
+          <label key={field.key}>
+            {field.label}
+            <textarea
+              value={project.details[field.key]}
+              placeholder={field.placeholder}
+              onChange={event => setDetails({ [field.key]: event.target.value })}
+            />
+          </label>
+        ) : (
+          <TextField
+            key={field.key}
+            label={field.label}
+            value={project.details[field.key]}
+            type={field.type}
+            onChange={value => setDetails({ [field.key]: value })}
+          />
+        ),
+      )}
+    </>
+  );
+}

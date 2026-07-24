@@ -1,4 +1,11 @@
-import type { TemplateId } from '../types';
+import type { GraphicDetails, TemplateId } from '../types';
+
+export interface TemplateFieldDefinition {
+  key: keyof GraphicDetails;
+  label: string;
+  type?: 'text' | 'date' | 'time' | 'textarea';
+  placeholder?: string;
+}
 
 export interface TemplateDefinition {
   id: TemplateId;
@@ -31,6 +38,58 @@ export const TEMPLATE_CATALOGUE: readonly TemplateDefinition[] = [
   },
   { id: 'sponsor', name: 'Sponsor Recognition', description: 'Thank and feature a partner.' },
 ] as const;
+
+const raceFields: readonly TemplateFieldDefinition[] = [
+  { key: 'round', label: 'Round(s)' },
+  { key: 'circuit', label: 'Track name' },
+  { key: 'date', label: 'Date', type: 'date' },
+];
+
+const timedRaceFields: readonly TemplateFieldDefinition[] = [
+  ...raceFields,
+  { key: 'time', label: 'Time', type: 'time' },
+];
+
+const overrideFields: readonly TemplateFieldDefinition[] = [
+  { key: 'headline', label: 'Headline override' },
+  { key: 'subheadline', label: 'Subheadline override' },
+];
+
+export const TEMPLATE_FIELDS: Record<
+  TemplateId,
+  readonly TemplateFieldDefinition[]
+> = {
+  event: raceFields,
+  announcement: [...timedRaceFields, ...overrideFields],
+  bio: overrideFields,
+  schedule: [
+    ...timedRaceFields,
+    {
+      key: 'scheduleLines',
+      label: 'Schedule lines',
+      type: 'textarea',
+      placeholder: 'QUALIFYING · 19:30\nRACE 1 · 20:00',
+    },
+    ...overrideFields,
+  ],
+  qualifying: [
+    ...timedRaceFields,
+    { key: 'position', label: 'Position' },
+    { key: 'result', label: 'Lap time' },
+    ...overrideFields,
+  ],
+  results: [
+    ...timedRaceFields,
+    { key: 'position', label: 'Position' },
+    { key: 'result', label: 'Result or gap' },
+    ...overrideFields,
+  ],
+  sponsor: [
+    ...timedRaceFields,
+    { key: 'sponsorName', label: 'Sponsor name' },
+    ...overrideFields,
+  ],
+};
 
 export const getTemplateDefinition = (templateId: TemplateId): TemplateDefinition => {
   const template = TEMPLATE_CATALOGUE.find(({ id }) => id === templateId);
