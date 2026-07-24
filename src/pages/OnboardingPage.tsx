@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserRound } from 'lucide-react';
-import { Upload } from '../components/forms/ImageUpload';
+import { ProfileAssetUpload } from '../components/forms/ProfileAsset';
+import { TextField } from '../components/forms/PropertyEditor';
 import { DRIVER_FIELDS, labelForDriverField } from '../config/profile';
 import type { Data } from '../types';
 
@@ -33,38 +34,36 @@ export function OnboardingPage({ data, finish }: OnboardingPageProps) {
         <div className="onboarding-grid">
           <div className="portrait-upload">
             {profile.driverImage ? <img src={profile.driverImage} /> : <UserRound size={54} />}
-            <Upload
-              label="Driver image"
-              purpose="portrait"
-              on={driverImage =>
+            <ProfileAssetUpload
+              asset="driverImage"
+              onChange={driverImage =>
                 setDraft({ ...draft, profile: { ...profile, driverImage } })
               }
             />
           </div>
           <div className="form-grid single">
             {DRIVER_FIELDS.map(field => (
-              <label key={field}>
-                {labelForDriverField(field)}
-                <input
-                  value={profile[field]}
-                  onChange={event =>
-                    setDraft({
-                      ...draft,
-                      profile: { ...profile, [field]: event.target.value },
-                    })
-                  }
-                />
-              </label>
+              <TextField
+                key={field}
+                label={labelForDriverField(field)}
+                value={profile[field]}
+                onChange={value =>
+                  setDraft({
+                    ...draft,
+                    profile: { ...profile, [field]: value },
+                  })
+                }
+              />
             ))}
-            <Upload
-              label="Team logo"
-              purpose="logo"
-              on={teamLogo => setDraft({ ...draft, profile: { ...profile, teamLogo } })}
+            <ProfileAssetUpload
+              asset="teamLogo"
+              onChange={teamLogo =>
+                setDraft({ ...draft, profile: { ...profile, teamLogo } })
+              }
             />
-            <Upload
-              label="Competition logo"
-              purpose="logo"
-              on={competitionLogo =>
+            <ProfileAssetUpload
+              asset="competitionLogo"
+              onChange={competitionLogo =>
                 setDraft({ ...draft, profile: { ...profile, competitionLogo } })
               }
             />

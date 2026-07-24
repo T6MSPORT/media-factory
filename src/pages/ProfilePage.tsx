@@ -1,5 +1,6 @@
 import { UserRound } from 'lucide-react';
-import { Upload } from '../components/forms/ImageUpload';
+import { ProfileAssetCard } from '../components/forms/ProfileAsset';
+import { TextField } from '../components/forms/PropertyEditor';
 import { PageHeader } from '../components/ui';
 import { DRIVER_FIELDS, labelForDriverField } from '../config/profile';
 import type { Data, DriverProfile } from '../types';
@@ -24,59 +25,36 @@ export function ProfilePage({ data, setData }: ProfilePageProps) {
         <div className="panel profile-inputs">
           <div className="form-grid">
             {DRIVER_FIELDS.map((key) => (
-              <label key={key}>
-                {labelForDriverField(key)}
-                <input
-                  value={profile[key]}
-                  onChange={(event) => update({ [key]: event.target.value })}
-                />
-              </label>
+              <TextField
+                key={key}
+                label={labelForDriverField(key)}
+                value={profile[key]}
+                onChange={value => update({ [key]: value })}
+              />
             ))}
           </div>
         </div>
         <div className="profile-previews">
-          <AssetUploadPreview
-            title="Driver image"
+          <ProfileAssetCard
+            asset="driverImage"
             image={profile.driverImage}
             fallback={<UserRound size={48} />}
-            on={(driverImage) => update({ driverImage })}
+            onChange={driverImage => update({ driverImage })}
           />
           <div className="logo-preview-stack">
-            <AssetUploadPreview
-              title="Team logo"
+            <ProfileAssetCard
+              asset="teamLogo"
               image={profile.teamLogo}
-              fallback={<span>TEAM</span>}
-              on={(teamLogo) => update({ teamLogo })}
+              onChange={teamLogo => update({ teamLogo })}
             />
-            <AssetUploadPreview
-              title="Competition logo"
+            <ProfileAssetCard
+              asset="competitionLogo"
               image={profile.competitionLogo}
-              fallback={<span>COMP</span>}
-              on={(competitionLogo) => update({ competitionLogo })}
+              onChange={competitionLogo => update({ competitionLogo })}
             />
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-type AssetUploadPreviewProps = {
-  title: string;
-  image?: string;
-  fallback: React.ReactNode;
-  on: (value: string) => void;
-};
-
-function AssetUploadPreview({ title, image, fallback, on }: AssetUploadPreviewProps) {
-  return (
-    <div className={`asset-preview-card ${title === 'Driver image' ? 'driver-asset-preview' : ''}`}>
-      <div className="asset-preview-image">{image ? <img src={image} /> : fallback}</div>
-      <Upload
-        label={title}
-        purpose={title.toLowerCase().includes('logo') ? 'logo' : 'portrait'}
-        on={on}
-      />
     </div>
   );
 }
