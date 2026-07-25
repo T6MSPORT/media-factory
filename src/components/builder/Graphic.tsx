@@ -1,20 +1,8 @@
-import { useEffect, useState, type PointerEvent as ReactPointerEvent, type Ref } from 'react';
+import type { PointerEvent as ReactPointerEvent, Ref } from 'react';
 import type { Data, Project, Sponsor } from '../../types';
 import { getCanvasDimensions } from '../../utils/format';
-import { getImageDimensions } from '../../utils/images';
-import {
-  BackgroundLayers,
-  BrandLogos,
-  DragSurface,
-  SponsorBar,
-} from './GraphicLayers';
-import {
-  AchievementBadge,
-  EventTemplate,
-  StandardTemplate,
-  TemplateExtras,
-} from './GraphicTemplates';
-import { getGraphicCopy } from './rendererCalculations';
+import { GraphicScene } from './GraphicScene';
+import { useHeroDimensions } from './useHeroDimensions';
 
 type GraphicProps = {
   project: Project;
@@ -36,44 +24,7 @@ export function Graphic({
   onBackgroundPointerUp,
 }: GraphicProps) {
   const { width: w, height: h } = getCanvasDimensions(project.format);
-  const profile = data.profile;
-  const branding = data.branding;
-  const backgroundHero = project.heroImage;
-  const [loadedHeroSize, setLoadedHeroSize] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    if (!backgroundHero) {
-      setLoadedHeroSize(null);
-      return;
-    }
-    if (project.heroImageWidth && project.heroImageHeight) {
-      setLoadedHeroSize({
-        width: project.heroImageWidth,
-        height: project.heroImageHeight,
-      });
-      return;
-    }
-    getImageDimensions(backgroundHero)
-      .then(size => {
-        if (active) setLoadedHeroSize(size);
-      })
-      .catch(() => {
-        if (active) setLoadedHeroSize(null);
-      });
-    return () => {
-      active = false;
-    };
-  }, [backgroundHero, project.heroImageWidth, project.heroImageHeight]);
-
-  const { achievement, title, sub, headingFont, bodyFont } = getGraphicCopy(
-    project,
-    profile,
-    branding,
-  );
+  const loadedHeroSize = useHeroDimensions(project);
 
   return (
     <svg
@@ -82,67 +33,17 @@ export function Graphic({
       xmlns="http://www.w3.org/2000/svg"
       className="graphic"
     >
-      <BackgroundLayers
+      <GraphicScene
         w={w}
         h={h}
         project={project}
-        branding={branding}
-        loadedHeroSize={loadedHeroSize}
-        driverImage={profile.driverImage}
-      />
-      {project.template === 'event' ? (
-        <EventTemplate
-          w={w}
-          project={project}
-          profile={profile}
-          branding={branding}
-          headingFont={headingFont}
-          bodyFont={bodyFont}
-        />
-      ) : (
-        <StandardTemplate
-          h={h}
-          project={project}
-          profile={profile}
-          branding={branding}
-          title={title}
-          sub={sub}
-          headingFont={headingFont}
-          bodyFont={bodyFont}
-        />
-      )}
-      <AchievementBadge
-        w={w}
-        h={h}
-        achievement={achievement}
-        branding={branding}
-        headingFont={headingFont}
-        bodyFont={bodyFont}
-      />
-      <TemplateExtras
-        h={h}
-        project={project}
-        profile={profile}
-        branding={branding}
-        headingFont={headingFont}
-        bodyFont={bodyFont}
-      />
-      <SponsorBar
-        w={w}
-        h={h}
+        data={data}
         sponsors={sponsors}
-        branding={branding}
-        bodyFont={bodyFont}
+        loadedHeroSize={loadedHeroSize}
+        onBackgroundPointerDown={onBackgroundPointerDown}
+        onBackgroundPointerMove={onBackgroundPointerMove}
+        onBackgroundPointerUp={onBackgroundPointerUp}
       />
-      <DragSurface
-        w={w}
-        h={h}
-        backgroundHero={backgroundHero}
-        onPointerDown={onBackgroundPointerDown}
-        onPointerMove={onBackgroundPointerMove}
-        onPointerUp={onBackgroundPointerUp}
-      />
-      <BrandLogos w={w} project={project} profile={profile} />
     </svg>
   );
 }
