@@ -11,6 +11,19 @@ import {
 import type { Data, Sponsor } from '../types';
 import { getImageDimensions } from '../utils/images';
 
+type DimensionReader = (
+  source: string,
+) => Promise<{ width: number; height: number }>;
+
+export async function saveSponsorLogo(
+  logo: string,
+  update: (patch: Partial<Sponsor>) => void,
+  readDimensions: DimensionReader = getImageDimensions,
+): Promise<void> {
+  const size = await readDimensions(logo);
+  update({ logo, logoWidth: size.width, logoHeight: size.height });
+}
+
 type SponsorsPageProps = {
   data: Data;
   setData: (data: Data) => void;
@@ -79,15 +92,6 @@ type SponsorCardProps = {
 };
 
 function SponsorCard({ sponsor, update, remove }: SponsorCardProps) {
-  const saveLogo = async (logo: string) => {
-    try {
-      const size = await getImageDimensions(logo);
-      update({ logo, logoWidth: size.width, logoHeight: size.height });
-    } catch {
-      update({ logo, logoWidth: undefined, logoHeight: undefined });
-    }
-  };
-
   return (
     <div className="edit-card">
       <div className="brand-mark">
@@ -101,7 +105,11 @@ function SponsorCard({ sponsor, update, remove }: SponsorCardProps) {
             onChange={(event) => update({ name: event.target.value })}
           />
         </label>
-        <Upload label="Logo" purpose="logo" on={saveLogo} />
+        <Upload
+          label="Logo"
+          purpose="logo"
+          on={logo => saveSponsorLogo(logo, update)}
+        />
       </div>
       <button className="icon danger" onClick={remove}>
         <Trash2 size={17} />
