@@ -3,6 +3,7 @@ import { ProfileAssetCard } from '../components/forms/ProfileAsset';
 import { TextField } from '../components/forms/PropertyEditor';
 import { PageHeader } from '../components/ui';
 import { DRIVER_FIELDS, labelForDriverField } from '../config/profile';
+import { updateProfile } from '../state/pageState';
 import type { Data, DriverProfile } from '../types';
 
 type ProfilePageProps = {
@@ -13,7 +14,7 @@ type ProfilePageProps = {
 export function ProfilePage({ data, setData }: ProfilePageProps) {
   const profile = data.profile;
   const update = (patch: Partial<DriverProfile>) =>
-    setData({ ...data, profile: { ...profile, ...patch } });
+    setData(updateProfile(data, patch));
 
   return (
     <div className="page">

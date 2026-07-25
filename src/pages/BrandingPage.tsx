@@ -1,5 +1,6 @@
 import { PageHeader } from '../components/ui';
 import { MOTORSPORT_FONTS } from '../config/branding';
+import { updateBranding } from '../state/pageState';
 import type { Branding, Data } from '../types';
 
 type BrandingPageProps = {
@@ -11,7 +12,7 @@ export function BrandingPage({ data, setData }: BrandingPageProps) {
   const branding = data.branding;
   const profile = data.profile;
   const update = (patch: Partial<Branding>) =>
-    setData({ ...data, branding: { ...branding, ...patch } });
+    setData(updateBranding(data, patch));
 
   return (
     <div className="page">

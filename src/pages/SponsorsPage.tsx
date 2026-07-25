@@ -1,7 +1,13 @@
 import { Trash2 } from 'lucide-react';
 import { Upload } from '../components/forms/ImageUpload';
 import { PageHeader } from '../components/ui';
-import { id } from '../store';
+import {
+  addSponsor,
+  removeSponsor,
+  SPONSOR_LIMIT,
+  updateBranding,
+  updateSponsor,
+} from '../state/pageState';
 import type { Data, Sponsor } from '../types';
 import { getImageDimensions } from '../utils/images';
 
@@ -11,26 +17,19 @@ type SponsorsPageProps = {
 };
 
 export function SponsorsPage({ data, setData }: SponsorsPageProps) {
-  const add = () => {
-    if (data.sponsors.length >= 10) return;
-    setData({
-      ...data,
-      sponsors: [...data.sponsors, { id: id('sponsor'), name: 'New Sponsor' }],
-    });
-  };
   const logoScale = data.branding.sponsorLogoScale || 1;
 
   return (
     <div className="page">
       <PageHeader
         title="Sponsors"
-        subtitle={`${data.sponsors.length}/10 logos available for the locked sponsor bar.`}
+        subtitle={`${data.sponsors.length}/${SPONSOR_LIMIT} logos available for the locked sponsor bar.`}
       />
       <div className="sponsor-toolbar">
         <button
           className="primary inline-action"
-          onClick={add}
-          disabled={data.sponsors.length >= 10}
+          onClick={() => setData(addSponsor(data))}
+          disabled={data.sponsors.length >= SPONSOR_LIMIT}
         >
           Add sponsor
         </button>
@@ -43,13 +42,9 @@ export function SponsorsPage({ data, setData }: SponsorsPageProps) {
             step="0.05"
             value={logoScale}
             onChange={(event) =>
-              setData({
-                ...data,
-                branding: {
-                  ...data.branding,
-                  sponsorLogoScale: +event.target.value,
-                },
-              })
+              setData(updateBranding(data, {
+                sponsorLogoScale: +event.target.value,
+              }))
             }
           />
         </label>
@@ -65,18 +60,10 @@ export function SponsorsPage({ data, setData }: SponsorsPageProps) {
             key={sponsor.id}
             sponsor={sponsor}
             update={(patch) =>
-              setData({
-                ...data,
-                sponsors: data.sponsors.map((item) =>
-                  item.id === sponsor.id ? { ...item, ...patch } : item,
-                ),
-              })
+              setData(updateSponsor(data, sponsor.id, patch))
             }
             remove={() =>
-              setData({
-                ...data,
-                sponsors: data.sponsors.filter((item) => item.id !== sponsor.id),
-              })
+              setData(removeSponsor(data, sponsor.id))
             }
           />
         ))}
