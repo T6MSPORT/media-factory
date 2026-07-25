@@ -1,6 +1,11 @@
 import { FolderKanban, Trash2 } from 'lucide-react';
 import { PageHeader } from '../components/ui';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
+import {
+  getSavedProjects,
+  removeSavedProject,
+  renameSavedProject,
+} from '../state/pageState';
 import type { Data, Project } from '../types';
 
 type SavedGraphicsPageProps = {
@@ -10,7 +15,7 @@ type SavedGraphicsPageProps = {
 };
 
 export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProps) {
-  const savedProjects = data.projects.filter((project) => project.exportedAt);
+  const savedProjects = getSavedProjects(data);
 
   return (
     <div className="page">
@@ -36,18 +41,7 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
               <input
                 value={project.name}
                 onChange={(event) =>
-                  setData({
-                    ...data,
-                    projects: data.projects.map((item) =>
-                      item.id === project.id
-                        ? {
-                            ...item,
-                            name: event.target.value,
-                            updatedAt: new Date().toISOString(),
-                          }
-                        : item,
-                    ),
-                  })
+                  setData(renameSavedProject(data, project.id, event.target.value))
                 }
               />
               <small>
@@ -58,12 +52,11 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
                 <button onClick={() => open(project)}>Open</button>
                 <button
                   className="icon danger"
-                  onClick={() =>
-                    setData({
-                      ...data,
-                      projects: data.projects.filter((item) => item.id !== project.id),
-                    })
-                  }
+                  aria-label={`Delete ${project.name}`}
+                  onClick={() => {
+                    const next = removeSavedProject(data, project.id);
+                    if (next !== data) setData(next);
+                  }}
                 >
                   <Trash2 size={16} />
                 </button>

@@ -1,5 +1,5 @@
 import { id } from '../store';
-import type { Branding, Data, DriverProfile, Sponsor } from '../types';
+import type { Branding, Data, DriverProfile, Project, Sponsor } from '../types';
 
 export const SPONSOR_LIMIT = 10;
 
@@ -49,5 +49,39 @@ export function removeSponsor(data: Data, sponsorId: string): Data {
   return {
     ...data,
     sponsors: data.sponsors.filter(sponsor => sponsor.id !== sponsorId),
+  };
+}
+
+export function getSavedProjects(data: Data): Project[] {
+  return data.projects.filter(project => project.exportedAt);
+}
+
+export function renameSavedProject(
+  data: Data,
+  projectId: string,
+  name: string,
+  updatedAt: string = new Date().toISOString(),
+): Data {
+  return {
+    ...data,
+    projects: data.projects.map(project =>
+      project.id === projectId ? { ...project, name, updatedAt } : project,
+    ),
+  };
+}
+
+export function removeSavedProject(
+  data: Data,
+  projectId: string,
+  confirmDelete: (message: string) => boolean = message => window.confirm(message),
+): Data {
+  const project = data.projects.find(item => item.id === projectId && item.exportedAt);
+  if (!project || !confirmDelete(`Delete "${project.name}" from Saved Graphics?`)) {
+    return data;
+  }
+
+  return {
+    ...data,
+    projects: data.projects.filter(item => item.id !== projectId),
   };
 }

@@ -14,7 +14,10 @@ const server = await createServer({
 const {
   SPONSOR_LIMIT,
   addSponsor,
+  getSavedProjects,
   removeSponsor,
+  removeSavedProject,
+  renameSavedProject,
   updateBranding,
   updateProfile,
   updateSponsor,
@@ -150,4 +153,90 @@ test('removing a sponsor preserves existing project selections', () => {
     firstSponsor.id,
     secondSponsor.id,
   ]);
+});
+
+test('saved graphics includes only projects with a successful export', () => {
+  const draft = { ...project, id: 'draft', exportedAt: undefined };
+  const saved = {
+    ...project,
+    id: 'saved',
+    exportedAt: '2026-07-25T10:00:00.000Z',
+  };
+  const next = { ...data, projects: [draft, saved] };
+
+  assert.deepEqual(getSavedProjects(next), [saved]);
+});
+
+test('renaming a saved graphic targets one project and records the update time', () => {
+  const first = {
+    ...project,
+    id: 'saved-one',
+    name: 'Old name',
+    exportedAt: '2026-07-25T10:00:00.000Z',
+    updatedAt: '2026-07-25T10:00:00.000Z',
+  };
+  const second = { ...first, id: 'saved-two', name: 'Second graphic' };
+  const next = renameSavedProject(
+    { ...data, projects: [first, second] },
+    first.id,
+    'New name',
+    '2026-07-25T11:00:00.000Z',
+  );
+
+  assert.deepEqual(next.projects[0], {
+    ...first,
+    name: 'New name',
+    updatedAt: '2026-07-25T11:00:00.000Z',
+  });
+  assert.equal(next.projects[1], second);
+});
+
+test('cancelling saved graphic deletion preserves the existing data object', () => {
+  const saved = {
+    ...project,
+    name: 'Race Day',
+    exportedAt: '2026-07-25T10:00:00.000Z',
+  };
+  let prompt = '';
+  const next = removeSavedProject(
+    { ...data, projects: [saved] },
+    saved.id,
+    message => {
+      prompt = message;
+      return false;
+    },
+  );
+
+  assert.equal(prompt, 'Delete "Race Day" from Saved Graphics?');
+  assert.equal(next.projects[0], saved);
+});
+
+test('confirming saved graphic deletion removes only the selected project', () => {
+  const first = {
+    ...project,
+    id: 'saved-one',
+    name: 'Race Day',
+    exportedAt: '2026-07-25T10:00:00.000Z',
+  };
+  const second = { ...first, id: 'saved-two', name: 'Event Poster' };
+  const current = { ...data, projects: [first, second] };
+  const next = removeSavedProject(current, first.id, () => true);
+
+  assert.deepEqual(next.projects, [second]);
+  assert.equal(next.profile, current.profile);
+  assert.equal(next.branding, current.branding);
+  assert.equal(next.sponsors, current.sponsors);
+});
+
+test('draft projects cannot be removed through Saved Graphics actions', () => {
+  const draft = { ...project, id: 'draft', exportedAt: undefined };
+  const current = { ...data, projects: [draft] };
+  let asked = false;
+  const next = removeSavedProject(current, draft.id, () => {
+    asked = true;
+    return true;
+  });
+
+  assert.equal(next, current);
+  assert.equal(asked, false);
 });

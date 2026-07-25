@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
+import { getSavedProjects } from '../state/pageState';
 
 type HomePageProps = {
   data: Data;
@@ -69,7 +70,7 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
         <StatCard value={TEMPLATE_CATALOGUE.length} label="Templates" />
         <StatCard value={data.sponsors.length} label="Sponsors" />
         <StatCard
-          value={data.projects.filter(project => project.exportedAt).length}
+          value={getSavedProjects(data).length}
           label="Saved graphics"
         />
       </div>
