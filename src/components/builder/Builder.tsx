@@ -10,6 +10,14 @@ import {
   SelectField,
   ToggleField,
 } from '../forms/PropertyEditor';
+import {
+  centreBackgroundPatch,
+  exportProjectPng,
+  getUploadedHeroPatch,
+  resetBackgroundPatch,
+  resetDriverPatch,
+  zoomBackgroundToFillPatch,
+} from './builderInteractions';
 import { Graphic } from './Graphic';
 import { TemplateFields } from './TemplateFields';
 
@@ -30,9 +38,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
 
   const exportPng = () => {
     if (!svg.current) return;
-
-    patch({ exportedAt: project.exportedAt || new Date().toISOString() });
-    void exportSvgAsPng(svg.current, project.format, project.name);
+    void exportProjectPng(svg.current, project, patch, exportSvgAsPng);
   };
 
   return (
@@ -65,14 +71,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
           <BackgroundUpload
             on={async heroImage => {
               const size = await getImageDimensions(heroImage);
-              patch({
-                heroImage,
-                heroImageWidth: size.width,
-                heroImageHeight: size.height,
-                heroX: 0,
-                heroY: 0,
-                heroScale: 1,
-              });
+              patch(getUploadedHeroPatch(heroImage, size));
             }}
           />
           {project.heroImage && (
@@ -104,15 +103,11 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
             onChange={heroScale => patch({ heroScale })}
           />
           <div className="control-actions">
-            <button onClick={() => patch({ heroX: 0, heroY: 0 })}>Centre</button>
-            <button onClick={() => patch({ heroX: 0, heroY: 0, heroScale: 1 })}>
+            <button onClick={() => patch(centreBackgroundPatch)}>Centre</button>
+            <button onClick={() => patch(zoomBackgroundToFillPatch)}>
               Zoom to fill
             </button>
-            <button
-              onClick={() =>
-                patch({ heroX: 0, heroY: 0, heroScale: 1, heroFlip: false })
-              }
-            >
+            <button onClick={() => patch(resetBackgroundPatch)}>
               Reset
             </button>
           </div>
@@ -150,7 +145,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
                 value={project.driverScale}
                 onChange={driverScale => patch({ driverScale })}
               />
-              <button onClick={() => patch({ driverX: 0, driverY: 0, driverScale: 1 })}>
+              <button onClick={() => patch(resetDriverPatch)}>
                 Reset driver image
               </button>
             </>

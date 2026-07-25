@@ -1,11 +1,31 @@
 import type { FormatId } from '../types';
 import { getCanvasDimensions, toSafeFileName } from './format';
 
+export type PngExportPlan = {
+  width: number;
+  height: number;
+  fileName: string;
+  mimeType: 'image/png';
+};
+
+export function getPngExportPlan(
+  format: FormatId,
+  projectName: string,
+): PngExportPlan {
+  const { width, height } = getCanvasDimensions(format);
+  return {
+    width,
+    height,
+    fileName: `${toSafeFileName(projectName)}.png`,
+    mimeType: 'image/png',
+  };
+}
+
 export async function exportSvgAsPng(
   node: SVGSVGElement,
   format: FormatId,
   projectName: string,
-) {
+): Promise<void> {
   try {
     await document.fonts?.ready;
   } catch {
@@ -17,26 +37,43 @@ export async function exportSvgAsPng(
   const svgUrl = URL.createObjectURL(svgBlob);
   const image = new Image();
 
-  image.onload = () => {
-    const { width, height } = getCanvasDimensions(format);
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
+  return new Promise((resolve, reject) => {
+    image.onload = () => {
+      const plan = getPngExportPlan(format, projectName);
+      const canvas = document.createElement('canvas');
+      canvas.width = plan.width;
+      canvas.height = plan.height;
 
-    const context = canvas.getContext('2d')!;
-    context.drawImage(image, 0, 0, width, height);
-    URL.revokeObjectURL(svgUrl);
+      const context = canvas.getContext('2d');
+      if (!context) {
+        URL.revokeObjectURL(svgUrl);
+        reject(new Error('PNG canvas could not be created.'));
+        return;
+      }
 
-    canvas.toBlob(blob => {
-      if (!blob) return;
+      context.drawImage(image, 0, 0, plan.width, plan.height);
+      URL.revokeObjectURL(svgUrl);
 
-      const anchor = document.createElement('a');
-      anchor.href = URL.createObjectURL(blob);
-      anchor.download = `${toSafeFileName(projectName)}.png`;
-      anchor.click();
-      URL.revokeObjectURL(anchor.href);
-    }, 'image/png');
-  };
+      canvas.toBlob(blob => {
+        if (!blob) {
+          reject(new Error('PNG data could not be generated.'));
+          return;
+        }
 
-  image.src = svgUrl;
+        const anchor = document.createElement('a');
+        anchor.href = URL.createObjectURL(blob);
+        anchor.download = plan.fileName;
+        anchor.click();
+        URL.revokeObjectURL(anchor.href);
+        resolve();
+      }, plan.mimeType);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(svgUrl);
+      reject(new Error('The SVG preview could not be loaded for export.'));
+    };
+
+    image.src = svgUrl;
+  });
 }
