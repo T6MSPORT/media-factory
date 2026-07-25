@@ -1,7 +1,7 @@
+import { MOTORSPORT_FONTS } from './config/branding';
 import type { Data, DriverProfile, GraphicDetails, Project } from './types';
 
 export const STORAGE_KEY = 'media-factory-individual-v1';
-export const MOTORSPORT_FONTS = ['Orbitron', 'Rajdhani', 'Teko', 'Oxanium', 'Russo One'];
 
 export const emptyDetails: GraphicDetails = {
   eventName: '',
@@ -37,6 +37,16 @@ type StoredData = Partial<Data> & {
   projects?: Partial<Project>[];
 };
 
+export type StorageIssue = {
+  operation: 'load' | 'save';
+  error: unknown;
+};
+
+export type LoadResult = {
+  data: Data;
+  issue?: StorageIssue;
+};
+
 export function normaliseData(value: unknown): Data {
   const parsed = (value && typeof value === 'object' ? value : {}) as StoredData;
   const profile = { ...starter.profile, ...parsed.profile };
@@ -52,10 +62,10 @@ export function normaliseData(value: unknown): Data {
     sponsorLogoScale: Number.isFinite(sponsorLogoScale)
       ? Math.min(1.4, Math.max(0.65, sponsorLogoScale as number))
       : 1,
-    headingFont: MOTORSPORT_FONTS.includes(headingFont || '')
+    headingFont: MOTORSPORT_FONTS.some(font => font === headingFont)
       ? headingFont!
       : starter.branding.headingFont,
-    bodyFont: MOTORSPORT_FONTS.includes(bodyFont || '')
+    bodyFont: MOTORSPORT_FONTS.some(font => font === bodyFont)
       ? bodyFont!
       : starter.branding.bodyFont,
   };
@@ -80,29 +90,35 @@ export function normaliseData(value: unknown): Data {
   return { ...starter, ...parsed, profile, branding, projects };
 }
 
-export function load(storage: Pick<Storage, 'getItem'> = localStorage): Data {
+export function loadResult(storage: Pick<Storage, 'getItem'> = localStorage): LoadResult {
   try {
     const raw = storage.getItem(STORAGE_KEY);
-    return raw ? normaliseData(JSON.parse(raw)) : starter;
-  } catch {
-    return starter;
+    return { data: raw ? normaliseData(JSON.parse(raw)) : starter };
+  } catch (error) {
+    return {
+      data: starter,
+      issue: { operation: 'load', error },
+    };
   }
 }
 
-const reportStorageError = (error: unknown) => {
-  console.error('Media Factory could not save the latest change.', error);
-  window.dispatchEvent(new CustomEvent('media-factory-storage-error'));
-};
+export function load(storage: Pick<Storage, 'getItem'> = localStorage): Data {
+  return loadResult(storage).data;
+}
 
 export function save(
   data: Data,
   storage: Pick<Storage, 'setItem'> = localStorage,
-  onError: (error: unknown) => void = reportStorageError,
-) {
+  onError: (error: unknown) => void = error => {
+    console.error('Media Factory could not save the latest change.', error);
+  },
+): boolean {
   try {
     storage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
   } catch (error) {
     onError(error);
+    return false;
   }
 }
 

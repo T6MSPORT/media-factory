@@ -18,13 +18,14 @@ const {
   updateProject,
 } = await server.ssrLoadModule('/src/state/mediaFactoryState.ts');
 const {
-  MOTORSPORT_FONTS,
   STORAGE_KEY,
   load,
+  loadResult,
   normaliseData,
   save,
   starter,
 } = await server.ssrLoadModule('/src/store.ts');
+const { MOTORSPORT_FONTS } = await server.ssrLoadModule('/src/config/branding.ts');
 
 after(() => server.close());
 
@@ -114,17 +115,18 @@ test('finishing onboarding preserves the draft and marks it complete', () => {
 
 test('autosave writes the complete state under the existing storage key', () => {
   const writes: Array<[string, string]> = [];
-  save(data, {
+  const saved = save(data, {
     setItem: (key: string, value: string) => writes.push([key, value]),
   });
 
+  assert.equal(saved, true);
   assert.deepEqual(writes, [[STORAGE_KEY, JSON.stringify(data)]]);
 });
 
 test('autosave reports storage failures without changing state', () => {
   const failure = new Error('quota exceeded');
   const errors: unknown[] = [];
-  save(
+  const saved = save(
     data,
     {
       setItem: () => {
@@ -134,6 +136,7 @@ test('autosave reports storage failures without changing state', () => {
     error => errors.push(error),
   );
 
+  assert.equal(saved, false);
   assert.deepEqual(errors, [failure]);
   assert.deepEqual(data.projects, []);
 });
@@ -181,4 +184,31 @@ test('normalisation and corrupt storage fall back to the starter state', () => {
     }),
     starter,
   );
+});
+
+test('load failures expose recovery details without mutating browser storage', () => {
+  const failure = new Error('storage unavailable');
+  let writes = 0;
+  const result = loadResult({
+    getItem: () => {
+      throw failure;
+    },
+    setItem: () => {
+      writes += 1;
+    },
+  });
+
+  assert.equal(result.data, starter);
+  assert.deepEqual(result.issue, { operation: 'load', error: failure });
+  assert.equal(writes, 0);
+});
+
+test('corrupt persisted data remains recoverable instead of being silently accepted', () => {
+  const result = loadResult({
+    getItem: () => '{broken',
+  });
+
+  assert.equal(result.data, starter);
+  assert.equal(result.issue?.operation, 'load');
+  assert.ok(result.issue?.error instanceof SyntaxError);
 });
