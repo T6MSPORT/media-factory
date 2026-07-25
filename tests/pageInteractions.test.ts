@@ -24,6 +24,12 @@ const { HomePage } = await server.ssrLoadModule('/src/pages/HomePage.tsx');
 const { SavedGraphicsPage } = await server.ssrLoadModule(
   '/src/pages/SavedGraphicsPage.tsx',
 );
+const { ProfilePage } = await server.ssrLoadModule('/src/pages/ProfilePage.tsx');
+const { BrandingPage } = await server.ssrLoadModule('/src/pages/BrandingPage.tsx');
+const { SponsorsPage } = await server.ssrLoadModule('/src/pages/SponsorsPage.tsx');
+const { OnboardingForm } = await server.ssrLoadModule(
+  '/src/pages/OnboardingPage.tsx',
+);
 const { TemplateLibraryPage } = await server.ssrLoadModule(
   '/src/pages/TemplateLibraryPage.tsx',
 );
@@ -33,6 +39,11 @@ const { NAVIGATION_ITEMS } = await server.ssrLoadModule(
 const { TEMPLATE_CATALOGUE } = await server.ssrLoadModule(
   '/src/config/templates.ts',
 );
+const { MOTORSPORT_FONTS } = await server.ssrLoadModule(
+  '/src/config/branding.ts',
+);
+const { DRIVER_FIELDS } = await server.ssrLoadModule('/src/config/profile.ts');
+const { SPONSOR_LIMIT } = await server.ssrLoadModule('/src/state/pageState.ts');
 const { starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -52,15 +63,16 @@ const completeData: Data = {
 };
 
 function expand(node: unknown): unknown {
-  if (
-    node &&
-    typeof node === 'object' &&
-    typeof (node as ElementNode).type === 'function'
+  let expanded = node;
+  while (
+    expanded &&
+    typeof expanded === 'object' &&
+    typeof (expanded as ElementNode).type === 'function'
   ) {
-    const element = node as ElementNode;
-    return element.type!(element.props || {});
+    const element = expanded as ElementNode;
+    expanded = element.type!(element.props || {});
   }
-  return node;
+  return expanded;
 }
 
 function findElements(node: unknown, type: string, found: ElementNode[] = []): ElementNode[] {
@@ -101,6 +113,20 @@ function findButtonContaining(node: unknown, label: string): ElementNode {
   );
   assert.ok(button, `Expected button containing "${label}"`);
   return button;
+}
+
+function findLabel(node: unknown, label: string): ElementNode {
+  const item = findElements(node, 'label').find(
+    element => textContent(element).trim().startsWith(label),
+  );
+  assert.ok(item, `Expected label "${label}"`);
+  return item;
+}
+
+function fieldInLabel(node: unknown, label: string, type: string): ElementNode {
+  const field = findElements(findLabel(node, label), type)[0];
+  assert.ok(field, `Expected ${type} in label "${label}"`);
+  return field;
 }
 
 test('sidebar exposes every approved destination and reports navigation', () => {
@@ -237,4 +263,155 @@ test('saved graphic cards rename, reopen and confirm before deletion', () => {
   assert.deepEqual(opened, [savedProject]);
   assert.deepEqual(prompts, ['Delete "Bathurst Race Day" from Saved Graphics?']);
   assert.deepEqual(updates[1].projects, []);
+});
+
+test('profile fields update the permanent driver record and retain asset previews', () => {
+  const updates: Data[] = [];
+  const data: Data = {
+    ...completeData,
+    profile: {
+      ...completeData.profile,
+      driverImage: 'driver.png',
+      teamLogo: 'team.png',
+      competitionLogo: 'competition.png',
+    },
+  };
+  const tree = ProfilePage({
+    data,
+    setData: (next: Data) => updates.push(next),
+  });
+
+  assert.equal(findElements(tree, 'input').length, DRIVER_FIELDS.length + 3);
+  (
+    fieldInLabel(tree, 'Driver name', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: 'Updated Driver' } });
+
+  assert.equal(updates[0].profile.name, 'Updated Driver');
+  assert.equal(updates[0].profile.driverImage, 'driver.png');
+  assert.deepEqual(
+    findElements(tree, 'img').map(image => image.props?.src),
+    ['driver.png', 'team.png', 'competition.png'],
+  );
+});
+
+test('branding controls expose five approved fonts and update the live preview', () => {
+  const updates: Data[] = [];
+  const tree = BrandingPage({
+    data: completeData,
+    setData: (next: Data) => updates.push(next),
+  });
+
+  const headingFont = fieldInLabel(tree, 'Heading font', 'select');
+  assert.deepEqual(
+    findElements(headingFont, 'option').map(option => textContent(option)),
+    MOTORSPORT_FONTS,
+  );
+  (
+    fieldInLabel(tree, 'Primary colour', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: '#c70000' } });
+  (
+    headingFont.props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: MOTORSPORT_FONTS[2] } });
+
+  assert.equal(updates[0].branding.primary, '#c70000');
+  assert.equal(updates[1].branding.headingFont, MOTORSPORT_FONTS[2]);
+  assert.match(textContent(tree), /#46 · T6 Msport/);
+  assert.match(textContent(tree), /SPONSOR BAR · 5 PER ROW/);
+});
+
+test('sponsor interactions add, resize, rename and remove a logo slot', () => {
+  const sponsor = { id: 'sponsor-one', name: 'Corbeau' };
+  const data: Data = { ...completeData, sponsors: [sponsor] };
+  const updates: Data[] = [];
+  const tree = SponsorsPage({
+    data,
+    setData: (next: Data) => updates.push(next),
+  });
+
+  (findButton(tree, 'Add sponsor').props?.onClick as () => void)();
+  (
+    fieldInLabel(tree, 'Logo visual size', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: '1.25' } });
+  (
+    fieldInLabel(tree, 'Name', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: 'Corbeau Seats' } });
+  const remove = findElements(tree, 'button').find(
+    button => button.props?.className === 'icon danger',
+  );
+  assert.ok(remove);
+  (remove.props?.onClick as () => void)();
+
+  assert.equal(updates[0].sponsors.length, 2);
+  assert.equal(updates[1].branding.sponsorLogoScale, 1.25);
+  assert.equal(updates[2].sponsors[0].name, 'Corbeau Seats');
+  assert.deepEqual(updates[3].sponsors, []);
+});
+
+test('sponsor page enforces the ten-logo limit in the component', () => {
+  const data: Data = {
+    ...completeData,
+    sponsors: Array.from({ length: SPONSOR_LIMIT }, (_, index) => ({
+      id: `sponsor-${index}`,
+      name: `Sponsor ${index + 1}`,
+    })),
+  };
+  const tree = SponsorsPage({ data, setData: () => {} });
+
+  assert.equal(findButton(tree, 'Add sponsor').props?.disabled, true);
+  assert.match(textContent(tree), new RegExp(`${SPONSOR_LIMIT}/${SPONSOR_LIMIT}`));
+});
+
+test('onboarding requires a driver name and number before completing the draft', () => {
+  const emptyDraft: Data = {
+    ...completeData,
+    onboardingComplete: false,
+    profile: { ...starter.profile },
+  };
+  const drafts: Data[] = [];
+  const finished: Data[] = [];
+  const initialTree = OnboardingForm({
+    draft: emptyDraft,
+    setDraft: (next: Data) => drafts.push(next),
+    finish: (next: Data) => finished.push(next),
+  });
+
+  assert.equal(findButton(initialTree, 'Create profile').props?.disabled, true);
+  (
+    fieldInLabel(initialTree, 'Driver name', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: 'Rich Weatherill' } });
+  const withName = drafts[0];
+  const nameTree = OnboardingForm({
+    draft: withName,
+    setDraft: (next: Data) => drafts.push(next),
+    finish: (next: Data) => finished.push(next),
+  });
+  (
+    fieldInLabel(nameTree, 'Car number', 'input').props?.onChange as (
+      event: { target: { value: string } },
+    ) => void
+  )({ target: { value: '46' } });
+  const completeDraft = drafts[1];
+  const completeTree = OnboardingForm({
+    draft: completeDraft,
+    setDraft: () => {},
+    finish: (next: Data) => finished.push(next),
+  });
+
+  assert.equal(findButton(completeTree, 'Create profile').props?.disabled, false);
+  (findButton(completeTree, 'Create profile').props?.onClick as () => void)();
+  assert.equal(finished[0].profile.name, 'Rich Weatherill');
+  assert.equal(finished[0].profile.number, '46');
+  assert.equal(finished[0].onboardingComplete, false);
 });

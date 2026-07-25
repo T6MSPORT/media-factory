@@ -12,6 +12,21 @@ type OnboardingPageProps = {
 
 export function OnboardingPage({ data, finish }: OnboardingPageProps) {
   const [draft, setDraft] = useState(data);
+
+  return <OnboardingForm draft={draft} setDraft={setDraft} finish={finish} />;
+}
+
+type OnboardingFormProps = {
+  draft: Data;
+  setDraft: (data: Data) => void;
+  finish: (data: Data) => void;
+};
+
+export function OnboardingForm({
+  draft,
+  setDraft,
+  finish,
+}: OnboardingFormProps) {
   const profile = draft.profile;
   const valid = profile.name.trim() && profile.number.trim();
 
