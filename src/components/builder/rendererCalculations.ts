@@ -179,7 +179,8 @@ export function getEventTemplateLayout(
     eventNumberText,
     isStory ? 39 : 35,
     eventNumberW - (isStory ? 30 : 26),
-    18,
+    12,
+    0.86,
   );
   const eventNameSize = isStory ? 46 : 40;
   const eventNameX = eventBlockX + eventNumberW + 22;
