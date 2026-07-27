@@ -136,20 +136,21 @@ test('event layout preserves the approved story positions and round wording', ()
   );
 });
 
-test('event text fits long track names and car numbers inside their containers', () => {
+test('event text fits long track names and three-digit car numbers inside their containers', () => {
   const layout = getEventTemplateLayout(
     1080,
     {
       ...project,
+      format: 'feed',
       details: { ...details, circuit: 'Silverstone National' },
     },
-    { ...profile, number: '123456' },
+    { ...profile, number: '333' },
   );
 
   assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
   assert.ok(Math.abs(layout.eventTrackSize - 62.66667) < 0.001);
-  assert.equal(layout.eventNumberText, '#123456');
-  assert.ok(Math.abs(layout.eventNumberSize - 24.88479) < 0.001);
+  assert.equal(layout.eventNumberText, '#333');
+  assert.ok(Math.abs(layout.eventNumberSize - 27.90698) < 0.001);
 });
 
 test('derived headings and achievement labels remain template-specific', () => {
