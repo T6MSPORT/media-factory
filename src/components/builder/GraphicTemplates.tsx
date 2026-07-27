@@ -29,6 +29,8 @@ export function EventTemplate({
     eventIdentityY,
     eventNumberW,
     eventNumberH,
+    eventNumberText,
+    eventNumberSize,
     eventNameSize,
     eventNameX,
     eventNameText,
@@ -39,6 +41,7 @@ export function EventTemplate({
     eventNextSize,
     eventRoundSize,
     eventTrackSize,
+    eventTrackText,
     eventDateSize,
     eventRoundY,
     eventTrackY,
@@ -73,12 +76,12 @@ export function EventTemplate({
             x={isStory ? 15 : 13}
             y={isStory ? 43 : 39}
             fontFamily={headingFont}
-            fontSize={isStory ? 39 : 35}
+            fontSize={eventNumberSize}
             fontWeight="900"
             fill={branding.accent}
             transform="skewX(10)"
           >
-            #{profile.number || '00'}
+            {eventNumberText}
           </text>
         </g>
         <text
@@ -156,7 +159,7 @@ export function EventTemplate({
         fill={branding.primary}
         letterSpacing="-3"
       >
-        {(details.circuit || 'TRACK NAME').toUpperCase()}
+        {eventTrackText}
       </text>
       <text
         x={eventBlockX + 4}

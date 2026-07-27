@@ -8,6 +8,20 @@ import type {
 
 type Size = { width: number; height: number };
 
+export function fitTextSize(
+  text: string,
+  preferredSize: number,
+  maxWidth: number,
+  minimumSize: number,
+  widthFactor = 0.62,
+) {
+  const estimatedWidth = Math.max(1, text.length) * preferredSize * widthFactor;
+  return Math.max(
+    minimumSize,
+    Math.min(preferredSize, preferredSize * (maxWidth / estimatedWidth)),
+  );
+}
+
 export const templateTitles = {
   event: 'RACE WEEKEND',
   announcement: 'ANNOUNCEMENT',
@@ -160,6 +174,13 @@ export function getEventTemplateLayout(
   const eventIdentityY = eventTop + (isStory ? 46 : 40);
   const eventNumberW = isStory ? 138 : 122;
   const eventNumberH = isStory ? 58 : 52;
+  const eventNumberText = `#${profile.number || '00'}`;
+  const eventNumberSize = fitTextSize(
+    eventNumberText,
+    isStory ? 39 : 35,
+    eventNumberW - (isStory ? 30 : 26),
+    18,
+  );
   const eventNameSize = isStory ? 46 : 40;
   const eventNameX = eventBlockX + eventNumberW + 22;
   const eventTeamW = isStory ? 260 : 220;
@@ -169,7 +190,13 @@ export function getEventTemplateLayout(
     (profile.competitionLogo ? (isStory ? 310 : 255) : isStory ? 135 : 112);
   const eventNextSize = isStory ? 64 : 54;
   const eventRoundSize = isStory ? 43 : 37;
-  const eventTrackSize = isStory ? 198 : 167;
+  const eventTrackText = (project.details.circuit || 'TRACK NAME').toUpperCase();
+  const eventTrackSize = fitTextSize(
+    eventTrackText,
+    isStory ? 198 : 167,
+    w - eventBlockX * 2,
+    isStory ? 54 : 46,
+  );
   const eventDateSize = isStory ? 42 : 36;
   const eventGap = isStory ? 36 : 30;
   const eventRoundY = eventHeadingY + eventNextSize + eventGap;
@@ -186,6 +213,8 @@ export function getEventTemplateLayout(
     eventIdentityY,
     eventNumberW,
     eventNumberH,
+    eventNumberText,
+    eventNumberSize,
     eventNameSize,
     eventNameX,
     eventNameText: (profile.name || 'DRIVER NAME').toUpperCase(),
@@ -196,6 +225,7 @@ export function getEventTemplateLayout(
     eventNextSize,
     eventRoundSize,
     eventTrackSize,
+    eventTrackText,
     eventDateSize,
     eventRoundY,
     eventTrackY,

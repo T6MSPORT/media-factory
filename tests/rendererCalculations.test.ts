@@ -106,6 +106,8 @@ test('event layout preserves the approved story positions and round wording', ()
     eventIdentityY: 116,
     eventNumberW: 138,
     eventNumberH: 58,
+    eventNumberText: '#46',
+    eventNumberSize: 39,
     eventNameSize: 46,
     eventNameX: 230,
     eventNameText: 'RICH WEATHERILL',
@@ -115,11 +117,12 @@ test('event layout preserves the approved story positions and round wording', ()
     eventHeadingY: 510,
     eventNextSize: 64,
     eventRoundSize: 43,
-    eventTrackSize: 198,
+    eventTrackSize: 189.51612903225805,
+    eventTrackText: 'BATHURST',
     eventDateSize: 42,
     eventRoundY: 610,
     eventTrackY: 689,
-    eventDateY: 923,
+    eventDateY: 914.516129032258,
     roundLabel: 'ROUND 3',
   });
 
@@ -131,6 +134,22 @@ test('event layout preserves the approved story positions and round wording', ()
     ).roundLabel,
     'ROUNDS 3 & 4',
   );
+});
+
+test('event text fits long track names and car numbers inside their containers', () => {
+  const layout = getEventTemplateLayout(
+    1080,
+    {
+      ...project,
+      details: { ...details, circuit: 'Silverstone National' },
+    },
+    { ...profile, number: '123456' },
+  );
+
+  assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
+  assert.ok(Math.abs(layout.eventTrackSize - 75.80645) < 0.001);
+  assert.equal(layout.eventNumberText, '#123456');
+  assert.ok(Math.abs(layout.eventNumberSize - 24.88479) < 0.001);
 });
 
 test('derived headings and achievement labels remain template-specific', () => {
