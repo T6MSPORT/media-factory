@@ -117,12 +117,12 @@ test('event layout preserves the approved story positions and round wording', ()
     eventHeadingY: 510,
     eventNextSize: 64,
     eventRoundSize: 43,
-    eventTrackSize: 189.51612903225805,
+    eventTrackSize: 156.66666666666666,
     eventTrackText: 'BATHURST',
     eventDateSize: 42,
     eventRoundY: 610,
     eventTrackY: 689,
-    eventDateY: 914.516129032258,
+    eventDateY: 881.6666666666666,
     roundLabel: 'ROUND 3',
   });
 
@@ -147,7 +147,7 @@ test('event text fits long track names and car numbers inside their containers',
   );
 
   assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
-  assert.ok(Math.abs(layout.eventTrackSize - 75.80645) < 0.001);
+  assert.ok(Math.abs(layout.eventTrackSize - 62.66667) < 0.001);
   assert.equal(layout.eventNumberText, '#123456');
   assert.ok(Math.abs(layout.eventNumberSize - 24.88479) < 0.001);
 });

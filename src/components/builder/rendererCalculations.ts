@@ -196,6 +196,7 @@ export function getEventTemplateLayout(
     isStory ? 198 : 167,
     w - eventBlockX * 2,
     isStory ? 54 : 46,
+    0.75,
   );
   const eventDateSize = isStory ? 42 : 36;
   const eventGap = isStory ? 36 : 30;
