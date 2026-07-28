@@ -86,9 +86,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '4d19806dc6486b9c917b57ac53d0744867e2cf68d86c6ea6ff791b010e35a301',
+    '75f653974b988bda3c64d9975b65f06c2ba6bb4065e930de3f9cc9f478a8df48',
   'event:feed':
-    'c57aae0f00c1066d8b82e1f7a9509fb574128cd2329ed262a62a7b713f96e97c',
+    '2bb608d58273430cc8eb677c879699ae220a73cd39949d980f977f943381482e',
   'announcement:story':
     '538ac8a4f71595d359dd7f170cbe57fd5cb240ad63ab8861259b043612743bec',
   'announcement:feed':
@@ -173,6 +173,7 @@ for (const template of templates) {
         assert.match(markup, /transform="skewX\(-14\)"/);
         assert.match(markup, /fill="#c70000" transform="skewX\(-14\)"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
+        assert.match(markup, /preserveAspectRatio="xMaxYMin meet"/);
         assert.match(
           markup,
           format === 'story'
