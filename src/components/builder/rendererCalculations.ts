@@ -175,7 +175,7 @@ export function getEventTemplateLayout(
   const eventNameY = eventTop;
   const eventNumberW = isStory ? 330 : 280;
   const eventNumberH = isStory ? 88 : 76;
-  const eventIdentityGap = isStory ? 18 : 16;
+  const eventIdentityGap = isStory ? 10 : 8;
   const eventNameSize = isStory ? 46 : 40;
   const eventNumberY = eventNameY + eventNameSize + eventIdentityGap;
   const eventNumberText = `#${profile.number || '00'}`;

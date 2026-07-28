@@ -75,7 +75,7 @@ export function EventTemplate({
             fontFamily={headingFont}
             fontSize={eventNumberSize}
             fontWeight="900"
-            fill={branding.accent}
+            fill={branding.primary}
             transform="skewX(-14)"
           >
             {eventNumberText}
