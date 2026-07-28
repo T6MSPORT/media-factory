@@ -2,7 +2,6 @@ import type { Branding, DriverProfile, Project } from '../../types';
 import { formatEventDate } from '../../utils/format';
 import {
   getAnnouncementTemplateLayout,
-  getBioTemplateLayout,
   getEventTemplateLayout,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
@@ -268,58 +267,6 @@ export function StandardTemplate({
             </tspan>
           ))}
         </text>
-      </g>
-    );
-  }
-
-  if (project.template === 'bio') {
-    const layout = getBioTemplateLayout(w, project, profile);
-
-    return (
-      <g fontFamily={bodyFont} fill={branding.accent}>
-        <ChampionshipDriverHeader
-          w={w}
-          project={project}
-          profile={profile}
-          branding={branding}
-          headingFont={headingFont}
-          bodyFont={bodyFont}
-        />
-        <text
-          x={layout.x}
-          y={layout.titleY}
-          dominantBaseline="hanging"
-          fontFamily={headingFont}
-          fontSize={layout.titleSize}
-          fontWeight="900"
-          letterSpacing="-3"
-          textLength={layout.titleMaxWidth}
-          lengthAdjust="spacingAndGlyphs"
-        >
-          {String(title).toUpperCase()}
-        </text>
-        {layout.rows.map((row, index) => (
-          <text
-            key={`${row.value}-${index}`}
-            x={layout.x}
-            y={row.y}
-            dominantBaseline="hanging"
-            fontSize={layout.rowSize}
-            fontWeight="700"
-            letterSpacing="1"
-            textLength={row.textLength}
-            lengthAdjust="spacingAndGlyphs"
-          >
-            {row.label && (
-              <tspan fill={branding.primary} fontWeight="900">
-                {row.label}{'  '}
-              </tspan>
-            )}
-            <tspan fill={branding.accent}>
-              {row.value.toUpperCase()}
-            </tspan>
-          </text>
-        ))}
       </g>
     );
   }

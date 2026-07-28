@@ -23,12 +23,6 @@ export const starter: Data = {
     name: '',
     number: '',
     team: '',
-    car: '',
-    location: '',
-    age: '',
-    optionalInfo1: '',
-    optionalInfo2: '',
-    optionalInfo3: '',
   },
   branding: {
     primary: '#ef3b3b',
@@ -42,9 +36,9 @@ export const starter: Data = {
   projects: [],
 };
 
-type StoredData = Partial<Data> & {
+type StoredData = Omit<Partial<Data>, 'profile' | 'projects'> & {
   profile?: DriverProfile & { heroImage?: unknown; carImage?: unknown };
-  projects?: Partial<Project>[];
+  projects?: Array<Omit<Partial<Project>, 'template'> & { template?: string }>;
 };
 
 export type StorageIssue = {
@@ -59,9 +53,16 @@ export type LoadResult = {
 
 export function normaliseData(value: unknown): Data {
   const parsed = (value && typeof value === 'object' ? value : {}) as StoredData;
-  const profile = { ...starter.profile, ...parsed.profile };
-  delete profile.heroImage;
-  delete profile.carImage;
+  const profile: DriverProfile = {
+    name: parsed.profile?.name || '',
+    number: parsed.profile?.number || '',
+    team: parsed.profile?.team || '',
+  };
+  if (parsed.profile?.driverImage) profile.driverImage = parsed.profile.driverImage;
+  if (parsed.profile?.teamLogo) profile.teamLogo = parsed.profile.teamLogo;
+  if (parsed.profile?.competitionLogo) {
+    profile.competitionLogo = parsed.profile.competitionLogo;
+  }
 
   const sponsorLogoScale = parsed.branding?.sponsorLogoScale;
   const headingFont = parsed.branding?.headingFont;
@@ -80,7 +81,9 @@ export function normaliseData(value: unknown): Data {
       : starter.branding.bodyFont,
   };
 
-  const projects = (parsed.projects || []).map(project => ({
+  const projects = (parsed.projects || [])
+    .filter(project => project.template !== 'bio')
+    .map(project => ({
     ...project,
     driverX: Number.isFinite(project.driverX) ? project.driverX! : 0,
     driverY: Number.isFinite(project.driverY) ? project.driverY! : 0,
@@ -95,7 +98,7 @@ export function normaliseData(value: unknown): Data {
       typeof project.heroImage === 'string' && project.heroImage.length < 3000000
         ? project.heroImage
         : '',
-  })) as Project[];
+    })) as Project[];
 
   return { ...starter, ...parsed, profile, branding, projects };
 }

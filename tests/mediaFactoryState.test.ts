@@ -146,7 +146,15 @@ test('load retains storage migrations and rejects invalid persisted values', () 
     getItem: () =>
       JSON.stringify({
         onboardingComplete: true,
-        profile: { name: 'Rich', heroImage: 'legacy', carImage: 'legacy' },
+        profile: {
+          name: 'Rich',
+          car: 'legacy',
+          location: 'legacy',
+          age: 'legacy',
+          optionalInfo1: 'legacy',
+          heroImage: 'legacy',
+          carImage: 'legacy',
+        },
         branding: {
           sponsorLogoScale: 5,
           headingFont: 'Times New Roman',
@@ -160,6 +168,10 @@ test('load retains storage migrations and rejects invalid persisted values', () 
             driverVisible: false,
             exportedAt: 123,
           },
+          {
+            id: 'legacy-profile',
+            template: 'bio',
+          },
         ],
       }),
   });
@@ -168,12 +180,17 @@ test('load retains storage migrations and rejects invalid persisted values', () 
   assert.equal(loaded.profile.name, 'Rich');
   assert.equal('heroImage' in loaded.profile, false);
   assert.equal('carImage' in loaded.profile, false);
+  assert.equal('car' in loaded.profile, false);
+  assert.equal('location' in loaded.profile, false);
+  assert.equal('age' in loaded.profile, false);
+  assert.equal('optionalInfo1' in loaded.profile, false);
   assert.equal(loaded.branding.sponsorLogoScale, 1.4);
   assert.equal(loaded.branding.headingFont, starter.branding.headingFont);
   assert.equal(loaded.branding.bodyFont, MOTORSPORT_FONTS[2]);
   assert.equal(loaded.projects[0].heroScale, 1);
   assert.equal(loaded.projects[0].driverVisible, false);
   assert.equal(loaded.projects[0].exportedAt, undefined);
+  assert.equal(loaded.projects.length, 1);
 });
 
 test('normalisation and corrupt storage fall back to the starter state', () => {

@@ -111,8 +111,8 @@ test('complete driver-to-saved-graphic flow retains every approved state transit
 });
 
 test('the complete flow survives autosave and reload without losing assets', () => {
-  const project = createProject('bio', starter, {
-    createId: () => 'graphic-driver-bio',
+  const project = createProject('announcement', starter, {
+    createId: () => 'graphic-announcement',
     now: () => '2026-07-25T13:00:00.000Z',
   });
   const data: Data = {
@@ -141,5 +141,5 @@ test('the complete flow survives autosave and reload without losing assets', () 
   const restored = load({ getItem: () => stored });
 
   assert.deepEqual(restored, data);
-  assert.equal(getSavedProjects(restored)[0].id, 'graphic-driver-bio');
+  assert.equal(getSavedProjects(restored)[0].id, 'graphic-announcement');
 });

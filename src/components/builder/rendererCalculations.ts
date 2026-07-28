@@ -32,7 +32,6 @@ export function fitTextSize(
 export const templateTitles = {
   event: 'RACE WEEKEND',
   announcement: 'ANNOUNCEMENT',
-  bio: 'DRIVER PROFILE',
   schedule: 'RACE SCHEDULE',
   qualifying: 'QUALIFYING RESULT',
   results: 'RACE RESULT',
@@ -52,60 +51,9 @@ export function getStandardTemplateLayout(
     detailY: titleY + 130,
     dateY: titleY + 174,
     resultY: titleY + 230,
-    showRaceDetails: project.template !== 'bio',
+    showRaceDetails: true,
     showResult:
       project.template === 'qualifying' || project.template === 'results',
-  };
-}
-
-export function getBioTemplateLayout(
-  w: number,
-  project: Pick<Project, 'format'>,
-  profile: DriverProfile,
-) {
-  const isStory = project.format === 'story';
-  const x = 70;
-  const titleY = isStory ? 330 : 290;
-  const titleSize = isStory ? 96 : 80;
-  const rowSize = isStory ? 46 : 40;
-  const rowGap = isStory ? 78 : 66;
-  const rowMaxWidth = w - x * 2;
-  const availableRows: Array<{ label?: string; value: string }> = [
-    { label: 'LOCATION', value: profile.location },
-    { label: 'AGE', value: profile.age },
-    { label: 'CAR', value: profile.car },
-    { value: profile.optionalInfo1 },
-    { value: profile.optionalInfo2 },
-    { value: profile.optionalInfo3 },
-  ];
-  const rows = availableRows
-    .filter(row => row.value.trim())
-    .map((row, index) => ({
-      ...row,
-      y: titleY + titleSize + (isStory ? 58 : 48) + index * rowGap,
-      textLength: Math.min(
-        rowMaxWidth,
-        `${row.label ? `${row.label}  ` : ''}${row.value}`
-          .length *
-          rowSize *
-          0.62,
-      ),
-    })) as Array<{
-      label?: string;
-      value: string;
-      y: number;
-      textLength: number;
-    }>;
-
-  return {
-    x,
-    titleY,
-    titleSize,
-    titleMaxWidth: w - x * 2,
-    rowSize,
-    rowGap,
-    rowMaxWidth,
-    rows,
   };
 }
 
@@ -207,10 +155,6 @@ export function getTemplateExtraLayout(
   project: Project,
   profile: DriverProfile,
 ) {
-  if (project.template === 'bio') {
-    return { kind: 'none' as const };
-  }
-
   if (project.template === 'schedule') {
     return {
       kind: 'schedule' as const,
@@ -269,7 +213,6 @@ export function getGraphicCopy(
     sub:
       project.details.subheadline ||
       profile.team ||
-      profile.car ||
       'MOTORSPORT',
     headingFont: `${branding.headingFont}, Arial, sans-serif`,
     bodyFont: `${branding.bodyFont}, Arial, sans-serif`,

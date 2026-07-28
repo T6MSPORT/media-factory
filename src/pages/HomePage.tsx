@@ -62,7 +62,7 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
         <div className="hero-card">
           <div className="mock-number">#{data.profile.number}</div>
           <b>{data.profile.name.toUpperCase()}</b>
-          <span>{data.profile.team || data.profile.car || 'RACING DRIVER'}</span>
+          <span>{data.profile.team || 'RACING DRIVER'}</span>
         </div>
       </section>
 

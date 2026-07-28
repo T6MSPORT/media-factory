@@ -3,7 +3,6 @@ import test from 'node:test';
 import {
   getBackgroundLayout,
   getAnnouncementTemplateLayout,
-  getBioTemplateLayout,
   getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
@@ -53,12 +52,6 @@ const profile = {
   name: 'Rich Weatherill',
   number: '46',
   team: 'T6 Msport',
-  car: 'Cupra',
-  location: 'West Yorkshire',
-  age: '40',
-  optionalInfo1: 'British Touring Car Driver',
-  optionalInfo2: '',
-  optionalInfo3: '',
   competitionLogo: 'data:image/png;base64,competition',
 };
 
@@ -304,7 +297,6 @@ test('every template retains its default title and standard layout behaviour', (
   const expectedTitles: Record<TemplateId, string> = {
     event: 'RACE WEEKEND',
     announcement: 'ANNOUNCEMENT',
-    bio: 'DRIVER PROFILE',
     schedule: 'RACE SCHEDULE',
     qualifying: 'QUALIFYING RESULT',
     results: 'RACE RESULT',
@@ -316,7 +308,7 @@ test('every template retains its default title and standard layout behaviour', (
   for (const template of Object.keys(expectedTitles) as TemplateId[]) {
     const copy = getGraphicCopy(
       { ...project, template },
-      { ...profile, team: '', car: '' },
+      { ...profile, team: '' },
       branding,
     );
     assert.equal(copy.title, expectedTitles[template]);
@@ -336,13 +328,6 @@ test('every template retains its default title and standard layout behaviour', (
   assert.equal(
     getStandardTemplateLayout(1350, {
       format: 'portrait',
-      template: 'bio',
-    }).showRaceDetails,
-    false,
-  );
-  assert.equal(
-    getStandardTemplateLayout(1350, {
-      format: 'portrait',
       template: 'qualifying',
     }).showResult,
     true,
@@ -356,33 +341,7 @@ test('every template retains its default title and standard layout behaviour', (
   );
 });
 
-test('driver profile title and large optional information rows remain stacked and bounded', () => {
-  const layout = getBioTemplateLayout(
-    1080,
-    { ...project, format: 'story' },
-    profile,
-  );
-
-  assert.equal(layout.titleY, 330);
-  assert.equal(layout.titleSize, 96);
-  assert.equal(layout.rowSize, 46);
-  assert.deepEqual(
-    layout.rows.map(row => [row.label, row.value, row.y]),
-    [
-      ['LOCATION', 'West Yorkshire', 484],
-      ['AGE', '40', 562],
-      ['CAR', 'Cupra', 640],
-      [undefined, 'British Touring Car Driver', 718],
-    ],
-  );
-  assert.ok(layout.rows.every(row => row.textLength <= layout.rowMaxWidth));
-});
-
 test('template extras retain schedule and sponsor content', () => {
-  assert.deepEqual(
-    getTemplateExtraLayout(1350, { ...project, template: 'bio' }, profile),
-    { kind: 'none' },
-  );
   assert.deepEqual(
     getTemplateExtraLayout(
       1350,
@@ -421,7 +380,6 @@ test('brand logo positions remain shared across non-event templates', () => {
   assert.equal(getBrandLogoLayout(1080, 'event'), null);
   for (const template of [
     'announcement',
-    'bio',
     'schedule',
     'qualifying',
     'results',

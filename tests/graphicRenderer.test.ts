@@ -26,12 +26,6 @@ const data: Data = {
     name: 'Rich Weatherill',
     number: '46',
     team: 'T6 Msport',
-    car: 'Cupra',
-    location: 'West Yorkshire',
-    age: '40',
-    optionalInfo1: 'British Touring Car Driver',
-    optionalInfo2: '2025 Champion',
-    optionalInfo3: '',
     driverImage: 'data:image/png;base64,driver',
     teamLogo: 'data:image/png;base64,team',
     competitionLogo: 'data:image/png;base64,competition',
@@ -79,7 +73,6 @@ const details = {
 const templates: TemplateId[] = [
   'event',
   'announcement',
-  'bio',
   'schedule',
   'qualifying',
   'results',
@@ -96,10 +89,6 @@ const expectedHashes: Record<string, string> = {
     'bd12130234ca8e5b7b5da311baa1091ca9b67022a26ddd892976e6174c53e8b8',
   'announcement:feed':
     'f3ac6312fca534ca3d1badaeae712106ac174b4cda159a963a209d080bc539d0',
-  'bio:story':
-    '2dd7d61ba37c434a94f835f514058da47335d07940070bf1149a0be41019e7ff',
-  'bio:feed':
-    'ab38c5fc60ee7194bf96b714e2eba4ebcb6eb96c8cd2fe1d9bab5faba425e58c',
   'schedule:story':
     '0d107219b673d89bdc451ae12f9ec7b4ddd6b8e875e749978c0778926b1db3f8',
   'schedule:feed':

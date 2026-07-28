@@ -20,11 +20,6 @@ export const TEMPLATE_CATALOGUE: readonly TemplateDefinition[] = [
     name: 'Announcement',
     description: 'Share driver, team, partnership or season news.',
   },
-  {
-    id: 'bio',
-    name: 'Driver Profile',
-    description: 'Introduce yourself and your racing profile.',
-  },
   { id: 'schedule', name: 'Schedule', description: 'Publish session or race timings.' },
   {
     id: 'qualifying',
@@ -68,7 +63,6 @@ export const TEMPLATE_FIELDS: Record<
       placeholder: 'Enter the announcement text',
     },
   ],
-  bio: overrideFields,
   schedule: [
     ...timedRaceFields,
     {
