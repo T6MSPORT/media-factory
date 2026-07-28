@@ -120,6 +120,7 @@ export function EventTemplate({
     eventNextSize,
     eventRoundSize,
     eventTrackSize,
+    eventTrackTextLength,
     eventTrackText,
     eventDateSize,
     eventRoundY,
@@ -166,6 +167,8 @@ export function EventTemplate({
         dominantBaseline="hanging"
         fontFamily={headingFont}
         fontSize={eventTrackSize}
+        textLength={eventTrackTextLength}
+        lengthAdjust="spacingAndGlyphs"
         fontWeight="900"
         fill={branding.primary}
         letterSpacing="-3"
