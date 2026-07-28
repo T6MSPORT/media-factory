@@ -86,9 +86,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    'f197a6f001bee4fb10da4acad51907b565c2c709698f41ecce63beac840b08f8',
+    'fddfaf0d6823e2df40fc62c24250c61575f5229958ec5eb6081e93e078d95822',
   'event:feed':
-    '89fec59105b7069f87e82ec5abd8e46fc40efca0a757f6b388c782675068a50d',
+    'da783250da48179b85c38ce093e8bd016733f12c9e0155e6968fc4c1d6f9e63b',
   'announcement:story':
     '538ac8a4f71595d359dd7f170cbe57fd5cb240ad63ab8861259b043612743bec',
   'announcement:feed':
@@ -170,6 +170,13 @@ for (const template of templates) {
       assert.match(markup, /data:image\/png;base64,corbeau/);
       if (template === 'event') {
         assert.doesNotMatch(markup, /<rect[^>]*stroke=/);
+        assert.match(markup, /id="next-race-event-contrast"/);
+        assert.match(
+          markup,
+          /fill="url\(#next-race-event-contrast\)"/,
+        );
+        assert.match(markup, /stroke="#080808"/);
+        assert.match(markup, /paint-order="stroke fill"/);
         assert.match(markup, /transform="skewX\(-14\)"/);
         assert.match(markup, /fill="#c70000" transform="skewX\(-14\)"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
