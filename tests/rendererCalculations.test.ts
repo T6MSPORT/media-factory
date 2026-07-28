@@ -107,16 +107,17 @@ test('event layout preserves the approved story positions and round wording', ()
     eventIdentityRight: 1010,
     eventNameY: 70,
     eventIdentityGap: 4,
+    eventIdentityLineHeightFactor: 0.76,
     eventNumberW: 330,
     eventNumberH: 88,
-    eventNumberY: 120,
+    eventNumberY: 108.96000000000001,
     eventNumberText: '#46',
     eventNumberSize: 84,
     eventNameSize: 46,
     eventNameText: 'RICH WEATHERILL',
     eventTeamW: 260,
     eventTeamX: 750,
-    eventTeamY: 208,
+    eventTeamY: 176.8,
     eventCompetitionY: 34,
     eventHeadingY: 540,
     eventNextSize: 96,
@@ -149,14 +150,19 @@ test('event identity rows use one tight equal gap', () => {
     );
 
     assert.equal(
-      layout.eventNumberY - (layout.eventNameY + layout.eventNameSize),
+      layout.eventNumberY -
+        (layout.eventNameY +
+          layout.eventNameSize * layout.eventIdentityLineHeightFactor),
       layout.eventIdentityGap,
     );
     assert.equal(
-      layout.eventTeamY - (layout.eventNumberY + layout.eventNumberSize),
+      layout.eventTeamY -
+        (layout.eventNumberY +
+          layout.eventNumberSize * layout.eventIdentityLineHeightFactor),
       layout.eventIdentityGap,
     );
     assert.equal(layout.eventIdentityGap, 4);
+    assert.equal(layout.eventIdentityLineHeightFactor, 0.76);
   }
 });
 
