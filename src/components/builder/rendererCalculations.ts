@@ -281,3 +281,56 @@ export function getSponsorLayout(
     logoY: barTop + row * rowH + 8 + (66 - logoH) / 2,
   };
 }
+
+export function getSponsorLayouts(
+  w: number,
+  h: number,
+  sponsors: Sponsor[],
+  sponsorLogoScale: number,
+) {
+  const visibleSponsors = sponsors.slice(0, 10);
+  const layouts = visibleSponsors.map((sponsor, index) =>
+    getSponsorLayout(
+      w,
+      h,
+      visibleSponsors.length,
+      index,
+      sponsor,
+      sponsorLogoScale,
+    ),
+  );
+
+  for (let row = 0; row < 2; row += 1) {
+    const rowStart = row * 5;
+    const rowLayouts = layouts.slice(rowStart, rowStart + 5);
+    if (!rowLayouts.length) continue;
+
+    const totalLogoWidth = rowLayouts.reduce(
+      (total, layout) => total + layout.logoW,
+      0,
+    );
+    const availableWidth = w - 72;
+    const gap =
+      rowLayouts.length === 1
+        ? 0
+        : Math.max(
+            12,
+            Math.min(
+              54,
+              (availableWidth - totalLogoWidth) / (rowLayouts.length - 1),
+            ),
+          );
+    const rowWidth =
+      totalLogoWidth + gap * Math.max(0, rowLayouts.length - 1);
+    let logoX = (w - rowWidth) / 2;
+
+    rowLayouts.forEach((layout) => {
+      layout.cellX = logoX;
+      layout.cellW = layout.logoW;
+      layout.logoX = logoX;
+      logoX += layout.logoW + gap;
+    });
+  }
+
+  return layouts;
+}

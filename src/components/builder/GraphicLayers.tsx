@@ -3,7 +3,7 @@ import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
 import {
   getBackgroundLayout,
   getBrandLogoLayout,
-  getSponsorLayout,
+  getSponsorLayouts,
 } from './rendererCalculations';
 
 type Size = { width: number; height: number };
@@ -135,6 +135,12 @@ export function SponsorBar({
   bodyFont: string;
 }) {
   const visibleSponsors = sponsors.slice(0, 10);
+  const sponsorLayouts = getSponsorLayouts(
+    w,
+    h,
+    visibleSponsors,
+    branding.sponsorLogoScale,
+  );
 
   return (
     <g>
@@ -150,14 +156,7 @@ export function SponsorBar({
             logoH,
             logoX,
             logoY,
-          } = getSponsorLayout(
-            w,
-            h,
-            visibleSponsors.length,
-            index,
-            sponsor,
-            branding.sponsorLogoScale,
-          );
+          } = sponsorLayouts[index];
 
           return sponsor.logo ? (
             <image

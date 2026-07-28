@@ -6,6 +6,7 @@ import {
   getEventTemplateLayout,
   getGraphicCopy,
   getSponsorLayout,
+  getSponsorLayouts,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
   templateTitles,
@@ -322,4 +323,33 @@ test('sponsor logos retain their adaptive row and contain calculations', () => {
     logoX: 452.8220211291865,
     logoY: 1287.2055052822966,
   });
+});
+
+test('mixed sponsor logo shapes keep equal visible gaps', () => {
+  const layouts = getSponsorLayouts(
+    1080,
+    1350,
+    [
+      { id: 'square', name: 'Square', logoWidth: 100, logoHeight: 100 },
+      { id: 'wide-1', name: 'Wide 1', logoWidth: 400, logoHeight: 100 },
+      { id: 'wide-2', name: 'Wide 2', logoWidth: 300, logoHeight: 100 },
+      { id: 'wide-3', name: 'Wide 3', logoWidth: 250, logoHeight: 100 },
+    ],
+    1,
+  );
+
+  const visibleGaps = layouts.slice(1).map(
+    (layout, index) =>
+      layout.logoX -
+      (layouts[index].logoX + layouts[index].logoW),
+  );
+
+  visibleGaps.forEach((gap) => assert.equal(gap, 54));
+  assert.ok(
+    Math.abs(
+      layouts[0].logoX -
+        (1080 -
+          (layouts.at(-1)!.logoX + layouts.at(-1)!.logoW)),
+    ) < 1e-9,
+  );
 });
