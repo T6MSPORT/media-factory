@@ -86,9 +86,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '6460f496d841e9af815dba78664ea884774f3ed64f5cf5be71d289a5a974da51',
+    'c30ec007854108fda91d3dcb1f30926122dc191c5a3f7dc715ed14245057e966',
   'event:feed':
-    '5a838d6ed2ca65a5e588f1c2abeb2ca18c30a475b943c028f352c681587293bc',
+    'ccf881158dbefb0d6707f173ed8d503d0d1894b30e3d0b6fdd666f24dfbc4c01',
   'announcement:story':
     'bd12130234ca8e5b7b5da311baa1091ca9b67022a26ddd892976e6174c53e8b8',
   'announcement:feed':
@@ -186,6 +186,7 @@ for (const template of templates) {
         assert.doesNotMatch(markup, /next-race-event-contrast/);
         assert.match(markup, /stroke="#080808"/);
         assert.match(markup, /paint-order="stroke fill"/);
+        assert.match(markup, /lengthAdjust="spacingAndGlyphs"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
       }
       if (template === 'announcement') {
