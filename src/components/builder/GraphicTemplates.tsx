@@ -94,8 +94,8 @@ function ChampionshipDriverHeader({
           href={profile.competitionLogo}
           x={eventBlockX}
           y={eventCompetitionY}
-          width={isStory ? 500 : 420}
-          height={isStory ? 260 : 220}
+          width={isStory ? 450 : 378}
+          height={isStory ? 234 : 198}
           preserveAspectRatio="xMinYMid meet"
         />
       )}

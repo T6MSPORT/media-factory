@@ -86,33 +86,33 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '43f0dbb6d49a41f6c02fcfadfc634a360926233726be9e2d5813db994925e3cf',
+    '49cab7f5174b81c20c9cb597e164a8da689b8e08427476b1b4ca66d0803deb4a',
   'event:feed':
-    'fef7a08e54958faee3aefe196c9135b80ea512bb05dffb6997ce89c46eafcfa1',
+    'b9e3fefd17a0d910f62c410e01f234da9483e70aab5b9ce790b9a88c4404f69b',
   'announcement:story':
-    'aebcc245913b5cba11f4119be178540b10ae2ab90453bee6996ba2efcb130ce5',
+    '828162a4052f5dfa86c523d64e8dcdd5a414b1aa6b4901635be8e227c00a8b02',
   'announcement:feed':
-    'dd6132c18166f76765c67e90363f56031f017e57ba2b87eb488304609b393e7b',
+    '17ff7923854035de54d184e925b56238b0519cda0a807834947225066d05ed3b',
   'bio:story':
-    'a0b72bcf8e53cbdc64dbdb1e759bc29aadafb7e39ee3b1bb45c088719b3edb54',
+    '23e38530c2582142f04e06dc18b67a29cff7fc37ca6bc45a4b24c47f46e99600',
   'bio:feed':
-    'b91b39f4c238977032eaca7407c3deb639c6161ed97ccbf775ec2a6e08375aa7',
+    '7d1bca5a7fa5c963726360bee533e4a59ed4a5f9d56191cc9b07f452c76eae60',
   'schedule:story':
-    '68bd205e164955a6a9580b5c4ff318f2b35c25827b16b026b07549fdf623c8bf',
+    '30b2dd14e45c0f811cf8be20159afddda44565eef90b886d8fdc27ceb1868aef',
   'schedule:feed':
-    '9e012dfbf61388bdee39c3d981037372d75aa1e10e7ae0d2142ca72d214e989b',
+    '4d51b61fe016c2300de9e83534efacc82f63fde01e0aa53bf264b75c7b9b848e',
   'qualifying:story':
-    'b1dc9c1080cad80682ec09f53c97f48a4fe85e91c7a742de7e7389d1194da1bf',
+    '0a4f1e09bb9a37ff14053705bd318c2f63c9aab3f55dce1e8906a34d80434f2d',
   'qualifying:feed':
-    '4b75df755315fa79c12065db9834c2f62b919219948279a1824ccfe3df949d84',
+    '1d7205d64f2c7fa8c8edaf9c0f7b8a94fc811cc9cd9873a394a423842a809b00',
   'results:story':
-    '75a2165c0b3e9753d35284c8d16095913d335028738a4359274b1ba3f8b499bf',
+    '35776389e79722f10b3db266ae6f05978aa4cb51cdbf8e46dd825153af7dab36',
   'results:feed':
-    '5a8044644d9b0240083fb9011db122c049d1c0b2a9a1692660d23e0c94bc47f0',
+    'f652e9fa7c48e5ca4a7d38c6d660517e5e6a593e1ffbb9f955141db2eba734b8',
   'sponsor:story':
-    '4ac951c86aa8d40357a212c3dd87ca5424eebe314829433dcdc97ec87e73ad94',
+    '46bc4dff0ced886ef49a438ae0d4204eb49727d555736d4303bc3eeecafc9bb8',
   'sponsor:feed':
-    'b523edfdf34d802cbb2131ebccb9b97f376b7db692395121d0ff579edbd02e10',
+    '79e649c3caca6493f4659c303c0b07e2b1a8fd5dcd419caf63ca855dcfdb795c',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -178,8 +178,8 @@ for (const template of templates) {
       assert.match(
         markup,
         format === 'story'
-          ? /width="500" height="260"/
-          : /width="420" height="220"/,
+          ? /width="450" height="234"/
+          : /width="378" height="198"/,
       );
       if (template === 'event') {
         assert.doesNotMatch(markup, /<rect[^>]*stroke=/);
