@@ -209,12 +209,13 @@ export function getEventTemplateLayout(
   const eventNextSize = isStory ? 96 : 81;
   const eventRoundSize = isStory ? 65 : 56;
   const eventTrackText = (project.details.circuit || 'TRACK NAME').toUpperCase();
+  const eventTrackMaxWidth = w - eventBlockX * 2;
   const eventTrackSize = fitTextSize(
     eventTrackText,
     isStory ? 198 : 167,
-    w - eventBlockX * 2,
+    eventTrackMaxWidth,
     isStory ? 54 : 46,
-    0.75,
+    0.58,
   );
   const eventDateSize = isStory ? 63 : 54;
   const eventGap = isStory ? 18 : 15;
@@ -248,6 +249,7 @@ export function getEventTemplateLayout(
     eventHeadingY,
     eventNextSize,
     eventRoundSize,
+    eventTrackMaxWidth,
     eventTrackSize,
     eventTrackText,
     eventDateSize,
