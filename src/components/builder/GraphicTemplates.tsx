@@ -363,19 +363,54 @@ export function StandardTemplate({
                     strokeOpacity=".22"
                   />
                   <text
-                    x={layout.sessionX}
+                    x="4"
                     y={y}
-                    textAnchor="end"
                     dominantBaseline="middle"
                     fontSize={layout.sessionSize}
                     fontWeight="700"
                   >
                     {session.label}
                   </text>
+                  <g
+                    fill="none"
+                    stroke={branding.primary}
+                    strokeWidth="2"
+                    strokeOpacity=".62"
+                  >
+                    {Array.from({
+                      length: Math.max(
+                        1,
+                        Math.floor(
+                          (layout.chevronEndX - layout.chevronStartX) /
+                            layout.chevronGap,
+                        ),
+                      ),
+                    }).map((_, chevronIndex) => {
+                      const chevronX =
+                        layout.chevronStartX +
+                        chevronIndex * layout.chevronGap;
+                      const chevronHalfHeight = Math.max(
+                        4,
+                        layout.sessionSize * 0.12,
+                      );
+                      const chevronWidth = Math.max(
+                        5,
+                        layout.sessionSize * 0.14,
+                      );
+                      return (
+                        <path
+                          key={chevronIndex}
+                          d={`M ${chevronX} ${y - chevronHalfHeight} L ${
+                            chevronX + chevronWidth
+                          } ${y} L ${chevronX} ${y + chevronHalfHeight}`}
+                        />
+                      );
+                    })}
+                  </g>
                   <text
-                    x={layout.timeX}
+                    x={day.width - 4}
                     y={y}
-                    textAnchor="start"
+                    textAnchor="end"
                     dominantBaseline="middle"
                     fontSize={layout.sessionSize}
                     fontWeight="900"

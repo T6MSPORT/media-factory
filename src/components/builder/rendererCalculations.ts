@@ -226,9 +226,9 @@ export function getScheduleTemplateLayout(
     isStory ? 46 : 40,
     Math.max(isStory ? 35 : 31, rowHeight * 0.72),
   );
-  const sessionTimeDividerX = contentWidth * 0.58;
-  const sessionX = sessionTimeDividerX - (isStory ? 16 : 13);
-  const timeX = sessionTimeDividerX + (isStory ? 16 : 13);
+  const chevronStartX = contentWidth * 0.38;
+  const chevronEndX = contentWidth * 0.72;
+  const chevronGap = isStory ? 25 : 21;
   let nextDayY = daysY;
   const positionedDays = days.map(day => {
     const positionedDay = {
@@ -258,8 +258,9 @@ export function getScheduleTemplateLayout(
     dayHeadingSize,
     dayHeadingHeight,
     sessionSize,
-    sessionX,
-    timeX,
+    chevronStartX,
+    chevronEndX,
+    chevronGap,
     rowHeight,
     days: positionedDays,
   };
