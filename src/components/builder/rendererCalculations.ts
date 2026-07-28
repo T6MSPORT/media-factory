@@ -194,10 +194,14 @@ export function getEventTemplateLayout(
     0.86,
   );
   const eventTeamW = isStory ? 260 : 220;
+  // Team-logo assets commonly include transparent padding. Compensate for
+  // that here so the visible mark sits tightly beneath the race number.
+  const eventTeamOpticalOffset = isStory ? 20 : 17;
   const eventTeamY =
     eventNumberY +
     eventNumberSize * eventIdentityLineHeightFactor +
-    eventIdentityGap;
+    eventIdentityGap -
+    eventTeamOpticalOffset;
   const eventCompetitionY = isStory ? 34 : 28;
   const eventHeadingY = isStory ? 540 : 430;
   const eventNextSize = isStory ? 96 : 81;
@@ -235,6 +239,7 @@ export function getEventTemplateLayout(
     eventNameSize,
     eventNameText: (profile.name || 'DRIVER NAME').toUpperCase(),
     eventTeamW,
+    eventTeamOpticalOffset,
     eventTeamX: w - eventBlockX - eventTeamW,
     eventTeamY,
     eventCompetitionY,
