@@ -177,7 +177,14 @@ export function getEventTemplateLayout(
   const eventNumberH = isStory ? 88 : 76;
   const eventIdentityGap = 4;
   const eventNameSize = isStory ? 46 : 40;
-  const eventNumberY = eventNameY + eventNameSize + eventIdentityGap;
+  // Microgramma's visible capitals occupy less height than the CSS font-size.
+  // Use the rendered line height here so the Next Race identity rows have
+  // genuinely tight, equal optical gaps rather than large invisible ones.
+  const eventIdentityLineHeightFactor = 0.76;
+  const eventNumberY =
+    eventNameY +
+    eventNameSize * eventIdentityLineHeightFactor +
+    eventIdentityGap;
   const eventNumberText = `#${profile.number || '00'}`;
   const eventNumberSize = fitTextSize(
     eventNumberText,
@@ -187,7 +194,10 @@ export function getEventTemplateLayout(
     0.86,
   );
   const eventTeamW = isStory ? 260 : 220;
-  const eventTeamY = eventNumberY + eventNumberSize + eventIdentityGap;
+  const eventTeamY =
+    eventNumberY +
+    eventNumberSize * eventIdentityLineHeightFactor +
+    eventIdentityGap;
   const eventCompetitionY = isStory ? 34 : 28;
   const eventHeadingY = isStory ? 540 : 430;
   const eventNextSize = isStory ? 96 : 81;
@@ -216,6 +226,7 @@ export function getEventTemplateLayout(
     eventIdentityRight,
     eventNameY,
     eventIdentityGap,
+    eventIdentityLineHeightFactor,
     eventNumberW,
     eventNumberH,
     eventNumberY,
