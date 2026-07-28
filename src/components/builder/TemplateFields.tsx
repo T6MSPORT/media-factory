@@ -17,7 +17,14 @@ export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
             <textarea
               value={project.details[field.key]}
               placeholder={field.placeholder}
-              onChange={event => setDetails({ [field.key]: event.target.value })}
+              onChange={event =>
+                setDetails({
+                  [field.key]:
+                    project.template === 'announcement'
+                      ? event.target.value.toUpperCase()
+                      : event.target.value,
+                })
+              }
             />
           </label>
         ) : (

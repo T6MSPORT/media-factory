@@ -94,12 +94,13 @@ export function getAnnouncementTemplateLayout(
   const titleY = isStory ? 350 : 310;
   const textX = margin;
   const textY = titleY + titleSize + (isStory ? 46 : 38);
-  const textBoxWidth = (w - margin * 2) / 2;
+  const textBoxWidth = w - margin * 2;
   const textBoxHeight = isStory ? 520 : 340;
   const copy =
-    project.details.subheadline.trim() || 'ENTER THE ANNOUNCEMENT TEXT';
-  const preferredTextSize = isStory ? 48 : 40;
-  const minimumTextSize = isStory ? 24 : 21;
+    project.details.subheadline.trim().toUpperCase() ||
+    'ENTER THE ANNOUNCEMENT TEXT';
+  const preferredTextSize = isStory ? 64 : 54;
+  const minimumTextSize = isStory ? 28 : 24;
   let textSize = preferredTextSize;
   let lines = wrapTextToWidth(copy, textSize, textBoxWidth);
 

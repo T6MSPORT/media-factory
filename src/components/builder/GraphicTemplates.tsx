@@ -232,6 +232,7 @@ export function StandardTemplate({
           dominantBaseline="hanging"
           fontSize={layout.textSize}
           fontWeight="700"
+          fill={branding.primary}
         >
           {layout.lines.map((line, index) => (
             <tspan

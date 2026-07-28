@@ -230,7 +230,7 @@ test('derived headings and achievement labels remain template-specific', () => {
   );
 });
 
-test('announcement uses a full-width top heading and half-width fitted text block', () => {
+test('announcement uses a full-width top heading and full-width fitted uppercase text block', () => {
   const announcement = getAnnouncementTemplateLayout(1080, 1920, {
     ...project,
     template: 'announcement',
@@ -246,7 +246,11 @@ test('announcement uses a full-width top heading and half-width fitted text bloc
   assert.equal(announcement.titleX, 70);
   assert.equal(announcement.titleY, 350);
   assert.equal(announcement.titleMaxWidth, 940);
-  assert.equal(announcement.textBoxWidth, 470);
+  assert.equal(announcement.textBoxWidth, 940);
+  assert.equal(
+    announcement.lines.join(' '),
+    'PTEC WELCOMES A NEW CHAMPIONSHIP PARTNER FOR THE FORTHCOMING SEASON.',
+  );
   assert.ok(announcement.lines.length > 1);
   assert.ok(
     announcement.lines.length *
