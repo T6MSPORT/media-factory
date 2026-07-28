@@ -95,29 +95,29 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    'c30ec007854108fda91d3dcb1f30926122dc191c5a3f7dc715ed14245057e966',
+    '379ea9314d4db54c6ce1c0ded64658769ca6995e064343f378c34915d26f036f',
   'event:feed':
-    'ccf881158dbefb0d6707f173ed8d503d0d1894b30e3d0b6fdd666f24dfbc4c01',
+    '0db95560680f00778a69163c47a47910e90dc10055199fdbf7119032da7a4219',
   'announcement:story':
-    'bd12130234ca8e5b7b5da311baa1091ca9b67022a26ddd892976e6174c53e8b8',
+    '22ab05cdb5353aef6918a8217a7b98f761b1364069cbfde547ede91addc4f37e',
   'announcement:feed':
-    'f3ac6312fca534ca3d1badaeae712106ac174b4cda159a963a209d080bc539d0',
+    'c703db614c36926edf64ea50a904c59c9d35494dc4cb91c06975e305b48803ca',
   'schedule:story':
-    'e5814d9c4d9ea44c54e68ad21e1ed95784e87f471d1f3f25008b6d49cbbe3da8',
+    '226a5f2913a03e3acb39fbc50c10eb270e66021242f5cc09c15b9db81fed30b9',
   'schedule:feed':
-    'ea26e945d60090cbbbd59e8fa579fa9da47b45888cfc1ea23bb87f2a6beb74c2',
+    'da1f6c2120d18932e70fb48ff282c928b6a5820b98bf259b816826874c023e0a',
   'qualifying:story':
-    '1f8efadb99ae3bd11270ae5a0577b5259b8d0600652903759afed33c03f11e89',
+    '284d52ce498fe510511461aa8483aebb244d85fb8a58fd2f94dd847ef6c0c2d1',
   'qualifying:feed':
-    '95eceaf0d2d4c803a720f47513a328bae2e8ebc454383e940bb8d5ac298598ed',
+    '7c79f64970aac3aeb8069896277842496eee73f665d7b028185d48dc86cb133f',
   'results:story':
-    '9c048af400313c61aac4debfacdeb837242c87664d392730de143cc14ecb4089',
+    '8afd95324fa9513ba1f75e8c91098c9fd378d18627637be99cc5ce64e5a6a8fb',
   'results:feed':
-    '75d5a1b8564589b07e7b826cb861f0717f6de1967e72d98b32f2e2c76e1db19b',
+    '0319dd514dfc079ebe96d0e731506e384d92ba0e3ab28f8a7604f8a0c733ceaa',
   'sponsor:story':
-    '6c4146b37ef9af036005379a706ab97730d67a3d2525ee58f67316bc61b8298c',
+    '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
   'sponsor:feed':
-    '99851d5b2048ad2a98db6948c113998c93f019c37a3d0b2300f20590a6390ea2',
+    'e45bce0e37bf70d1d324dad4872246d25a0bb9f3499ba5ecac241b1211285dfe',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -171,6 +171,11 @@ for (const template of templates) {
       assert.equal(outputHash, expectedHashes[key]);
       assert.match(markup, /^<svg /);
       assert.match(markup, /class="graphic"/);
+      assert.match(
+        markup,
+        /<linearGradient id="topFade" x1="0" y1="0" x2="0" y2="1">/,
+      );
+      assert.match(markup, /fill="url\(#topFade\)"/);
       assert.match(markup, /data:image\/png;base64,driver/);
       assert.match(markup, /data:image\/png;base64,corbeau/);
       assert.match(markup, /data:image\/png;base64,competition/);

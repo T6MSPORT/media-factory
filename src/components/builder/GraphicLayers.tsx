@@ -63,7 +63,7 @@ export function BackgroundLayers({
           <stop offset="0.58" stopColor="#000000" stopOpacity="0" />
           <stop offset="1" stopColor="#000000" stopOpacity=".94" />
         </linearGradient>
-        <linearGradient id="eventTopFade" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="topFade" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#000000" stopOpacity=".88" />
           <stop offset="0.44" stopColor="#000000" stopOpacity=".62" />
           <stop offset="1" stopColor="#000000" stopOpacity="0" />
@@ -83,14 +83,12 @@ export function BackgroundLayers({
           <rect width={w} height={h} fill="url(#bgOverlay)" />
         </>
       )}
-      {project.template === 'event' && (
-        <rect
-          width={w}
-          height={h * (project.format === 'story' ? 0.38 : 0.36)}
-          fill="url(#eventTopFade)"
-          pointerEvents="none"
-        />
-      )}
+      <rect
+        width={w}
+        height={h * (project.format === 'story' ? 0.38 : 0.36)}
+        fill="url(#topFade)"
+        pointerEvents="none"
+      />
       {project.template !== 'schedule' && (
         <>
           <path
