@@ -140,3 +140,102 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 /* v3.6: white date-picker icon in the builder */
 .controls input[type="date"]{color-scheme:dark}
 .controls input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer}
+
+
+/* v3.7: full-height builder controls and fully contained preview */
+@media (min-width: 1101px) {
+  .builder {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .builder-body {
+    grid-template-columns: minmax(520px, 34vw) minmax(0, 1fr);
+    height: calc(100dvh - 68px);
+    min-height: 0;
+  }
+
+  .controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row;
+    gap: 9px 14px;
+    padding: 14px 18px;
+    overflow: hidden;
+  }
+
+  .controls > h3,
+  .controls > .selected-hero,
+  .controls > .control-actions,
+  .controls > .control-hint,
+  .controls > .locked,
+  .controls > button {
+    grid-column: 1 / -1;
+  }
+
+  .controls h3 {
+    margin: 4px 0 0;
+  }
+
+  .controls label {
+    gap: 4px;
+  }
+
+  .controls input,
+  .controls select,
+  .controls .upload span,
+  .controls button {
+    padding-block: 8px;
+  }
+
+  .controls .selected-hero {
+    grid-template-columns: 56px 1fr;
+    padding: 6px;
+  }
+
+  .controls .selected-hero img {
+    width: 56px;
+    height: 48px;
+  }
+
+  .controls .control-hint {
+    margin: 0;
+  }
+
+  .controls .locked {
+    padding: 9px 10px;
+  }
+
+  .preview {
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 24px;
+    overflow: hidden;
+  }
+
+  .graphic {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1100px) {
+  .builder-body {
+    grid-template-columns: minmax(400px, 46vw) minmax(0, 1fr);
+  }
+
+  .preview {
+    min-width: 0;
+    padding: 20px;
+  }
+
+  .graphic {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(100dvh - 108px);
+  }
+}
