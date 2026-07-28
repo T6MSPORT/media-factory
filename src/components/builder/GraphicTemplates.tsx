@@ -73,22 +73,15 @@ export function EventTemplate({
             width={eventNumberW}
             height={eventNumberH}
             rx="5"
-            fill={branding.primary}
-          />
-          <rect
-            x="5"
-            y="5"
-            width={eventNumberW - 10}
-            height={eventNumberH - 10}
-            rx="3"
             fill="none"
             stroke={branding.accent}
-            strokeWidth="2"
-            opacity=".75"
+            strokeWidth="4"
           />
           <text
-            x={isStory ? 15 : 13}
-            y={isStory ? 43 : 39}
+            x={eventNumberW / 2 - Math.tan(Math.PI / 18) * eventNumberH / 2}
+            y={eventNumberH / 2}
+            textAnchor="middle"
+            dominantBaseline="central"
             fontFamily={headingFont}
             fontSize={eventNumberSize}
             fontWeight="900"
