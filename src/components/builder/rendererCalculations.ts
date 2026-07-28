@@ -190,8 +190,8 @@ export function getEventTemplateLayout(
   const eventTeamY = eventNumberY + eventNumberH + eventIdentityGap;
   const eventCompetitionY = isStory ? 34 : 28;
   const eventHeadingY = isStory ? 540 : 430;
-  const eventNextSize = isStory ? 64 : 54;
-  const eventRoundSize = isStory ? 43 : 37;
+  const eventNextSize = isStory ? 96 : 81;
+  const eventRoundSize = isStory ? 65 : 56;
   const eventTrackText = (project.details.circuit || 'TRACK NAME').toUpperCase();
   const eventTrackSize = fitTextSize(
     eventTrackText,
@@ -200,7 +200,7 @@ export function getEventTemplateLayout(
     isStory ? 54 : 46,
     0.75,
   );
-  const eventDateSize = isStory ? 42 : 36;
+  const eventDateSize = isStory ? 63 : 54;
   const eventGap = isStory ? 36 : 30;
   const eventRoundY = eventHeadingY + eventNextSize + eventGap;
   const eventTrackY = eventRoundY + eventRoundSize + eventGap;
