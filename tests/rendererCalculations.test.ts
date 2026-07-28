@@ -106,17 +106,17 @@ test('event layout preserves the approved story positions and round wording', ()
     eventBlockX: 70,
     eventIdentityRight: 1010,
     eventNameY: 70,
-    eventIdentityGap: 10,
+    eventIdentityGap: 4,
     eventNumberW: 330,
     eventNumberH: 88,
-    eventNumberY: 126,
+    eventNumberY: 120,
     eventNumberText: '#46',
     eventNumberSize: 84,
     eventNameSize: 46,
     eventNameText: 'RICH WEATHERILL',
     eventTeamW: 260,
     eventTeamX: 750,
-    eventTeamY: 224,
+    eventTeamY: 208,
     eventCompetitionY: 34,
     eventHeadingY: 540,
     eventNextSize: 96,
@@ -138,6 +138,26 @@ test('event layout preserves the approved story positions and round wording', ()
     ).roundLabel,
     'ROUNDS 3 & 4',
   );
+});
+
+test('event identity rows use one tight equal gap', () => {
+  for (const format of ['story', 'feed'] as const) {
+    const layout = getEventTemplateLayout(
+      1080,
+      { ...project, format },
+      profile,
+    );
+
+    assert.equal(
+      layout.eventNumberY - (layout.eventNameY + layout.eventNameSize),
+      layout.eventIdentityGap,
+    );
+    assert.equal(
+      layout.eventTeamY - (layout.eventNumberY + layout.eventNumberSize),
+      layout.eventIdentityGap,
+    );
+    assert.equal(layout.eventIdentityGap, 4);
+  }
 });
 
 test('event text fits long track names and three-digit car numbers inside their containers', () => {

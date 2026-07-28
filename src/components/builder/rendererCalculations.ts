@@ -175,7 +175,7 @@ export function getEventTemplateLayout(
   const eventNameY = eventTop;
   const eventNumberW = isStory ? 330 : 280;
   const eventNumberH = isStory ? 88 : 76;
-  const eventIdentityGap = isStory ? 10 : 8;
+  const eventIdentityGap = 4;
   const eventNameSize = isStory ? 46 : 40;
   const eventNumberY = eventNameY + eventNameSize + eventIdentityGap;
   const eventNumberText = `#${profile.number || '00'}`;
@@ -187,7 +187,7 @@ export function getEventTemplateLayout(
     0.86,
   );
   const eventTeamW = isStory ? 260 : 220;
-  const eventTeamY = eventNumberY + eventNumberH + eventIdentityGap;
+  const eventTeamY = eventNumberY + eventNumberSize + eventIdentityGap;
   const eventCompetitionY = isStory ? 34 : 28;
   const eventHeadingY = isStory ? 540 : 430;
   const eventNextSize = isStory ? 96 : 81;
