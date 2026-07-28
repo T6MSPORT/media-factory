@@ -86,9 +86,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    'fa87f62cd71a903483beaa768c6745b0c981629f4b72a472ab7bed1076765a61',
+    'ecbe52a35ae10fd96abd3f10a22056068f6e40f616d128edd921a92e4de13923',
   'event:feed':
-    '77cd219bb362056f8f8533c78374c86cd07cb475e31d00b8107d33b5e27d10b8',
+    '54c2a75361c193096a7c3a12f7c2dcfa40ab8f1b06a3421da75981ab18de9798',
   'announcement:story':
     '52811445bc8b04519eb83c5f2c7f00a8fe4da092e911fd346e86c966a39bb139',
   'announcement:feed':
@@ -168,6 +168,14 @@ for (const template of templates) {
       assert.match(markup, /class="graphic"/);
       assert.match(markup, /data:image\/png;base64,driver/);
       assert.match(markup, /data:image\/png;base64,corbeau/);
+      if (template === 'event') {
+        assert.match(
+          markup,
+          format === 'story'
+            ? /width="500" height="260"/
+            : /width="420" height="220"/,
+        );
+      }
     });
   }
 }

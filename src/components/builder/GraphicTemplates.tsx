@@ -121,8 +121,8 @@ export function EventTemplate({
             href={profile.competitionLogo}
             x={eventBlockX}
             y={eventCompetitionY}
-            width={isStory ? 300 : 250}
-            height={isStory ? 180 : 150}
+            width={isStory ? 500 : 420}
+            height={isStory ? 260 : 220}
             preserveAspectRatio="xMinYMid meet"
           />
         )}
