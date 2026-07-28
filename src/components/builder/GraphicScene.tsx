@@ -2,7 +2,6 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { Data, Project, Sponsor } from '../../types';
 import {
   BackgroundLayers,
-  BrandLogos,
   DragSurface,
   SponsorBar,
 } from './GraphicLayers';
@@ -63,6 +62,7 @@ export function GraphicScene({
         <EventTemplate w={w} {...templateProps} />
       ) : (
         <StandardTemplate
+          w={w}
           h={h}
           title={copy.title}
           sub={copy.sub}
@@ -93,7 +93,6 @@ export function GraphicScene({
         onPointerMove={onBackgroundPointerMove}
         onPointerUp={onBackgroundPointerUp}
       />
-      <BrandLogos w={w} project={project} profile={profile} />
     </>
   );
 }

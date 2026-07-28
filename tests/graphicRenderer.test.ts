@@ -86,33 +86,33 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    'db80b4ff5630d7065e0da93942369e7d7ab4a29ac0efb37079ab70c9458d558c',
+    '43f0dbb6d49a41f6c02fcfadfc634a360926233726be9e2d5813db994925e3cf',
   'event:feed':
-    '79bd41230c0a00e5db922c5092aa7622d570e1839cab4c8c9f4fc7ef10876e12',
+    'fef7a08e54958faee3aefe196c9135b80ea512bb05dffb6997ce89c46eafcfa1',
   'announcement:story':
-    '538ac8a4f71595d359dd7f170cbe57fd5cb240ad63ab8861259b043612743bec',
+    'aebcc245913b5cba11f4119be178540b10ae2ab90453bee6996ba2efcb130ce5',
   'announcement:feed':
-    'f1057b2e9276451fffb940d5ef33531af51c94c2de61497bbffbfd8eb284d21e',
+    'dd6132c18166f76765c67e90363f56031f017e57ba2b87eb488304609b393e7b',
   'bio:story':
-    '42bdb434d22be5fd12388998136c8d413e5f126d17dc9977374b5c81bbe02062',
+    'a0b72bcf8e53cbdc64dbdb1e759bc29aadafb7e39ee3b1bb45c088719b3edb54',
   'bio:feed':
-    '50a09f17572a566720dba8b0a940b0a9b4b578791ec3f662948ae98608b1d71f',
+    'b91b39f4c238977032eaca7407c3deb639c6161ed97ccbf775ec2a6e08375aa7',
   'schedule:story':
-    '4166972b9e811f7f5d9e3024e7f114d9da564f34ab558a745fd6735dfaa68661',
+    '68bd205e164955a6a9580b5c4ff318f2b35c25827b16b026b07549fdf623c8bf',
   'schedule:feed':
-    'c2cf02f6297c6e5becd073f8f13f34d4f1cb8aaa54d269725127334476c6d152',
+    '9e012dfbf61388bdee39c3d981037372d75aa1e10e7ae0d2142ca72d214e989b',
   'qualifying:story':
-    '017ed3f97d301f48c0d8ce6933bd5abd24a8c2ee2cbf3a755d14dcff9024840e',
+    'b1dc9c1080cad80682ec09f53c97f48a4fe85e91c7a742de7e7389d1194da1bf',
   'qualifying:feed':
-    'f1606f308820d83374b311d31d27a0fbe9c416e00f757f995b046882a31ff3d6',
+    '4b75df755315fa79c12065db9834c2f62b919219948279a1824ccfe3df949d84',
   'results:story':
-    '7343ca7282a1e5e1e705205a99ae69d95883ddbd36fbba33f5f7fed9c4f6b57f',
+    '75a2165c0b3e9753d35284c8d16095913d335028738a4359274b1ba3f8b499bf',
   'results:feed':
-    'a9de274b878962456914b6d8cad8d1565b61b55c658070eff4c07ca210f8d498',
+    '5a8044644d9b0240083fb9011db122c049d1c0b2a9a1692660d23e0c94bc47f0',
   'sponsor:story':
-    'c7aa6fbc1fa621288f7e00922bae0a097c8d1534e91b4d0d28a3571f2381b6d1',
+    '4ac951c86aa8d40357a212c3dd87ca5424eebe314829433dcdc97ec87e73ad94',
   'sponsor:feed':
-    'e4f2b11c82974403450b9fa6be7664304e10d6f2411f3ba123ad290f62bb214d',
+    'b523edfdf34d802cbb2131ebccb9b97f376b7db692395121d0ff579edbd02e10',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -168,21 +168,25 @@ for (const template of templates) {
       assert.match(markup, /class="graphic"/);
       assert.match(markup, /data:image\/png;base64,driver/);
       assert.match(markup, /data:image\/png;base64,corbeau/);
+      assert.match(markup, /data:image\/png;base64,competition/);
+      assert.match(markup, /data:image\/png;base64,team/);
+      assert.match(markup, /RICH WEATHERILL/);
+      assert.match(markup, />#46</);
+      assert.match(markup, /transform="skewX\(-14\)"/);
+      assert.match(markup, /fill="#c70000" transform="skewX\(-14\)"/);
+      assert.match(markup, /preserveAspectRatio="xMaxYMin meet"/);
+      assert.match(
+        markup,
+        format === 'story'
+          ? /width="500" height="260"/
+          : /width="420" height="220"/,
+      );
       if (template === 'event') {
         assert.doesNotMatch(markup, /<rect[^>]*stroke=/);
         assert.doesNotMatch(markup, /next-race-event-contrast/);
         assert.match(markup, /stroke="#080808"/);
         assert.match(markup, /paint-order="stroke fill"/);
-        assert.match(markup, /transform="skewX\(-14\)"/);
-        assert.match(markup, /fill="#c70000" transform="skewX\(-14\)"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
-        assert.match(markup, /preserveAspectRatio="xMaxYMin meet"/);
-        assert.match(
-          markup,
-          format === 'story'
-            ? /width="500" height="260"/
-            : /width="420" height="220"/,
-        );
       }
     });
   }

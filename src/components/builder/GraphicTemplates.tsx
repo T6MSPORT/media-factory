@@ -14,6 +14,95 @@ type TemplateSharedProps = {
   bodyFont: string;
 };
 
+function ChampionshipDriverHeader({
+  w,
+  project,
+  profile,
+  branding,
+  headingFont,
+  bodyFont,
+}: TemplateSharedProps & { w: number }) {
+  const {
+    isStory,
+    eventBlockX,
+    eventIdentityRight,
+    eventNameY,
+    eventNumberY,
+    eventNumberText,
+    eventNumberSize,
+    eventNameSize,
+    eventNameText,
+    eventTeamW,
+    eventTeamX,
+    eventTeamY,
+    eventCompetitionY,
+  } = getEventTemplateLayout(w, project, profile);
+
+  return (
+    <g fill={branding.accent}>
+      <text
+        x={eventIdentityRight}
+        y={eventNameY}
+        textAnchor="end"
+        dominantBaseline="hanging"
+        fontFamily={headingFont}
+        fontSize={eventNameSize}
+        fontWeight="900"
+        letterSpacing="-1"
+      >
+        {eventNameText}
+      </text>
+      <g transform={`translate(${eventIdentityRight} ${eventNumberY})`}>
+        <text
+          x="0"
+          y="0"
+          textAnchor="end"
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={eventNumberSize}
+          fontWeight="900"
+          fill={branding.primary}
+          transform="skewX(-14)"
+        >
+          {eventNumberText}
+        </text>
+      </g>
+      {profile.teamLogo ? (
+        <image
+          href={profile.teamLogo}
+          x={eventTeamX}
+          y={eventTeamY}
+          width={eventTeamW}
+          height={isStory ? 90 : 78}
+          preserveAspectRatio="xMaxYMin meet"
+        />
+      ) : profile.team ? (
+        <text
+          x={eventIdentityRight}
+          y={eventTeamY + (isStory ? 28 : 24)}
+          textAnchor="end"
+          fontFamily={bodyFont}
+          fontSize={isStory ? 24 : 21}
+          fontWeight="700"
+          letterSpacing="2"
+        >
+          {profile.team.toUpperCase()}
+        </text>
+      ) : null}
+      {profile.competitionLogo && (
+        <image
+          href={profile.competitionLogo}
+          x={eventBlockX}
+          y={eventCompetitionY}
+          width={isStory ? 500 : 420}
+          height={isStory ? 260 : 220}
+          preserveAspectRatio="xMinYMid meet"
+        />
+      )}
+    </g>
+  );
+}
+
 export function EventTemplate({
   w,
   project,
@@ -26,19 +115,6 @@ export function EventTemplate({
   const {
     isStory,
     eventBlockX,
-    eventIdentityRight,
-    eventNameY,
-    eventNumberW,
-    eventNumberH,
-    eventNumberY,
-    eventNumberText,
-    eventNumberSize,
-    eventNameSize,
-    eventNameText,
-    eventTeamW,
-    eventTeamX,
-    eventTeamY,
-    eventCompetitionY,
     eventHeadingY,
     eventNextSize,
     eventRoundSize,
@@ -53,67 +129,14 @@ export function EventTemplate({
 
   return (
     <g fill={branding.accent}>
-      <g textAnchor="start">
-        <text
-          x={eventIdentityRight}
-          y={eventNameY}
-          textAnchor="end"
-          dominantBaseline="hanging"
-          fontFamily={headingFont}
-          fontSize={eventNameSize}
-          fontWeight="900"
-          letterSpacing="-1"
-        >
-          {eventNameText}
-        </text>
-        <g transform={`translate(${eventIdentityRight} ${eventNumberY})`}>
-          <text
-            x="0"
-            y="0"
-            textAnchor="end"
-            dominantBaseline="hanging"
-            fontFamily={headingFont}
-            fontSize={eventNumberSize}
-            fontWeight="900"
-            fill={branding.primary}
-            transform="skewX(-14)"
-          >
-            {eventNumberText}
-          </text>
-        </g>
-        {profile.teamLogo ? (
-          <image
-            href={profile.teamLogo}
-            x={eventTeamX}
-            y={eventTeamY}
-            width={eventTeamW}
-            height={isStory ? 90 : 78}
-            preserveAspectRatio="xMaxYMin meet"
-          />
-        ) : profile.team ? (
-          <text
-            x={eventIdentityRight}
-            y={eventTeamY + (isStory ? 28 : 24)}
-            textAnchor="end"
-            fontFamily={bodyFont}
-            fontSize={isStory ? 24 : 21}
-            fontWeight="700"
-            letterSpacing="2"
-          >
-            {profile.team.toUpperCase()}
-          </text>
-        ) : null}
-        {profile.competitionLogo && (
-          <image
-            href={profile.competitionLogo}
-            x={eventBlockX}
-            y={eventCompetitionY}
-            width={isStory ? 500 : 420}
-            height={isStory ? 260 : 220}
-            preserveAspectRatio="xMinYMid meet"
-          />
-        )}
-      </g>
+      <ChampionshipDriverHeader
+        w={w}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
       <text
         x={eventBlockX}
         y={eventHeadingY}
@@ -168,6 +191,7 @@ export function EventTemplate({
 }
 
 export function StandardTemplate({
+  w,
   h,
   project,
   profile,
@@ -176,7 +200,7 @@ export function StandardTemplate({
   sub,
   headingFont,
   bodyFont,
-}: TemplateSharedProps & { h: number; title: string; sub: string }) {
+}: TemplateSharedProps & { w: number; h: number; title: string; sub: string }) {
   const details = project.details;
   const {
     titleY,
@@ -191,18 +215,14 @@ export function StandardTemplate({
 
   return (
     <g fontFamily={bodyFont} fill={branding.accent}>
-      <text x="70" y="95" fontSize="28" fontWeight="700" letterSpacing="5">
-        #{profile.number}
-      </text>
-      <text
-        x="70"
-        y="145"
-        fontFamily={headingFont}
-        fontSize="46"
-        fontWeight="900"
-      >
-        {profile.name.toUpperCase()}
-      </text>
+      <ChampionshipDriverHeader
+        w={w}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
       <text
         x="70"
         y={titleY}
