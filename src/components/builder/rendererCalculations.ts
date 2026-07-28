@@ -150,19 +150,78 @@ export function getAnnouncementTemplateLayout(
   };
 }
 
+export function getScheduleTemplateLayout(
+  w: number,
+  h: number,
+  project: Project,
+) {
+  const isStory = project.format === 'story';
+  const margin = 70;
+  const dayCount = Math.min(
+    3,
+    Math.max(1, project.details.scheduleDayCount || project.details.scheduleDays?.length || 1),
+  );
+  const days = Array.from({ length: dayCount }, (_, dayIndex) => {
+    const suppliedDay = project.details.scheduleDays?.[dayIndex];
+    return (
+      suppliedDay || {
+        day: (['Friday', 'Saturday', 'Sunday'] as const)[Math.min(dayIndex + 1, 2)],
+        sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
+          type,
+          time: '',
+        })),
+      }
+    );
+  });
+  const gap = isStory ? 28 : 24;
+  const contentWidth = w - margin * 2;
+  const columnWidth = (contentWidth - gap * (dayCount - 1)) / dayCount;
+  const titleY = isStory ? 350 : 310;
+  const titleSize = isStory ? 112 : 94;
+  const trackY = titleY + titleSize + (isStory ? 26 : 20);
+  const trackText =
+    project.details.circuit.trim().toUpperCase() || 'TRACK NAME';
+  const trackSize = fitTextSize(
+    trackText,
+    isStory ? 58 : 50,
+    contentWidth,
+    isStory ? 34 : 30,
+    0.6,
+    1,
+  );
+  const daysY = trackY + trackSize + (isStory ? 52 : 40);
+  const dayHeadingSize =
+    dayCount === 3 ? (isStory ? 32 : 28) : isStory ? 40 : 34;
+  const sessionSize =
+    dayCount === 3 ? (isStory ? 25 : 22) : isStory ? 30 : 26;
+  const rowHeight = isStory ? 62 : 52;
+
+  return {
+    margin,
+    title: 'SCHEDULE',
+    titleY,
+    titleSize,
+    trackY,
+    trackText,
+    trackSize,
+    contentWidth,
+    daysY,
+    dayHeadingSize,
+    sessionSize,
+    rowHeight,
+    days: days.map((day, dayIndex) => ({
+      ...day,
+      x: margin + dayIndex * (columnWidth + gap),
+      width: columnWidth,
+    })),
+  };
+}
+
 export function getTemplateExtraLayout(
   h: number,
   project: Project,
   profile: DriverProfile,
 ) {
-  if (project.template === 'schedule') {
-    return {
-      kind: 'schedule' as const,
-      y: h * 0.75,
-      text: project.details.scheduleLines || 'ADD SESSION TIMES',
-    };
-  }
-
   if (project.template === 'sponsor') {
     return {
       kind: 'sponsor' as const,

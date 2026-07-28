@@ -6,6 +6,7 @@ import {
   getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
+  getScheduleTemplateLayout,
   getSponsorLayout,
   getSponsorLayouts,
   getStandardTemplateLayout,
@@ -341,19 +342,44 @@ test('every template retains its default title and standard layout behaviour', (
   );
 });
 
-test('template extras retain schedule and sponsor content', () => {
-  assert.deepEqual(
-    getTemplateExtraLayout(
-      1350,
-      {
-        ...project,
-        template: 'schedule',
-        details: { ...details, scheduleLines: 'QUALIFYING · 19:30' },
-      },
-      profile,
-    ),
-    { kind: 'schedule', y: 1012.5, text: 'QUALIFYING · 19:30' },
-  );
+test('schedule layout keeps the title and track at the top with selected days underneath', () => {
+  const schedule = getScheduleTemplateLayout(1080, 1920, {
+    ...project,
+    template: 'schedule',
+    details: {
+      ...details,
+      circuit: 'Silverstone National',
+      scheduleDayCount: 2,
+      scheduleDays: [
+        {
+          day: 'Saturday',
+          sessions: Array.from({ length: 5 }, () => ({
+            type: 'Practice',
+            time: '18:00',
+          })),
+        },
+        {
+          day: 'Sunday',
+          sessions: Array.from({ length: 5 }, () => ({
+            type: 'Race',
+            time: '19:30',
+          })),
+        },
+      ],
+    },
+  });
+
+  assert.equal(schedule.title, 'SCHEDULE');
+  assert.equal(schedule.titleY, 350);
+  assert.equal(schedule.trackText, 'SILVERSTONE NATIONAL');
+  assert.ok(schedule.trackY > schedule.titleY);
+  assert.ok(schedule.daysY > schedule.trackY);
+  assert.equal(schedule.days.length, 2);
+  assert.deepEqual(schedule.days.map(day => day.day), ['Saturday', 'Sunday']);
+  assert.equal(schedule.days[0].sessions.length, 5);
+});
+
+test('template extras retain sponsor content', () => {
   assert.deepEqual(
     getTemplateExtraLayout(
       1350,

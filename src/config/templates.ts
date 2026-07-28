@@ -64,14 +64,7 @@ export const TEMPLATE_FIELDS: Record<
     },
   ],
   schedule: [
-    ...timedRaceFields,
-    {
-      key: 'scheduleLines',
-      label: 'Schedule lines',
-      type: 'textarea',
-      placeholder: 'QUALIFYING · 19:30\nRACE 1 · 20:00',
-    },
-    ...overrideFields,
+    { key: 'circuit', label: 'Track name' },
   ],
   qualifying: [
     ...timedRaceFields,

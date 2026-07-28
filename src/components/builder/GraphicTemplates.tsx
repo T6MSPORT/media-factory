@@ -3,6 +3,7 @@ import { formatEventDate } from '../../utils/format';
 import {
   getAnnouncementTemplateLayout,
   getEventTemplateLayout,
+  getScheduleTemplateLayout,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
 } from './rendererCalculations';
@@ -271,6 +272,110 @@ export function StandardTemplate({
     );
   }
 
+  if (project.template === 'schedule') {
+    const layout = getScheduleTemplateLayout(w, h, project);
+
+    return (
+      <g fontFamily={bodyFont} fill={branding.accent}>
+        <ChampionshipDriverHeader
+          w={w}
+          project={project}
+          profile={profile}
+          branding={branding}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+        <text
+          x={layout.margin}
+          y={layout.titleY}
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={layout.titleSize}
+          fontWeight="900"
+          letterSpacing="-3"
+        >
+          {layout.title}
+        </text>
+        <text
+          x={layout.margin}
+          y={layout.trackY}
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={layout.trackSize}
+          fontWeight="900"
+          fill={branding.primary}
+          textLength={Math.min(
+            layout.contentWidth,
+            layout.trackText.length * layout.trackSize * 0.6,
+          )}
+          lengthAdjust="spacingAndGlyphs"
+        >
+          {layout.trackText}
+        </text>
+        {layout.days.map(day => (
+          <g key={`${day.day}-${day.x}`} transform={`translate(${day.x} ${layout.daysY})`}>
+            <rect
+              width={day.width}
+              height={layout.dayHeadingSize + 22}
+              fill={branding.primary}
+              opacity=".92"
+            />
+            <text
+              x="16"
+              y="9"
+              dominantBaseline="hanging"
+              fontFamily={headingFont}
+              fontSize={layout.dayHeadingSize}
+              fontWeight="900"
+              textLength={Math.min(
+                day.width - 32,
+                day.day.length * layout.dayHeadingSize * 0.6,
+              )}
+              lengthAdjust="spacingAndGlyphs"
+            >
+              {day.day.toUpperCase()}
+            </text>
+            {day.sessions.slice(0, 5).map((session, sessionIndex) => {
+              const y =
+                layout.dayHeadingSize +
+                42 +
+                sessionIndex * layout.rowHeight;
+              return (
+                <g key={sessionIndex}>
+                  <line
+                    x1="0"
+                    x2={day.width}
+                    y1={y - 11}
+                    y2={y - 11}
+                    stroke={branding.accent}
+                    strokeOpacity=".22"
+                  />
+                  <text
+                    x="4"
+                    y={y}
+                    fontSize={layout.sessionSize}
+                    fontWeight="700"
+                  >
+                    {session.type.toUpperCase()}
+                  </text>
+                  <text
+                    x={day.width - 4}
+                    y={y}
+                    textAnchor="end"
+                    fontSize={layout.sessionSize}
+                    fontWeight="900"
+                  >
+                    {session.time || '--:--'}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        ))}
+      </g>
+    );
+  }
+
   const details = project.details;
   const {
     titleY,
@@ -383,18 +488,6 @@ export function TemplateExtras({
 
   return (
     <>
-      {extra.kind === 'schedule' && (
-        <text
-          x="74"
-          y={extra.y}
-          fill={branding.accent}
-          fontFamily={bodyFont}
-          fontSize="28"
-          style={{ whiteSpace: 'pre' }}
-        >
-          {extra.text}
-        </text>
-      )}
       {extra.kind === 'sponsor' && (
         <text
           x="74"

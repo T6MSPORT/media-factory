@@ -1,5 +1,13 @@
 import { MOTORSPORT_FONTS } from './config/branding';
-import type { Data, DriverProfile, GraphicDetails, Project } from './types';
+import type {
+  Data,
+  DriverProfile,
+  GraphicDetails,
+  Project,
+  ScheduleDay,
+  ScheduleDayName,
+  ScheduleSessionType,
+} from './types';
 
 export const STORAGE_KEY = 'media-factory-individual-v1';
 
@@ -15,7 +23,59 @@ export const emptyDetails: GraphicDetails = {
   position: '',
   scheduleLines: '',
   sponsorName: '',
+  scheduleDayCount: 1,
+  scheduleDays: [
+    {
+      day: 'Saturday',
+      sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
+        type: type as ScheduleSessionType,
+        time: '',
+      })),
+    },
+  ],
 };
+
+const scheduleDayNames: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
+const scheduleSessionTypes: ScheduleSessionType[] = [
+  'Practice',
+  'Qualifying',
+  'Race',
+];
+
+function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] {
+  const suppliedDays = Array.isArray(details.scheduleDays)
+    ? details.scheduleDays.slice(0, 3)
+    : [];
+  const requestedCount = Number(details.scheduleDayCount);
+  const dayCount = Math.min(
+    3,
+    Math.max(1, Number.isFinite(requestedCount) ? requestedCount : suppliedDays.length || 1),
+  );
+
+  return Array.from({ length: dayCount }, (_, dayIndex) => {
+    const suppliedDay = suppliedDays[dayIndex];
+    const fallbackDay = scheduleDayNames[Math.min(dayIndex + 1, 2)];
+    const day = suppliedDay && scheduleDayNames.includes(suppliedDay.day)
+      ? suppliedDay.day
+      : fallbackDay;
+
+    return {
+      day,
+      sessions: Array.from({ length: 5 }, (_, sessionIndex) => {
+        const suppliedSession = suppliedDay?.sessions?.[sessionIndex];
+        return {
+          type: suppliedSession && scheduleSessionTypes.includes(suppliedSession.type)
+            ? suppliedSession.type
+            : scheduleSessionTypes[Math.min(sessionIndex, 2)],
+          time:
+            typeof suppliedSession?.time === 'string'
+              ? suppliedSession.time
+              : '',
+        };
+      }),
+    };
+  });
+}
 
 export const starter: Data = {
   onboardingComplete: false,
@@ -83,8 +143,20 @@ export function normaliseData(value: unknown): Data {
 
   const projects = (parsed.projects || [])
     .filter(project => project.template !== 'bio')
-    .map(project => ({
+    .map(project => {
+    const details = {
+      ...emptyDetails,
+      ...project.details,
+    };
+    const scheduleDays = normaliseScheduleDays(details);
+
+    return ({
     ...project,
+    details: {
+      ...details,
+      scheduleDayCount: scheduleDays.length,
+      scheduleDays,
+    },
     driverX: Number.isFinite(project.driverX) ? project.driverX! : 0,
     driverY: Number.isFinite(project.driverY) ? project.driverY! : 0,
     driverScale: Number.isFinite(project.driverScale) ? project.driverScale! : 1,
@@ -98,7 +170,8 @@ export function normaliseData(value: unknown): Data {
       typeof project.heroImage === 'string' && project.heroImage.length < 3000000
         ? project.heroImage
         : '',
-    })) as Project[];
+    });
+    }) as Project[];
 
   return { ...starter, ...parsed, profile, branding, projects };
 }

@@ -44,6 +44,9 @@ const { MOTORSPORT_FONTS } = await server.ssrLoadModule(
 );
 const { DRIVER_FIELDS } = await server.ssrLoadModule('/src/config/profile.ts');
 const { SPONSOR_LIMIT } = await server.ssrLoadModule('/src/state/pageState.ts');
+const { TemplateFields } = await server.ssrLoadModule(
+  '/src/components/builder/TemplateFields.tsx',
+);
 const { starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -182,6 +185,90 @@ test('template library exposes all templates and opens the chosen generator', ()
     buttons.at(-1)!.props?.onClick as () => void
   )();
   assert.deepEqual(opened, [TEMPLATE_CATALOGUE.at(-1).id]);
+});
+
+test('schedule fields show only the selected days and five inline session rows per day', () => {
+  const baseProject: Project = {
+    id: 'schedule',
+    name: 'Schedule',
+    template: 'schedule',
+    format: 'feed',
+    sponsorIds: [],
+    createdAt: '',
+    updatedAt: '',
+    heroImage: '',
+    heroImageWidth: 0,
+    heroImageHeight: 0,
+    heroX: 0,
+    heroY: 0,
+    heroScale: 1,
+    heroFlip: false,
+    driverX: 0,
+    driverY: 0,
+    driverScale: 1,
+    driverVisible: true,
+    details: {
+      eventName: '',
+      round: '',
+      circuit: 'Bathurst',
+      date: '',
+      time: '',
+      headline: '',
+      subheadline: '',
+      result: '',
+      position: '',
+      scheduleLines: '',
+      sponsorName: '',
+      scheduleDayCount: 1,
+      scheduleDays: [
+        {
+          day: 'Saturday',
+          sessions: Array.from({ length: 5 }, () => ({
+            type: 'Race',
+            time: '',
+          })),
+        },
+      ],
+    },
+  };
+
+  const oneDayTree = TemplateFields({
+    project: baseProject,
+    setDetails: () => {},
+  });
+  assert.equal(findElements(oneDayTree, 'fieldset').length, 1);
+  assert.equal(findElements(oneDayTree, 'select').length, 7);
+  assert.ok(findLabel(oneDayTree, 'Track name'));
+  assert.ok(findLabel(oneDayTree, 'Day 1'));
+  assert.equal(
+    findElements(oneDayTree, 'input').filter(input => input.props?.type === 'time')
+      .length,
+    5,
+  );
+
+  const threeDayTree = TemplateFields({
+    project: {
+      ...baseProject,
+      details: {
+        ...baseProject.details,
+        scheduleDayCount: 3,
+        scheduleDays: (['Friday', 'Saturday', 'Sunday'] as const).map(day => ({
+          day,
+          sessions: Array.from({ length: 5 }, () => ({
+            type: 'Race',
+            time: '',
+          })),
+        })),
+      },
+    },
+    setDetails: () => {},
+  });
+  assert.equal(findElements(threeDayTree, 'fieldset').length, 3);
+  assert.equal(
+    findElements(threeDayTree, 'input').filter(input => input.props?.type === 'time')
+      .length,
+    15,
+  );
 });
 
 test('saved graphics empty state remains visible without successful exports', () => {

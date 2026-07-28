@@ -8,10 +8,15 @@ export type Branding = {
   primary:string; secondary:string; accent:string; headingFont:string; bodyFont:string; sponsorLogoScale:number;
 };
 export type Sponsor = {id:string; name:string; logo?:string; logoWidth?:number; logoHeight?:number};
+export type ScheduleDayName = 'Friday'|'Saturday'|'Sunday';
+export type ScheduleSessionType = 'Practice'|'Qualifying'|'Race';
+export type ScheduleSession = { type:ScheduleSessionType; time:string };
+export type ScheduleDay = { day:ScheduleDayName; sessions:ScheduleSession[] };
 export type GraphicDetails = {
   eventName:string; round:string; circuit:string; date:string; time:string;
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
+  scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];

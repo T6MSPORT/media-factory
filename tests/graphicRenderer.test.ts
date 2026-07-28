@@ -68,6 +68,19 @@ const details = {
   position: 'P2',
   scheduleLines: 'QUALIFYING · 19:30',
   sponsorName: 'Corbeau',
+  scheduleDayCount: 1,
+  scheduleDays: [
+    {
+      day: 'Saturday',
+      sessions: [
+        { type: 'Practice', time: '18:30' },
+        { type: 'Qualifying', time: '19:00' },
+        { type: 'Race', time: '19:30' },
+        { type: 'Race', time: '20:00' },
+        { type: 'Race', time: '20:30' },
+      ],
+    },
+  ],
 };
 
 const templates: TemplateId[] = [
@@ -90,9 +103,9 @@ const expectedHashes: Record<string, string> = {
   'announcement:feed':
     'f3ac6312fca534ca3d1badaeae712106ac174b4cda159a963a209d080bc539d0',
   'schedule:story':
-    '0d107219b673d89bdc451ae12f9ec7b4ddd6b8e875e749978c0778926b1db3f8',
+    'd6b99589d3acaddab563fe7ecdc0c711808b878139143a6fba75a1fc010bbebe',
   'schedule:feed':
-    'c8ebf993b4a980afb960c31b9f01b6ca91f50e80b189596159dae3e5d4def74c',
+    'baa2b09b72a61cebb4a4027ed348d7d8fe526ecece3235965cff7de78b4f3874',
   'qualifying:story':
     '1f8efadb99ae3bd11270ae5a0577b5259b8d0600652903759afed33c03f11e89',
   'qualifying:feed':

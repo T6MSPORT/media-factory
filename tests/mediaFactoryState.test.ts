@@ -75,6 +75,15 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
       position: '',
       scheduleLines: '',
       sponsorName: '',
+      scheduleDayCount: 1,
+      scheduleDays: [
+        {
+          day: 'Saturday',
+          sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(
+            type => ({ type, time: '' }),
+          ),
+        },
+      ],
     },
   });
 });

@@ -239,3 +239,19 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
     max-height: calc(100dvh - 108px);
   }
 }
+
+.schedule-fields{grid-column:1/-1;display:grid;gap:9px;min-width:0}
+.schedule-top-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.schedule-day-grid{display:grid;grid-template-columns:repeat(var(--schedule-days,1),minmax(0,1fr));gap:10px}
+.schedule-day-grid[data-days="1"]{--schedule-days:1}
+.schedule-day-grid[data-days="2"]{--schedule-days:2}
+.schedule-day-grid[data-days="3"]{--schedule-days:3}
+.schedule-day{min-width:0;margin:0;padding:8px;border:1px solid #303640;border-radius:8px}
+.schedule-sessions{display:grid;gap:5px;margin-top:7px}
+.schedule-session-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:5px}
+.schedule-session-row label{font-size:9px;letter-spacing:.3px}
+.schedule-session-row select,.schedule-session-row input{min-width:0;padding-inline:6px}
+
+@media(max-width:700px){
+  .schedule-top-fields,.schedule-day-grid{grid-template-columns:1fr}
+}

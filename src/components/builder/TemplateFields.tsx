@@ -1,5 +1,10 @@
 import { TEMPLATE_FIELDS } from '../../config/templates';
-import type { Project } from '../../types';
+import type {
+  Project,
+  ScheduleDay,
+  ScheduleDayName,
+  ScheduleSessionType,
+} from '../../types';
 import { TextField } from '../forms/PropertyEditor';
 
 type TemplateFieldsProps = {
@@ -8,6 +13,10 @@ type TemplateFieldsProps = {
 };
 
 export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
+  if (project.template === 'schedule') {
+    return <ScheduleFields project={project} setDetails={setDetails} />;
+  }
+
   return (
     <>
       {TEMPLATE_FIELDS[project.template].map(field =>
@@ -15,7 +24,7 @@ export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
           <label key={field.key}>
             {field.label}
             <textarea
-              value={project.details[field.key]}
+              value={String(project.details[field.key] ?? '')}
               placeholder={field.placeholder}
               onChange={event =>
                 setDetails({
@@ -31,12 +40,153 @@ export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
           <TextField
             key={field.key}
             label={field.label}
-            value={project.details[field.key]}
+            value={String(project.details[field.key] ?? '')}
             type={field.type}
             onChange={value => setDetails({ [field.key]: value })}
           />
         ),
       )}
     </>
+  );
+}
+
+const DAY_OPTIONS: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
+const SESSION_OPTIONS: ScheduleSessionType[] = [
+  'Practice',
+  'Qualifying',
+  'Race',
+];
+
+function makeDay(index: number): ScheduleDay {
+  return {
+    day: DAY_OPTIONS[Math.min(index + 1, 2)],
+    sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
+      type: type as ScheduleSessionType,
+      time: '',
+    })),
+  };
+}
+
+function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
+  const dayCount = Math.min(
+    3,
+    Math.max(1, project.details.scheduleDayCount || project.details.scheduleDays?.length || 1),
+  );
+  const days = Array.from(
+    { length: dayCount },
+    (_, index) => project.details.scheduleDays?.[index] || makeDay(index),
+  );
+
+  const updateDays = (nextDays: ScheduleDay[]) =>
+    setDetails({
+      scheduleDayCount: nextDays.length,
+      scheduleDays: nextDays,
+    });
+
+  return (
+    <div className="schedule-fields">
+      <div className="schedule-top-fields">
+        <label>
+          Schedule days
+          <select
+            value={dayCount}
+            onChange={event => {
+              const nextCount = Number(event.target.value);
+              updateDays(
+                Array.from(
+                  { length: nextCount },
+                  (_, index) => days[index] || makeDay(index),
+                ),
+              );
+            }}
+          >
+            <option value="1">1 day</option>
+            <option value="2">2 days</option>
+            <option value="3">3 days</option>
+          </select>
+        </label>
+
+        <TextField
+          label="Track name"
+          value={project.details.circuit}
+          onChange={circuit => setDetails({ circuit })}
+        />
+      </div>
+
+      <div className="schedule-day-grid" data-days={dayCount}>
+        {days.map((scheduleDay, dayIndex) => (
+          <fieldset className="schedule-day" key={dayIndex}>
+          <label>
+            Day {dayIndex + 1}
+            <select
+              value={scheduleDay.day}
+              onChange={event => {
+                const nextDays = [...days];
+                nextDays[dayIndex] = {
+                  ...scheduleDay,
+                  day: event.target.value as ScheduleDayName,
+                };
+                updateDays(nextDays);
+              }}
+            >
+              {DAY_OPTIONS.map(day => (
+                <option value={day} key={day}>
+                  {day}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="schedule-sessions">
+            {scheduleDay.sessions.map((session, sessionIndex) => (
+              <div className="schedule-session-row" key={sessionIndex}>
+                <label>
+                  Session {sessionIndex + 1}
+                  <select
+                    aria-label={`Day ${dayIndex + 1} session ${sessionIndex + 1}`}
+                    value={session.type}
+                    onChange={event => {
+                      const nextDays = [...days];
+                      const sessions = [...scheduleDay.sessions];
+                      sessions[sessionIndex] = {
+                        ...session,
+                        type: event.target.value as ScheduleSessionType,
+                      };
+                      nextDays[dayIndex] = { ...scheduleDay, sessions };
+                      updateDays(nextDays);
+                    }}
+                  >
+                    {SESSION_OPTIONS.map(type => (
+                      <option value={type} key={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Time
+                  <input
+                    aria-label={`Day ${dayIndex + 1} session ${sessionIndex + 1} time`}
+                    type="time"
+                    value={session.time}
+                    onChange={event => {
+                      const nextDays = [...days];
+                      const sessions = [...scheduleDay.sessions];
+                      sessions[sessionIndex] = {
+                        ...session,
+                        time: event.target.value,
+                      };
+                      nextDays[dayIndex] = { ...scheduleDay, sessions };
+                      updateDays(nextDays);
+                    }}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
+          </fieldset>
+        ))}
+      </div>
+    </div>
   );
 }
