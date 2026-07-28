@@ -124,9 +124,9 @@ test('event layout preserves the approved story positions and round wording', ()
     eventTrackSize: 156.66666666666666,
     eventTrackText: 'BATHURST',
     eventDateSize: 63,
-    eventRoundY: 672,
-    eventTrackY: 773,
-    eventDateY: 965.6666666666666,
+    eventRoundY: 654,
+    eventTrackY: 737,
+    eventDateY: 911.6666666666666,
     roundLabel: 'ROUND 3',
   });
 
