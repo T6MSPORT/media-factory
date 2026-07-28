@@ -60,7 +60,14 @@ export const TEMPLATE_FIELDS: Record<
   readonly TemplateFieldDefinition[]
 > = {
   event: raceFields,
-  announcement: [...timedRaceFields, ...overrideFields],
+  announcement: [
+    {
+      key: 'subheadline',
+      label: 'Text',
+      type: 'textarea',
+      placeholder: 'Enter the announcement text',
+    },
+  ],
   bio: overrideFields,
   schedule: [
     ...timedRaceFields,

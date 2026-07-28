@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   getBackgroundLayout,
+  getAnnouncementTemplateLayout,
   getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
@@ -226,6 +227,32 @@ test('derived headings and achievement labels remain template-specific', () => {
       headingFont: 'Microgramma, Arial, sans-serif',
       bodyFont: 'Aldrich, Arial, sans-serif',
     },
+  );
+});
+
+test('announcement uses a full-width top heading and half-width fitted text block', () => {
+  const announcement = getAnnouncementTemplateLayout(1080, 1920, {
+    ...project,
+    template: 'announcement',
+    format: 'story',
+    details: {
+      ...details,
+      subheadline:
+        'PTEC welcomes a new championship partner for the forthcoming season.',
+    },
+  });
+
+  assert.equal(announcement.title, 'ANNOUNCEMENT');
+  assert.equal(announcement.titleX, 70);
+  assert.equal(announcement.titleY, 350);
+  assert.equal(announcement.titleMaxWidth, 940);
+  assert.equal(announcement.textBoxWidth, 470);
+  assert.ok(announcement.lines.length > 1);
+  assert.ok(
+    announcement.lines.length *
+      announcement.textSize *
+      1.28 <=
+      announcement.textBoxHeight,
   );
 });
 

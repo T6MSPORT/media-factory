@@ -51,6 +51,82 @@ export function getStandardTemplateLayout(
   };
 }
 
+function wrapTextToWidth(
+  text: string,
+  fontSize: number,
+  maxWidth: number,
+  widthFactor = 0.58,
+) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length * fontSize * widthFactor <= maxWidth || !line) {
+      line = candidate;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+export function getAnnouncementTemplateLayout(
+  w: number,
+  h: number,
+  project: Project,
+) {
+  const isStory = project.format === 'story';
+  const margin = 70;
+  const title = templateTitles.announcement;
+  const titleMaxWidth = w - margin * 2;
+  const titleSize = fitTextSize(
+    title,
+    isStory ? 122 : 104,
+    titleMaxWidth,
+    isStory ? 82 : 70,
+    0.59,
+  );
+  const titleY = isStory ? 350 : 310;
+  const textX = margin;
+  const textY = titleY + titleSize + (isStory ? 46 : 38);
+  const textBoxWidth = (w - margin * 2) / 2;
+  const textBoxHeight = isStory ? 520 : 340;
+  const copy =
+    project.details.subheadline.trim() || 'ENTER THE ANNOUNCEMENT TEXT';
+  const preferredTextSize = isStory ? 48 : 40;
+  const minimumTextSize = isStory ? 24 : 21;
+  let textSize = preferredTextSize;
+  let lines = wrapTextToWidth(copy, textSize, textBoxWidth);
+
+  while (
+    textSize > minimumTextSize &&
+    lines.length * textSize * 1.28 > textBoxHeight
+  ) {
+    textSize -= 1;
+    lines = wrapTextToWidth(copy, textSize, textBoxWidth);
+  }
+
+  return {
+    title,
+    titleX: margin,
+    titleY,
+    titleSize,
+    titleMaxWidth,
+    textX,
+    textY,
+    textSize,
+    textBoxWidth,
+    textBoxHeight,
+    textLineHeight: textSize * 1.28,
+    lines,
+  };
+}
+
 export function getTemplateExtraLayout(
   h: number,
   project: Project,

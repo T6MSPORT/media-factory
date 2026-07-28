@@ -1,6 +1,7 @@
 import type { Branding, DriverProfile, Project } from '../../types';
 import { formatEventDate } from '../../utils/format';
 import {
+  getAnnouncementTemplateLayout,
   getEventTemplateLayout,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
@@ -201,6 +202,51 @@ export function StandardTemplate({
   headingFont,
   bodyFont,
 }: TemplateSharedProps & { w: number; h: number; title: string; sub: string }) {
+  if (project.template === 'announcement') {
+    const layout = getAnnouncementTemplateLayout(w, h, project);
+
+    return (
+      <g fontFamily={bodyFont} fill={branding.accent}>
+        <ChampionshipDriverHeader
+          w={w}
+          project={project}
+          profile={profile}
+          branding={branding}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+        <text
+          x={layout.titleX}
+          y={layout.titleY}
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={layout.titleSize}
+          fontWeight="900"
+          letterSpacing="-3"
+        >
+          {layout.title}
+        </text>
+        <text
+          x={layout.textX}
+          y={layout.textY}
+          dominantBaseline="hanging"
+          fontSize={layout.textSize}
+          fontWeight="700"
+        >
+          {layout.lines.map((line, index) => (
+            <tspan
+              key={`${line}-${index}`}
+              x={layout.textX}
+              dy={index === 0 ? 0 : layout.textLineHeight}
+            >
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
+    );
+  }
+
   const details = project.details;
   const {
     titleY,
