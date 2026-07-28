@@ -213,11 +213,11 @@ export function StandardTemplate({
             x1="0"
             y1="0"
             x2="1"
-            y2="0"
+            y2="1"
           >
-            <stop offset="0%" stopColor="#4a4a4a" stopOpacity=".82" />
-            <stop offset="72%" stopColor="#4a4a4a" stopOpacity=".56" />
-            <stop offset="100%" stopColor="#4a4a4a" stopOpacity="0" />
+            <stop offset="0%" stopColor="#000000" stopOpacity=".58" />
+            <stop offset="62%" stopColor="#000000" stopOpacity=".28" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </linearGradient>
         </defs>
         <ChampionshipDriverHeader
