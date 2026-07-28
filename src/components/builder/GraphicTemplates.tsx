@@ -50,9 +50,25 @@ export function EventTemplate({
     eventDateY,
     roundLabel,
   } = getEventTemplateLayout(w, project, profile);
+  const eventContrastTop = eventHeadingY - (isStory ? 28 : 24);
+  const eventContrastBottom =
+    eventDateY + eventDateSize + (isStory ? 30 : 26);
 
   return (
     <g fill={branding.accent}>
+      <defs>
+        <linearGradient
+          id="next-race-event-contrast"
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="0%"
+        >
+          <stop offset="0%" stopColor="#000000" stopOpacity="0.62" />
+          <stop offset="68%" stopColor="#000000" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+        </linearGradient>
+      </defs>
       <g textAnchor="start">
         <text
           x={eventIdentityRight}
@@ -114,6 +130,14 @@ export function EventTemplate({
           />
         )}
       </g>
+      <rect
+        x={eventBlockX - (isStory ? 30 : 26)}
+        y={eventContrastTop}
+        width={isStory ? 850 : 720}
+        height={eventContrastBottom - eventContrastTop}
+        rx={isStory ? 12 : 10}
+        fill="url(#next-race-event-contrast)"
+      />
       <text
         x={eventBlockX}
         y={eventHeadingY}
@@ -145,6 +169,10 @@ export function EventTemplate({
         fontWeight="900"
         fill={branding.primary}
         letterSpacing="-3"
+        stroke="#080808"
+        strokeWidth={isStory ? 3 : 2.5}
+        strokeLinejoin="round"
+        paintOrder="stroke fill"
       >
         {eventTrackText}
       </text>
