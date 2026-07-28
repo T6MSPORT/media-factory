@@ -215,7 +215,7 @@ export function getEventTemplateLayout(
     isStory ? 198 : 167,
     eventTrackMaxWidth,
     isStory ? 54 : 46,
-    0.42,
+    0.52,
   );
   const eventDateSize = isStory ? 63 : 54;
   const eventGap = isStory ? 18 : 15;
