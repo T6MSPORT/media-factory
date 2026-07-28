@@ -183,9 +183,29 @@ test('event text fits long track names and three-digit car numbers inside their 
 
   assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
   assert.equal(layout.eventTrackMaxWidth, 940);
-  assert.ok(Math.abs(layout.eventTrackSize - 81.03448) < 0.001);
+  assert.ok(Math.abs(layout.eventTrackSize - 111.90476) < 0.001);
   assert.equal(layout.eventNumberText, '#333');
   assert.equal(layout.eventNumberSize, 72);
+});
+
+test('event layout keeps Donington National prominent while fitting the canvas', () => {
+  for (const format of ['story', 'feed'] as const) {
+    const layout = getEventTemplateLayout(
+      1080,
+      {
+        ...project,
+        format,
+        details: { ...project.details, circuit: 'Donington National' },
+      },
+      profile,
+    );
+
+    assert.ok(layout.eventTrackSize >= 124);
+    assert.ok(
+      layout.eventTrackText.length * layout.eventTrackSize * 0.42 <=
+        layout.eventTrackMaxWidth,
+    );
+  }
 });
 
 test('derived headings and achievement labels remain template-specific', () => {
