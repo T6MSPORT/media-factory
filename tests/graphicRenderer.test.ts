@@ -29,6 +29,9 @@ const data: Data = {
     car: 'Cupra',
     location: 'West Yorkshire',
     age: '40',
+    optionalInfo1: 'British Touring Car Driver',
+    optionalInfo2: '2025 Champion',
+    optionalInfo3: '',
     driverImage: 'data:image/png;base64,driver',
     teamLogo: 'data:image/png;base64,team',
     competitionLogo: 'data:image/png;base64,competition',
@@ -94,9 +97,9 @@ const expectedHashes: Record<string, string> = {
   'announcement:feed':
     'f3ac6312fca534ca3d1badaeae712106ac174b4cda159a963a209d080bc539d0',
   'bio:story':
-    '75546c4ab043dbc4c07d8411f58167777f43bb08b68e66037d4e9ab84bc9b688',
+    '2dd7d61ba37c434a94f835f514058da47335d07940070bf1149a0be41019e7ff',
   'bio:feed':
-    '76a9be5c79287bf3505d50757bd4712f9a4bcd2ea31ff459214b2749401dd66d',
+    'ab38c5fc60ee7194bf96b714e2eba4ebcb6eb96c8cd2fe1d9bab5faba425e58c',
   'schedule:story':
     '0d107219b673d89bdc451ae12f9ec7b4ddd6b8e875e749978c0778926b1db3f8',
   'schedule:feed':
