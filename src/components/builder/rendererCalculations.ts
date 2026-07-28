@@ -335,7 +335,7 @@ export function getSponsorLayouts(
       Math.max(0.65, sponsorLogoScale || 1),
     );
     const minimumGap = 36;
-    const maximumGap = 96;
+    const maximumGap = 80;
     const availableWidth = w - 72;
     const rectangularIndexes = rowSponsors
       .map((sponsor, index) => {

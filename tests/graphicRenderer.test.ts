@@ -86,33 +86,33 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '21cb0781b5b767eac1603d81a2ebc377e9ae2fe32ff2f61baec5eed004600370',
+    'f9b7ce5e2d076704efc13757a7070a6d64ee4d626e4a5ee0c81b227c3f05c389',
   'event:feed':
-    '9ab6a67c49365eb08577c8906fb8395d9ca01946c18bc499ab33117fa7f08faa',
+    '87280957e814b61e39a1498c8dadd7eeccf83fe6196734838f61f76cdae2d78d',
   'announcement:story':
-    '26b66021cd5ea16f3c89bda15f5783394973b27da25cd8abf33e3d51724ce6d8',
+    'ccf1e7c3a56c5029aec645734296e23368d8029a42bfcaaf0fe4c9d37aa97046',
   'announcement:feed':
-    '1e2b88bceaccf7fa91ef68ea6cfb0557e8986ecefe92e5d5bd79eb734580cd44',
+    '91c02badb7d3bec7930e1693644c3dd09fb892b39795a55abe8681dc377a9402',
   'bio:story':
-    '36944869a1aa57b6cbcf7b15f5e0879a30a46dd6ba38a910675af6e2865ac9e3',
+    '5779f26810800bfde3257bb64ae8d128b69cabb66bb1537100b06c011de30655',
   'bio:feed':
-    'c8b7d17872285f5849ff73b0bb4a364b992b9ca33777d3fa696255189179d696',
+    'b7bb66d6f7ff6badf53aa7bca117460d58732943ed2404e8cc0a602a85c5a20c',
   'schedule:story':
-    'c2254ec9c450450e654df7e383afa4b12d1feb921c93ec648aba685742099922',
+    'adbacee674155504d9b7f539908935c5f9485b7f6f2ab4d983775613f0f29181',
   'schedule:feed':
-    '55832e798a2fa9308da8528a72948e03120673a85d56be0e0ce1674e9e914d75',
+    'f06ca3ee208759fd47aa0ca1e78f505334beb7b0d3f4571dd8b4fde40cc2c1b3',
   'qualifying:story':
-    'f8feb67ea775ee9506e8448afea5516ff932869d72a3d9ee6b39457b80fa9ab9',
+    '101f08b2ec03cae8245da4fd01b55de2e26c1038a46d5bb1b97ba85f7fc3b12e',
   'qualifying:feed':
-    'b554eaa0d0405f734444c30a78fdf12c014d483fabdfdf189deddeda40b537ae',
+    '29b3445932bfb93ef24f3024783a6c30196ca71f90c4057a077cb78f2bb73e5c',
   'results:story':
-    'a58fa6eff8f9ddf7db3189c97d7676e019373f499b1109876d093efd3f8058d4',
+    'de56bea4c6d56054dba0fd498fe5021cf3c2086b12982dc710f7c0839153f9ea',
   'results:feed':
-    'e9f4681f26c67edf6a1c001f9ba946d3b307517ea2bf80ee3be6fdba5cd4b2b4',
+    '5cf66192a5ad4794a0b4ac47cdc2dda4eba61e5d80a227df1768a922ce267b1f',
   'sponsor:story':
-    '4481b7343b12eed4cbfee2d0c6d2f51e44e6f1885dbaf9b3061bf7737a6f394b',
+    'f837b31422234452a049513e8c0cff15c62048be1ee6f6fec1904bef09027f06',
   'sponsor:feed':
-    '03899248d11d313a3ad959894cc6380e116714e1dcafe9945778e25e8c4dd861',
+    'a50c422d953b9227bf5644293f6cb3f8b4c15ad738f8d05d2ec3f79321cfa6cf',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
