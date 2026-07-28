@@ -19,7 +19,17 @@ export const emptyDetails: GraphicDetails = {
 
 export const starter: Data = {
   onboardingComplete: false,
-  profile: { name: '', number: '', team: '', car: '', location: '', age: '' },
+  profile: {
+    name: '',
+    number: '',
+    team: '',
+    car: '',
+    location: '',
+    age: '',
+    optionalInfo1: '',
+    optionalInfo2: '',
+    optionalInfo3: '',
+  },
   branding: {
     primary: '#ef3b3b',
     secondary: '#111317',
