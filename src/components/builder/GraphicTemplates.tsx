@@ -334,8 +334,9 @@ export function StandardTemplate({
               opacity=".92"
             />
             <text
-              x="16"
+              x={day.width / 2}
               y={layout.dayHeadingHeight / 2}
+              textAnchor="middle"
               dominantBaseline="middle"
               fontFamily={headingFont}
               fontSize={layout.dayHeadingSize}
