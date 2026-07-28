@@ -215,8 +215,8 @@ export function StandardTemplate({
             x2="1"
             y2="1"
           >
-            <stop offset="0%" stopColor="#000000" stopOpacity=".58" />
-            <stop offset="62%" stopColor="#000000" stopOpacity=".28" />
+            <stop offset="0%" stopColor="#000000" stopOpacity=".32" />
+            <stop offset="62%" stopColor="#000000" stopOpacity=".12" />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </linearGradient>
         </defs>
