@@ -2,6 +2,7 @@ export type TemplateId = 'event'|'announcement'|'bio'|'schedule'|'qualifying'|'r
 export type FormatId = 'feed'|'story';
 export type DriverProfile = {
   name:string; number:string; team:string; car:string; location:string; age:string;
+  optionalInfo1:string; optionalInfo2:string; optionalInfo3:string;
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
 };
 export type Branding = {
