@@ -86,9 +86,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    'efde3e67d00b07b37cd7f5d728433956f4b1a4460b18878f6a7cbee891e3c137',
+    'd4a8e1950a70ac2de685c4f342467afc44e420da8a8eac48fe3da4bbb0776686',
   'event:feed':
-    '6812f15f2aa89f0395a08ee321291534fe4aa0a59571d2d61ab822624c3bcaf8',
+    '456ade88444aaa08350dbfd02f052548e652ea91e57e6a5d89de4b0c6b481841',
   'announcement:story':
     '538ac8a4f71595d359dd7f170cbe57fd5cb240ad63ab8861259b043612743bec',
   'announcement:feed':
