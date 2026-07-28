@@ -398,7 +398,7 @@ test('mixed sponsor logo shapes keep equal visible gaps', () => {
       (layouts[index].logoX + layouts[index].logoW),
   );
 
-  visibleGaps.forEach((gap) => assert.equal(gap, 80));
+  visibleGaps.forEach((gap) => assert.equal(gap, 40));
   assert.ok(
     Math.abs(
       layouts[0].logoX -
