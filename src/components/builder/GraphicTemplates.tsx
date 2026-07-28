@@ -258,3 +258,69 @@ export function AchievementBadge({
         x="22"
         y="38"
         fill={branding.accent}
+        fontFamily={headingFont}
+        fontSize="27"
+        fontWeight="900"
+      >
+        {achievement}
+      </text>
+      <text
+        x="22"
+        y="70"
+        fill={branding.accent}
+        fontFamily={bodyFont}
+        fontSize="18"
+      >
+        ACHIEVEMENT
+      </text>
+    </g>
+  );
+}
+
+export function TemplateExtras({
+  h,
+  project,
+  profile,
+  branding,
+  headingFont,
+  bodyFont,
+}: TemplateSharedProps & { h: number }) {
+  const extra = getTemplateExtraLayout(h, project, profile);
+
+  return (
+    <>
+      {extra.kind === 'bio' && (
+        <g fill={branding.accent} fontFamily={bodyFont} fontSize="26">
+          {extra.rows.map(row => (
+            <text key={row.y} x="74" y={row.y}>
+              {row.text}
+            </text>
+          ))}
+        </g>
+      )}
+      {extra.kind === 'schedule' && (
+        <text
+          x="74"
+          y={extra.y}
+          fill={branding.accent}
+          fontFamily={bodyFont}
+          fontSize="28"
+          style={{ whiteSpace: 'pre' }}
+        >
+          {extra.text}
+        </text>
+      )}
+      {extra.kind === 'sponsor' && (
+        <text
+          x="74"
+          y={extra.y}
+          fill={branding.accent}
+          fontFamily={headingFont}
+          fontSize="45"
+        >
+          {extra.text}
+        </text>
+      )}
+    </>
+  );
+}
