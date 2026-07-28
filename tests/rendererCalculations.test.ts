@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   getBackgroundLayout,
   getAnnouncementTemplateLayout,
+  getBioTemplateLayout,
   getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
@@ -55,6 +56,9 @@ const profile = {
   car: 'Cupra',
   location: 'West Yorkshire',
   age: '40',
+  optionalInfo1: 'British Touring Car Driver',
+  optionalInfo2: '',
+  optionalInfo3: '',
   competitionLogo: 'data:image/png;base64,competition',
 };
 
@@ -352,22 +356,32 @@ test('every template retains its default title and standard layout behaviour', (
   );
 });
 
-test('template extras retain bio, schedule and sponsor content', () => {
+test('driver profile title and large optional information rows remain stacked and bounded', () => {
+  const layout = getBioTemplateLayout(
+    1080,
+    { ...project, format: 'story' },
+    profile,
+  );
+
+  assert.equal(layout.titleY, 330);
+  assert.equal(layout.titleSize, 96);
+  assert.equal(layout.rowSize, 46);
   assert.deepEqual(
-    getTemplateExtraLayout(
-      1350,
-      { ...project, template: 'bio' },
-      profile,
-    ),
-    {
-      kind: 'bio',
-      rows: [
-        { y: 1080, text: 'TEAM  T6 Msport' },
-        { y: 1122, text: 'LOCATION  West Yorkshire' },
-        { y: 1164, text: 'AGE  40' },
-        { y: 1206, text: 'CAR  Cupra' },
-      ],
-    },
+    layout.rows.map(row => [row.label, row.value, row.y]),
+    [
+      ['LOCATION', 'West Yorkshire', 484],
+      ['AGE', '40', 562],
+      ['CAR', 'Cupra', 640],
+      [undefined, 'British Touring Car Driver', 718],
+    ],
+  );
+  assert.ok(layout.rows.every(row => row.textLength <= layout.rowMaxWidth));
+});
+
+test('template extras retain schedule and sponsor content', () => {
+  assert.deepEqual(
+    getTemplateExtraLayout(1350, { ...project, template: 'bio' }, profile),
+    { kind: 'none' },
   );
   assert.deepEqual(
     getTemplateExtraLayout(
