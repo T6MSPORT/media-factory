@@ -112,6 +112,16 @@ export function getAnnouncementTemplateLayout(
     lines = wrapTextToWidth(copy, textSize, textBoxWidth);
   }
 
+  const textWidthFactor = 0.58;
+  const textBackgroundPaddingX = isStory ? 24 : 20;
+  const textBackgroundPaddingY = isStory ? 20 : 16;
+  const longestLineWidth = Math.min(
+    textBoxWidth,
+    Math.max(...lines.map(line => line.length * textSize * textWidthFactor)),
+  );
+  const renderedTextHeight =
+    textSize + Math.max(0, lines.length - 1) * textSize * 1.28;
+
   return {
     title,
     titleX: margin,
@@ -124,6 +134,12 @@ export function getAnnouncementTemplateLayout(
     textBoxWidth,
     textBoxHeight,
     textLineHeight: textSize * 1.28,
+    textBackgroundX: textX - textBackgroundPaddingX,
+    textBackgroundY: textY - textBackgroundPaddingY,
+    textBackgroundWidth:
+      longestLineWidth + textBackgroundPaddingX * 2,
+    textBackgroundHeight:
+      renderedTextHeight + textBackgroundPaddingY * 2,
     lines,
   };
 }

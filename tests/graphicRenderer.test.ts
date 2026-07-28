@@ -90,9 +90,9 @@ const expectedHashes: Record<string, string> = {
   'event:feed':
     '5a838d6ed2ca65a5e588f1c2abeb2ca18c30a475b943c028f352c681587293bc',
   'announcement:story':
-    '91612fe8418ced77759725e24fe02813a431ea00120438e04c0621ad0e4ca05c',
+    'c59f32c1e9a14c558ff340f2a4f2b1bb84553b159c5e2b1d05b7fae70606b391',
   'announcement:feed':
-    'd34783eee7a1b3c27399f06aca8365a031749c2d1a8b43cd64356725f6b288a8',
+    'a45fe4473a656dee8b8afbe55af73ea14b65c10287b6d0064dc310bd1d784295',
   'bio:story':
     '75546c4ab043dbc4c07d8411f58167777f43bb08b68e66037d4e9ab84bc9b688',
   'bio:feed':
@@ -187,6 +187,13 @@ for (const template of templates) {
         assert.match(markup, /stroke="#080808"/);
         assert.match(markup, /paint-order="stroke fill"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
+      }
+      if (template === 'announcement') {
+        assert.match(markup, /id="announcement-text-background"/);
+        assert.match(
+          markup,
+          /fill="url\(#announcement-text-background\)"/,
+        );
       }
     });
   }

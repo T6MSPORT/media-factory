@@ -252,6 +252,15 @@ test('announcement uses a full-width top heading and full-width fitted uppercase
     'PTEC WELCOMES A NEW CHAMPIONSHIP PARTNER FOR THE FORTHCOMING SEASON.',
   );
   assert.ok(announcement.lines.length > 1);
+  assert.equal(announcement.textBackgroundX, announcement.textX - 24);
+  assert.equal(announcement.textBackgroundY, announcement.textY - 20);
+  assert.ok(announcement.textBackgroundWidth <= announcement.textBoxWidth + 48);
+  assert.equal(
+    announcement.textBackgroundHeight,
+    announcement.textSize +
+      (announcement.lines.length - 1) * announcement.textLineHeight +
+      40,
+  );
   assert.ok(
     announcement.lines.length *
       announcement.textSize *

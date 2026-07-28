@@ -207,6 +207,19 @@ export function StandardTemplate({
 
     return (
       <g fontFamily={bodyFont} fill={branding.accent}>
+        <defs>
+          <linearGradient
+            id="announcement-text-background"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#4a4a4a" stopOpacity=".82" />
+            <stop offset="72%" stopColor="#4a4a4a" stopOpacity=".56" />
+            <stop offset="100%" stopColor="#4a4a4a" stopOpacity="0" />
+          </linearGradient>
+        </defs>
         <ChampionshipDriverHeader
           w={w}
           project={project}
@@ -226,6 +239,13 @@ export function StandardTemplate({
         >
           {layout.title}
         </text>
+        <rect
+          x={layout.textBackgroundX}
+          y={layout.textBackgroundY}
+          width={layout.textBackgroundWidth}
+          height={layout.textBackgroundHeight}
+          fill="url(#announcement-text-background)"
+        />
         <text
           x={layout.textX}
           y={layout.textY}
