@@ -26,7 +26,7 @@ export const emptyDetails: GraphicDetails = {
   scheduleDayCount: 1,
   scheduleDays: [
     {
-      day: 'Saturday',
+      day: '',
       sessions: Array.from({ length: 5 }, () => ({
         type: '' as ScheduleSessionType,
         time: '',
@@ -35,7 +35,7 @@ export const emptyDetails: GraphicDetails = {
   ],
 };
 
-const scheduleDayNames: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
+const scheduleDayNames: ScheduleDayName[] = ['', 'Friday', 'Saturday', 'Sunday'];
 const scheduleSessionTypes: ScheduleSessionType[] = [
   '',
   'Practice',
@@ -55,7 +55,7 @@ function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] 
 
   return Array.from({ length: dayCount }, (_, dayIndex) => {
     const suppliedDay = suppliedDays[dayIndex];
-    const fallbackDay = scheduleDayNames[Math.min(dayIndex + 1, 2)];
+    const fallbackDay: ScheduleDayName = '';
     const day = suppliedDay && scheduleDayNames.includes(suppliedDay.day)
       ? suppliedDay.day
       : fallbackDay;

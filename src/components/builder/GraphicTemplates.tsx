@@ -335,8 +335,8 @@ export function StandardTemplate({
             />
             <text
               x="16"
-              y="9"
-              dominantBaseline="hanging"
+              y={layout.dayHeadingHeight / 2}
+              dominantBaseline="middle"
               fontFamily={headingFont}
               fontSize={layout.dayHeadingSize}
               fontWeight="900"
@@ -346,7 +346,7 @@ export function StandardTemplate({
               )}
               lengthAdjust="spacingAndGlyphs"
             >
-              {day.day.toUpperCase()}
+              {day.day.toUpperCase() || 'SELECT DAY'}
             </text>
             {day.sessions.map((session, sessionIndex) => {
               const rowTop =
@@ -374,8 +374,10 @@ export function StandardTemplate({
                   <g
                     fill="none"
                     stroke={branding.primary}
-                    strokeWidth="2"
-                    strokeOpacity=".62"
+                    strokeWidth="4"
+                    strokeOpacity=".72"
+                    strokeLinecap="square"
+                    strokeLinejoin="miter"
                   >
                     {Array.from({
                       length: Math.max(
@@ -390,12 +392,12 @@ export function StandardTemplate({
                         layout.chevronStartX +
                         chevronIndex * layout.chevronGap;
                       const chevronHalfHeight = Math.max(
-                        4,
-                        layout.sessionSize * 0.12,
+                        6,
+                        layout.sessionSize * 0.17,
                       );
                       const chevronWidth = Math.max(
-                        5,
-                        layout.sessionSize * 0.14,
+                        8,
+                        layout.sessionSize * 0.2,
                       );
                       return (
                         <path

@@ -32,6 +32,12 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
   const svg = useRef<SVGSVGElement>(null);
   const backgroundDrag = useBackgroundDrag(svg, project, patch);
   const sponsors = data.sponsors.slice(0, 10);
+  const scheduleDaysComplete =
+    project.template !== 'schedule' ||
+    (project.details.scheduleDays
+      ?.slice(0, project.details.scheduleDayCount || 1)
+      .every(day => Boolean(day.day)) ??
+      false);
 
   const setDetails = (details: Partial<Project['details']>) =>
     patch({ details: { ...project.details, ...details } });
@@ -49,7 +55,16 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
           Templates
         </button>
         <input value={project.name} onChange={event => patch({ name: event.target.value })} />
-        <button onClick={exportPng} className="primary">
+        <button
+          onClick={exportPng}
+          className="primary"
+          disabled={!scheduleDaysComplete}
+          title={
+            scheduleDaysComplete
+              ? undefined
+              : 'Select a day for every schedule section before exporting'
+          }
+        >
           <Download size={18} />
           Export PNG
         </button>

@@ -223,7 +223,7 @@ test('schedule fields show only the selected days and five inline session rows p
       scheduleDayCount: 1,
       scheduleDays: [
         {
-          day: 'Saturday',
+          day: '',
           sessions: Array.from({ length: 5 }, () => ({
             type: '',
             time: '',
@@ -241,10 +241,15 @@ test('schedule fields show only the selected days and five inline session rows p
   assert.equal(findElements(oneDayTree, 'select').length, 7);
   assert.equal(
     findElements(oneDayTree, 'select').filter(select => select.props?.value === '').length,
-    5,
+    6,
   );
   assert.ok(findLabel(oneDayTree, 'Track name'));
   assert.ok(findLabel(oneDayTree, 'Day 1'));
+  const daySelect = findElements(oneDayTree, 'select').find(
+    select => select.props?.required,
+  );
+  assert.equal(daySelect?.props?.value, '');
+  assert.equal(textContent(daySelect?.props?.children?.[0]), 'SELECT DAY');
   assert.equal(
     findElements(oneDayTree, 'input').filter(input => input.props?.type === 'time')
       .length,

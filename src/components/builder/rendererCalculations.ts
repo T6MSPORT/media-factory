@@ -166,7 +166,7 @@ export function getScheduleTemplateLayout(
     const suppliedDay = project.details.scheduleDays?.[dayIndex];
     return (
       suppliedDay || {
-        day: (['Friday', 'Saturday', 'Sunday'] as const)[Math.min(dayIndex + 1, 2)],
+        day: '' as const,
         sessions: Array.from({ length: 5 }, () => ({
           type: '' as const,
           time: '',
@@ -226,9 +226,9 @@ export function getScheduleTemplateLayout(
     isStory ? 46 : 40,
     Math.max(isStory ? 35 : 31, rowHeight * 0.72),
   );
-  const chevronStartX = contentWidth * 0.38;
-  const chevronEndX = contentWidth * 0.72;
-  const chevronGap = isStory ? 25 : 21;
+  const chevronStartX = contentWidth * 0.4;
+  const chevronEndX = contentWidth * 0.6;
+  const chevronGap = isStory ? 29 : 25;
   let nextDayY = daysY;
   const positionedDays = days.map(day => {
     const positionedDay = {

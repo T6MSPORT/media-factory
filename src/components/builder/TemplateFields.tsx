@@ -59,8 +59,9 @@ const SESSION_OPTIONS: ScheduleSessionType[] = [
 ];
 
 function makeDay(index: number): ScheduleDay {
+  void index;
   return {
-    day: DAY_OPTIONS[Math.min(index + 1, 2)],
+    day: '',
     sessions: Array.from({ length: 5 }, () => ({
       type: '' as ScheduleSessionType,
       time: '',
@@ -134,6 +135,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           <label>
             Day {dayIndex + 1}
             <select
+              required
               value={scheduleDay.day}
               onChange={event => {
                 const nextDays = [...days];
@@ -144,6 +146,9 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
                 updateDays(nextDays);
               }}
             >
+              <option value="" disabled>
+                SELECT DAY
+              </option>
               {DAY_OPTIONS.map(day => (
                 <option value={day} key={day}>
                   {day}

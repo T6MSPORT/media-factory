@@ -78,7 +78,7 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
       scheduleDayCount: 1,
       scheduleDays: [
         {
-          day: 'Saturday',
+          day: '',
           sessions: Array.from({ length: 5 }, () => ({ type: '', time: '' })),
         },
       ],

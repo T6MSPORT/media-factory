@@ -391,6 +391,10 @@ test('schedule layout keeps the title and track at the top with selected days un
   assert.ok(schedule.sessionSize >= 35);
   assert.ok(schedule.chevronStartX > schedule.contentWidth * 0.35);
   assert.ok(schedule.chevronEndX < schedule.contentWidth * 0.75);
+  assert.equal(
+    schedule.chevronStartX + schedule.chevronEndX,
+    schedule.contentWidth,
+  );
   assert.ok(schedule.chevronEndX > schedule.chevronStartX);
   assert.ok(schedule.chevronGap > 0);
   assert.equal(schedule.days[0].x, schedule.days[1].x);

@@ -8,7 +8,7 @@ export type Branding = {
   primary:string; secondary:string; accent:string; headingFont:string; bodyFont:string; sponsorLogoScale:number;
 };
 export type Sponsor = {id:string; name:string; logo?:string; logoWidth?:number; logoHeight?:number};
-export type ScheduleDayName = 'Friday'|'Saturday'|'Sunday';
+export type ScheduleDayName = ''|'Friday'|'Saturday'|'Sunday';
 export type ScheduleSessionType = ''|'Practice'|'Qualifying'|'Race';
 export type ScheduleSession = { type:ScheduleSessionType; time:string };
 export type ScheduleDay = { day:ScheduleDayName; sessions:ScheduleSession[] };
