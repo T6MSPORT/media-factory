@@ -126,6 +126,7 @@ test('event layout preserves the approved story positions and round wording', ()
     eventRoundSize: 65,
     eventTrackMaxWidth: 940,
     eventTrackSize: 198,
+    eventTrackTextLength: 823.6800000000001,
     eventTrackText: 'BATHURST',
     eventDateSize: 63,
     eventRoundY: 654,
@@ -185,6 +186,7 @@ test('event text fits long track names and three-digit car numbers inside their 
   assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
   assert.equal(layout.eventTrackMaxWidth, 940);
   assert.ok(Math.abs(layout.eventTrackSize - 90.38462) < 0.001);
+  assert.equal(layout.eventTrackTextLength, 940);
   assert.equal(layout.eventNumberText, '#333');
   assert.equal(layout.eventNumberSize, 72);
 });
@@ -202,10 +204,35 @@ test('event layout keeps Donington National prominent while fitting the canvas',
     );
 
     assert.ok(layout.eventTrackSize >= 100);
-    assert.ok(
-      layout.eventTrackText.length * layout.eventTrackSize * 0.52 <=
-        layout.eventTrackMaxWidth,
+    assert.ok(layout.eventTrackTextLength <= layout.eventTrackMaxWidth);
+  }
+});
+
+test('event track text remains inside the template for every selectable heading font', () => {
+  for (const headingFont of [
+    'Orbitron',
+    'Rajdhani',
+    'Teko',
+    'Oxanium',
+    'Russo One',
+  ]) {
+    const layout = getEventTemplateLayout(
+      1080,
+      {
+        ...project,
+        details: {
+          ...project.details,
+          circuit: 'Silverstone International Circuit',
+        },
+      },
+      profile,
     );
+
+    assert.ok(
+      layout.eventTrackTextLength <= layout.eventTrackMaxWidth,
+      headingFont,
+    );
+    assert.ok(layout.eventTrackSize > 0, headingFont);
   }
 });
 
