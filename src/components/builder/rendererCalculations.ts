@@ -173,17 +173,17 @@ export function getEventTemplateLayout(
   const eventBlockX = 70;
   const eventIdentityRight = w - eventBlockX;
   const eventNameY = eventTop;
-  const eventNumberW = isStory ? 138 : 122;
-  const eventNumberH = isStory ? 58 : 52;
+  const eventNumberW = isStory ? 330 : 280;
+  const eventNumberH = isStory ? 88 : 76;
   const eventIdentityGap = isStory ? 18 : 16;
   const eventNameSize = isStory ? 46 : 40;
   const eventNumberY = eventNameY + eventNameSize + eventIdentityGap;
   const eventNumberText = `#${profile.number || '00'}`;
   const eventNumberSize = fitTextSize(
     eventNumberText,
-    isStory ? 39 : 35,
-    eventNumberW - (isStory ? 30 : 26),
-    12,
+    isStory ? 84 : 72,
+    eventNumberW,
+    isStory ? 58 : 50,
     0.86,
   );
   const eventTeamW = isStory ? 260 : 220;

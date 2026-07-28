@@ -66,27 +66,17 @@ export function EventTemplate({
         >
           {eventNameText}
         </text>
-        <g
-          transform={`translate(${eventIdentityRight - eventNumberW} ${eventNumberY}) skewX(-10)`}
-        >
-          <rect
-            width={eventNumberW}
-            height={eventNumberH}
-            rx="5"
-            fill="none"
-            stroke={branding.accent}
-            strokeWidth="4"
-          />
+        <g transform={`translate(${eventIdentityRight} ${eventNumberY})`}>
           <text
-            x={eventNumberW / 2 - Math.tan(Math.PI / 18) * eventNumberH / 2}
-            y={eventNumberH / 2}
-            textAnchor="middle"
-            dominantBaseline="central"
+            x="0"
+            y="0"
+            textAnchor="end"
+            dominantBaseline="hanging"
             fontFamily={headingFont}
             fontSize={eventNumberSize}
             fontWeight="900"
             fill={branding.accent}
-            transform="skewX(10)"
+            transform="skewX(-14)"
           >
             {eventNumberText}
           </text>
