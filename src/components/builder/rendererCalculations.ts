@@ -194,9 +194,11 @@ export function getEventTemplateLayout(
     0.86,
   );
   const eventTeamW = isStory ? 260 : 220;
-  // Team-logo assets commonly include transparent padding. Compensate for
-  // that here so the visible mark sits tightly beneath the race number.
-  const eventTeamOpticalOffset = isStory ? 20 : 17;
+  // Keep the logo's image box clear of the slanted number. Pulling the box
+  // upward to compensate for transparent PNG padding can make the artwork
+  // overlap the number, so any optical adjustment must happen inside the
+  // asset rather than by collapsing these row bounds.
+  const eventTeamOpticalOffset = 0;
   const eventTeamY =
     eventNumberY +
     eventNumberSize * eventIdentityLineHeightFactor +
