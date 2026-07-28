@@ -38,6 +38,17 @@ export const templateTitles = {
   sponsor: 'PROUDLY SUPPORTED BY',
 } satisfies Record<TemplateId, string>;
 
+export function formatRoundLabel(round: string, emptyLabel = '') {
+  const value = round.trim();
+  if (!value) return emptyLabel;
+
+  const isPlural =
+    /[,/&+]|[-–—]|\b(?:and|to)\b/i.test(value) ||
+    value.split(/\s+/).filter(Boolean).length > 1;
+
+  return `${isPlural ? 'ROUNDS' : 'ROUND'} ${value}`.toUpperCase();
+}
+
 export function getStandardTemplateLayout(
   h: number,
   project: Pick<Project, 'format' | 'template'>,
@@ -200,9 +211,7 @@ export function getScheduleTemplateLayout(
     0.6,
     1,
   );
-  const roundText = project.details.round.trim()
-    ? `ROUND${project.details.round.includes(',') || project.details.round.includes('&') ? 'S' : ''} ${project.details.round.trim()}`.toUpperCase()
-    : '';
+  const roundText = formatRoundLabel(project.details.round);
   const roundSize = isStory ? 31 : 26;
   const roundY = trackY + trackSize + (isStory ? 22 : 16);
   const daysY =
@@ -422,10 +431,7 @@ export function getEventTemplateLayout(
   const eventRoundY = eventHeadingY + eventNextSize + eventGap;
   const eventTrackY = eventRoundY + eventRoundSize + eventGap;
   const eventDateY = eventTrackY + eventTrackSize + eventGap;
-  const roundValue = (project.details.round || '').trim();
-  const roundIsPlural =
-    /[,/&+]|\b(?:and|to|-)\b/i.test(roundValue) ||
-    roundValue.split(/\s+/).filter(Boolean).length > 1;
+  const roundLabel = formatRoundLabel(project.details.round || '', 'ROUND');
 
   return {
     isStory,
@@ -457,9 +463,7 @@ export function getEventTemplateLayout(
     eventRoundY,
     eventTrackY,
     eventDateY,
-    roundLabel: roundValue
-      ? `${roundIsPlural ? 'ROUNDS' : 'ROUND'} ${roundValue}`
-      : 'ROUND',
+    roundLabel,
   };
 }
 

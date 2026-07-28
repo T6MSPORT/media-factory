@@ -103,9 +103,9 @@ const expectedHashes: Record<string, string> = {
   'announcement:feed':
     'c703db614c36926edf64ea50a904c59c9d35494dc4cb91c06975e305b48803ca',
   'schedule:story':
-    '226a5f2913a03e3acb39fbc50c10eb270e66021242f5cc09c15b9db81fed30b9',
+    '3da9e59e75e51bfb68d943312e50852f21cc559b285d5eb09c73f0002a339ee1',
   'schedule:feed':
-    'da1f6c2120d18932e70fb48ff282c928b6a5820b98bf259b816826874c023e0a',
+    '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
   'qualifying:story':
     '284d52ce498fe510511461aa8483aebb244d85fb8a58fd2f94dd847ef6c0c2d1',
   'qualifying:feed':
@@ -209,7 +209,7 @@ for (const template of templates) {
       if (template === 'schedule') {
         assert.match(
           markup,
-          /text-anchor="middle" dominant-baseline="middle"/,
+          /text-anchor="middle" dominant-baseline="central"/,
         );
       }
     });

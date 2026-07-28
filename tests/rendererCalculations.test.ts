@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  formatRoundLabel,
   getBackgroundLayout,
   getAnnouncementTemplateLayout,
   getBrandLogoLayout,
@@ -141,6 +142,14 @@ test('event layout preserves the approved story positions and round wording', ()
     ).roundLabel,
     'ROUNDS 3 & 4',
   );
+});
+
+test('round labels use plural wording for every supported range format', () => {
+  assert.equal(formatRoundLabel('3'), 'ROUND 3');
+  assert.equal(formatRoundLabel('3 & 4'), 'ROUNDS 3 & 4');
+  assert.equal(formatRoundLabel('3-4'), 'ROUNDS 3-4');
+  assert.equal(formatRoundLabel('3–4'), 'ROUNDS 3–4');
+  assert.equal(formatRoundLabel('3 to 4'), 'ROUNDS 3 TO 4');
 });
 
 test('event identity rows use tight spacing without overlapping', () => {

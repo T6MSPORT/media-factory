@@ -137,9 +137,11 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
   margin:0 auto;
 }
 
-/* v3.6: white date-picker icon in the builder */
-.controls input[type="date"]{color-scheme:dark}
-.controls input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer}
+/* White native date/time selectors and light picker panels in the builder */
+.controls input[type="date"],
+.controls input[type="time"]{color-scheme:light}
+.controls input[type="date"]::-webkit-calendar-picker-indicator,
+.controls input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer}
 
 
 /* v3.7: full-height builder controls and fully contained preview */

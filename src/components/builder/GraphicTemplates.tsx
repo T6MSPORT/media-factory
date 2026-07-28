@@ -337,7 +337,7 @@ export function StandardTemplate({
               x={day.width / 2}
               y={layout.dayHeadingHeight / 2}
               textAnchor="middle"
-              dominantBaseline="middle"
+              dominantBaseline="central"
               fontFamily={headingFont}
               fontSize={layout.dayHeadingSize}
               fontWeight="900"
