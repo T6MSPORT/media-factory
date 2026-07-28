@@ -171,9 +171,11 @@ export function getEventTemplateLayout(
   const isStory = project.format === 'story';
   const eventTop = isStory ? 70 : 58;
   const eventBlockX = 70;
-  const eventIdentityY = eventTop + (isStory ? 46 : 40);
+  const eventIdentityRight = w - eventBlockX;
+  const eventNameY = eventTop;
   const eventNumberW = isStory ? 138 : 122;
   const eventNumberH = isStory ? 58 : 52;
+  const eventNumberY = eventNameY + (isStory ? 66 : 58);
   const eventNumberText = `#${profile.number || '00'}`;
   const eventNumberSize = fitTextSize(
     eventNumberText,
@@ -183,9 +185,9 @@ export function getEventTemplateLayout(
     0.86,
   );
   const eventNameSize = isStory ? 46 : 40;
-  const eventNameX = eventBlockX + eventNumberW + 22;
   const eventTeamW = isStory ? 260 : 220;
-  const eventCompetitionY = eventIdentityY + (isStory ? 84 : 74);
+  const eventTeamY = eventNumberY + eventNumberH + (isStory ? 18 : 16);
+  const eventCompetitionY = isStory ? 34 : 28;
   const eventHeadingY =
     eventCompetitionY +
     (profile.competitionLogo ? (isStory ? 310 : 255) : isStory ? 135 : 112);
@@ -212,16 +214,18 @@ export function getEventTemplateLayout(
   return {
     isStory,
     eventBlockX,
-    eventIdentityY,
+    eventIdentityRight,
+    eventNameY,
     eventNumberW,
     eventNumberH,
+    eventNumberY,
     eventNumberText,
     eventNumberSize,
     eventNameSize,
-    eventNameX,
     eventNameText: (profile.name || 'DRIVER NAME').toUpperCase(),
     eventTeamW,
     eventTeamX: w - eventBlockX - eventTeamW,
+    eventTeamY,
     eventCompetitionY,
     eventHeadingY,
     eventNextSize,
