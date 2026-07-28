@@ -313,10 +313,10 @@ export function StandardTemplate({
           {layout.trackText}
         </text>
         {layout.days.map(day => (
-          <g key={`${day.day}-${day.x}`} transform={`translate(${day.x} ${layout.daysY})`}>
+          <g key={`${day.day}-${day.y}`} transform={`translate(${day.x} ${day.y})`}>
             <rect
               width={day.width}
-              height={layout.dayHeadingSize + 22}
+              height={layout.dayHeadingHeight}
               fill={branding.primary}
               opacity=".92"
             />
@@ -335,10 +335,10 @@ export function StandardTemplate({
             >
               {day.day.toUpperCase()}
             </text>
-            {day.sessions.slice(0, 5).map((session, sessionIndex) => {
+            {day.sessions.map((session, sessionIndex) => {
               const y =
-                layout.dayHeadingSize +
-                42 +
+                layout.dayHeadingHeight +
+                layout.rowHeight * 0.7 +
                 sessionIndex * layout.rowHeight;
               return (
                 <g key={sessionIndex}>
@@ -365,7 +365,7 @@ export function StandardTemplate({
                     fontSize={layout.sessionSize}
                     fontWeight="900"
                   >
-                    {session.time || '--:--'}
+                    {session.time}
                   </text>
                 </g>
               );

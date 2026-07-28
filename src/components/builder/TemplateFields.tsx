@@ -52,6 +52,7 @@ export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
 
 const DAY_OPTIONS: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
 const SESSION_OPTIONS: ScheduleSessionType[] = [
+  '',
   'Practice',
   'Qualifying',
   'Race',
@@ -60,8 +61,8 @@ const SESSION_OPTIONS: ScheduleSessionType[] = [
 function makeDay(index: number): ScheduleDay {
   return {
     day: DAY_OPTIONS[Math.min(index + 1, 2)],
-    sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
-      type: type as ScheduleSessionType,
+    sessions: Array.from({ length: 5 }, () => ({
+      type: '' as ScheduleSessionType,
       time: '',
     })),
   };
@@ -158,7 +159,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
                   >
                     {SESSION_OPTIONS.map(type => (
                       <option value={type} key={type}>
-                        {type}
+                        {type || 'Select session'}
                       </option>
                     ))}
                   </select>

@@ -166,16 +166,17 @@ export function getScheduleTemplateLayout(
     return (
       suppliedDay || {
         day: (['Friday', 'Saturday', 'Sunday'] as const)[Math.min(dayIndex + 1, 2)],
-        sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
-          type,
+        sessions: Array.from({ length: 5 }, () => ({
+          type: '' as const,
           time: '',
         })),
       }
     );
-  });
-  const gap = isStory ? 28 : 24;
+  }).map(day => ({
+    ...day,
+    sessions: day.sessions.slice(0, 5).filter(session => Boolean(session.type)),
+  }));
   const contentWidth = w - margin * 2;
-  const columnWidth = (contentWidth - gap * (dayCount - 1)) / dayCount;
   const titleY = isStory ? 350 : 310;
   const titleSize = isStory ? 112 : 94;
   const trackY = titleY + titleSize + (isStory ? 26 : 20);
@@ -190,11 +191,34 @@ export function getScheduleTemplateLayout(
     1,
   );
   const daysY = trackY + trackSize + (isStory ? 52 : 40);
-  const dayHeadingSize =
-    dayCount === 3 ? (isStory ? 32 : 28) : isStory ? 40 : 34;
-  const sessionSize =
-    dayCount === 3 ? (isStory ? 25 : 22) : isStory ? 30 : 26;
-  const rowHeight = isStory ? 62 : 52;
+  const dayHeadingSize = dayCount === 3 ? (isStory ? 34 : 26) : isStory ? 40 : 32;
+  const sessionSize = dayCount === 3 ? (isStory ? 27 : 21) : isStory ? 30 : 25;
+  const dayHeadingHeight = dayHeadingSize + (isStory ? 22 : 18);
+  const dayGap = isStory ? 26 : 18;
+  const totalRows = days.reduce((count, day) => count + day.sessions.length, 0);
+  const availableHeight = h - daysY - (isStory ? 170 : 145);
+  const rowHeight = Math.max(
+    isStory ? 38 : 31,
+    Math.min(
+      isStory ? 62 : 52,
+      totalRows
+        ? (availableHeight - dayCount * dayHeadingHeight - (dayCount - 1) * dayGap) /
+            totalRows
+        : isStory ? 62 : 52,
+    ),
+  );
+  let nextDayY = daysY;
+  const positionedDays = days.map(day => {
+    const positionedDay = {
+      ...day,
+      x: margin,
+      y: nextDayY,
+      width: contentWidth,
+    };
+    nextDayY +=
+      dayHeadingHeight + day.sessions.length * rowHeight + dayGap;
+    return positionedDay;
+  });
 
   return {
     margin,
@@ -207,13 +231,10 @@ export function getScheduleTemplateLayout(
     contentWidth,
     daysY,
     dayHeadingSize,
+    dayHeadingHeight,
     sessionSize,
     rowHeight,
-    days: days.map((day, dayIndex) => ({
-      ...day,
-      x: margin + dayIndex * (columnWidth + gap),
-      width: columnWidth,
-    })),
+    days: positionedDays,
   };
 }
 

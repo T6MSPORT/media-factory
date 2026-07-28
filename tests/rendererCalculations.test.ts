@@ -353,10 +353,13 @@ test('schedule layout keeps the title and track at the top with selected days un
       scheduleDays: [
         {
           day: 'Saturday',
-          sessions: Array.from({ length: 5 }, () => ({
-            type: 'Practice',
-            time: '18:00',
-          })),
+          sessions: [
+            { type: 'Practice', time: '18:00' },
+            { type: '', time: '' },
+            { type: 'Qualifying', time: '19:00' },
+            { type: '', time: '' },
+            { type: '', time: '' },
+          ],
         },
         {
           day: 'Sunday',
@@ -376,7 +379,10 @@ test('schedule layout keeps the title and track at the top with selected days un
   assert.ok(schedule.daysY > schedule.trackY);
   assert.equal(schedule.days.length, 2);
   assert.deepEqual(schedule.days.map(day => day.day), ['Saturday', 'Sunday']);
-  assert.equal(schedule.days[0].sessions.length, 5);
+  assert.equal(schedule.days[0].sessions.length, 2);
+  assert.equal(schedule.days[1].sessions.length, 5);
+  assert.equal(schedule.days[0].x, schedule.days[1].x);
+  assert.ok(schedule.days[1].y > schedule.days[0].y);
 });
 
 test('template extras retain sponsor content', () => {

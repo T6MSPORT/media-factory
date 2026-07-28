@@ -224,7 +224,7 @@ test('schedule fields show only the selected days and five inline session rows p
         {
           day: 'Saturday',
           sessions: Array.from({ length: 5 }, () => ({
-            type: 'Race',
+            type: '',
             time: '',
           })),
         },
@@ -238,6 +238,10 @@ test('schedule fields show only the selected days and five inline session rows p
   });
   assert.equal(findElements(oneDayTree, 'fieldset').length, 1);
   assert.equal(findElements(oneDayTree, 'select').length, 7);
+  assert.equal(
+    findElements(oneDayTree, 'select').filter(select => select.props?.value === '').length,
+    5,
+  );
   assert.ok(findLabel(oneDayTree, 'Track name'));
   assert.ok(findLabel(oneDayTree, 'Day 1'));
   assert.equal(

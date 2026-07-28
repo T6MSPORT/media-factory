@@ -27,8 +27,8 @@ export const emptyDetails: GraphicDetails = {
   scheduleDays: [
     {
       day: 'Saturday',
-      sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(type => ({
-        type: type as ScheduleSessionType,
+      sessions: Array.from({ length: 5 }, () => ({
+        type: '' as ScheduleSessionType,
         time: '',
       })),
     },
@@ -37,6 +37,7 @@ export const emptyDetails: GraphicDetails = {
 
 const scheduleDayNames: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
 const scheduleSessionTypes: ScheduleSessionType[] = [
+  '',
   'Practice',
   'Qualifying',
   'Race',
@@ -66,7 +67,7 @@ function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] 
         return {
           type: suppliedSession && scheduleSessionTypes.includes(suppliedSession.type)
             ? suppliedSession.type
-            : scheduleSessionTypes[Math.min(sessionIndex, 2)],
+            : '',
           time:
             typeof suppliedSession?.time === 'string'
               ? suppliedSession.time

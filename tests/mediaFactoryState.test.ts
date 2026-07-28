@@ -79,9 +79,7 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
       scheduleDays: [
         {
           day: 'Saturday',
-          sessions: ['Practice', 'Qualifying', 'Race', 'Race', 'Race'].map(
-            type => ({ type, time: '' }),
-          ),
+          sessions: Array.from({ length: 5 }, () => ({ type: '', time: '' })),
         },
       ],
     },
