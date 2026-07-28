@@ -188,9 +188,7 @@ export function getEventTemplateLayout(
   const eventTeamW = isStory ? 260 : 220;
   const eventTeamY = eventNumberY + eventNumberH + (isStory ? 18 : 16);
   const eventCompetitionY = isStory ? 34 : 28;
-  const eventHeadingY =
-    eventCompetitionY +
-    (profile.competitionLogo ? (isStory ? 310 : 255) : isStory ? 135 : 112);
+  const eventHeadingY = isStory ? 540 : 430;
   const eventNextSize = isStory ? 64 : 54;
   const eventRoundSize = isStory ? 43 : 37;
   const eventTrackText = (project.details.circuit || 'TRACK NAME').toUpperCase();
