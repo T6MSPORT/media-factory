@@ -334,8 +334,8 @@ export function getSponsorLayouts(
       1.4,
       Math.max(0.65, sponsorLogoScale || 1),
     );
-    const minimumGap = 24;
-    const maximumGap = 72;
+    const minimumGap = 36;
+    const maximumGap = 96;
     const availableWidth = w - 72;
     const rectangularIndexes = rowSponsors
       .map((sponsor, index) => {
@@ -358,7 +358,9 @@ export function getSponsorLayouts(
           rectangularIndexes.includes(index) ? total : total + layout.logoW,
         0,
       );
-      const gapWidth = minimumGap * Math.max(0, rowLayouts.length - 1);
+      // Reserve the preferred visible spacing before sizing wide logos.
+      // Otherwise the logos expand first and absorb any increase to the gap cap.
+      const gapWidth = maximumGap * Math.max(0, rowLayouts.length - 1);
       const sharedRectangularHeight = Math.min(
         52 * logoScale,
         (availableWidth - fixedLogoWidth - gapWidth) /
