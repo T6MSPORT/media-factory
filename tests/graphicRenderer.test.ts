@@ -103,9 +103,9 @@ const expectedHashes: Record<string, string> = {
   'announcement:feed':
     'f3ac6312fca534ca3d1badaeae712106ac174b4cda159a963a209d080bc539d0',
   'schedule:story':
-    'fc47d87aac82dc80aedd1bfee1427b4b1e867f25741825b4e9771522d40ad42e',
+    '047f76775decaa0c62202562f4ae00c4757060212c767cf5447c642901fdd9ba',
   'schedule:feed':
-    '0404c1601995c80a2e6e1a0409e5e8c337f936a8194ee612a2f4c7a49a29ea75',
+    'cd2deb5b8cd4daea5a8ec372f9c6164c6677850870ed9526c4b3073998b986a9',
   'qualifying:story':
     '1f8efadb99ae3bd11270ae5a0577b5259b8d0600652903759afed33c03f11e89',
   'qualifying:feed':

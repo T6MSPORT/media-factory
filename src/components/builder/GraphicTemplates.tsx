@@ -372,10 +372,9 @@ export function StandardTemplate({
                     {session.label}
                   </text>
                   <text
-                    x={day.width - 4}
+                    x={layout.timeX}
                     y={y}
                     dominantBaseline="middle"
-                    textAnchor="end"
                     fontSize={layout.sessionSize}
                     fontWeight="900"
                   >

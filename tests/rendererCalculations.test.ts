@@ -388,7 +388,9 @@ test('schedule layout keeps the title and track at the top with selected days un
     schedule.days.flatMap(day => day.sessions.map(session => session.label)),
     ['PRACTICE', 'QUALIFYING', 'RACE 1', 'RACE 2', 'RACE 3', 'RACE 4', 'RACE 5'],
   );
-  assert.ok(schedule.sessionSize >= 31);
+  assert.ok(schedule.sessionSize >= 35);
+  assert.equal(schedule.timeX, schedule.sessionSize * 7.2);
+  assert.ok(schedule.timeX < schedule.contentWidth / 2);
   assert.equal(schedule.days[0].x, schedule.days[1].x);
   assert.ok(schedule.days[1].y > schedule.days[0].y);
 });
