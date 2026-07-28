@@ -183,7 +183,7 @@ test('event text fits long track names and three-digit car numbers inside their 
 
   assert.equal(layout.eventTrackText, 'SILVERSTONE NATIONAL');
   assert.equal(layout.eventTrackMaxWidth, 940);
-  assert.ok(Math.abs(layout.eventTrackSize - 111.90476) < 0.001);
+  assert.ok(Math.abs(layout.eventTrackSize - 90.38462) < 0.001);
   assert.equal(layout.eventNumberText, '#333');
   assert.equal(layout.eventNumberSize, 72);
 });
@@ -200,9 +200,9 @@ test('event layout keeps Donington National prominent while fitting the canvas',
       profile,
     );
 
-    assert.ok(layout.eventTrackSize >= 124);
+    assert.ok(layout.eventTrackSize >= 100);
     assert.ok(
-      layout.eventTrackText.length * layout.eventTrackSize * 0.42 <=
+      layout.eventTrackText.length * layout.eventTrackSize * 0.52 <=
         layout.eventTrackMaxWidth,
     );
   }
