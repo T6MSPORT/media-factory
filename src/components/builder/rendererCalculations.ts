@@ -14,12 +14,19 @@ export function fitTextSize(
   maxWidth: number,
   minimumSize: number,
   widthFactor = 0.62,
+  letterSpacing = 0,
 ) {
-  const estimatedWidth = Math.max(1, text.length) * preferredSize * widthFactor;
-  return Math.max(
-    minimumSize,
-    Math.min(preferredSize, preferredSize * (maxWidth / estimatedWidth)),
+  const characterCount = Math.max(1, text.length);
+  const spacingWidth = Math.max(0, characterCount - 1) * letterSpacing;
+  const availableGlyphWidth = Math.max(1, maxWidth - spacingWidth);
+  const fittedSize = Math.min(
+    preferredSize,
+    availableGlyphWidth / (characterCount * widthFactor),
   );
+
+  // The minimum is a visual preference, not permission to overflow. If the
+  // minimum size cannot fit, continue shrinking so text always stays bounded.
+  return fittedSize >= minimumSize ? fittedSize : Math.max(1, fittedSize);
 }
 
 export const templateTitles = {
@@ -310,6 +317,12 @@ export function getEventTemplateLayout(
     isStory ? 54 : 46,
     0.52,
   );
+  // SVG textLength makes the final rendered width deterministic, rather than
+  // trusting a character-count estimate that changes with the selected font.
+  const eventTrackTextLength = Math.min(
+    eventTrackMaxWidth,
+    eventTrackText.length * eventTrackSize * 0.52,
+  );
   const eventDateSize = isStory ? 63 : 54;
   const eventGap = isStory ? 18 : 15;
   const eventRoundY = eventHeadingY + eventNextSize + eventGap;
@@ -344,6 +357,7 @@ export function getEventTemplateLayout(
     eventRoundSize,
     eventTrackMaxWidth,
     eventTrackSize,
+    eventTrackTextLength,
     eventTrackText,
     eventDateSize,
     eventRoundY,
