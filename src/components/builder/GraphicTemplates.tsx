@@ -26,16 +26,18 @@ export function EventTemplate({
   const {
     isStory,
     eventBlockX,
-    eventIdentityY,
+    eventIdentityRight,
+    eventNameY,
     eventNumberW,
     eventNumberH,
+    eventNumberY,
     eventNumberText,
     eventNumberSize,
     eventNameSize,
-    eventNameX,
     eventNameText,
     eventTeamW,
     eventTeamX,
+    eventTeamY,
     eventCompetitionY,
     eventHeadingY,
     eventNextSize,
@@ -52,8 +54,20 @@ export function EventTemplate({
   return (
     <g fill={branding.accent}>
       <g textAnchor="start">
+        <text
+          x={eventIdentityRight}
+          y={eventNameY}
+          textAnchor="end"
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={eventNameSize}
+          fontWeight="900"
+          letterSpacing="-1"
+        >
+          {eventNameText}
+        </text>
         <g
-          transform={`translate(${eventBlockX} ${eventIdentityY - eventNumberH / 2}) skewX(-10)`}
+          transform={`translate(${eventIdentityRight - eventNumberW} ${eventNumberY}) skewX(-10)`}
         >
           <rect
             width={eventNumberW}
@@ -84,29 +98,19 @@ export function EventTemplate({
             {eventNumberText}
           </text>
         </g>
-        <text
-          x={eventNameX}
-          y={eventIdentityY + eventNameSize * 0.34}
-          fontFamily={headingFont}
-          fontSize={eventNameSize}
-          fontWeight="900"
-          letterSpacing="-1"
-        >
-          {eventNameText}
-        </text>
         {profile.teamLogo ? (
           <image
             href={profile.teamLogo}
             x={eventTeamX}
-            y={eventIdentityY - (isStory ? 45 : 39)}
+            y={eventTeamY}
             width={eventTeamW}
             height={isStory ? 90 : 78}
             preserveAspectRatio="xMaxYMid meet"
           />
         ) : profile.team ? (
           <text
-            x={w - eventBlockX}
-            y={eventIdentityY + (isStory ? 10 : 8)}
+            x={eventIdentityRight}
+            y={eventTeamY + (isStory ? 28 : 24)}
             textAnchor="end"
             fontFamily={bodyFont}
             fontSize={isStory ? 24 : 21}
