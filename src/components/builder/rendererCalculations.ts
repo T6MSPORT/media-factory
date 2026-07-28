@@ -327,20 +327,69 @@ export function getSponsorLayouts(
   for (let row = 0; row < 2; row += 1) {
     const rowStart = row * 5;
     const rowLayouts = layouts.slice(rowStart, rowStart + 5);
+    const rowSponsors = visibleSponsors.slice(rowStart, rowStart + 5);
     if (!rowLayouts.length) continue;
+
+    const logoScale = Math.min(
+      1.4,
+      Math.max(0.65, sponsorLogoScale || 1),
+    );
+    const minimumGap = 12;
+    const maximumGap = 54;
+    const availableWidth = w - 72;
+    const rectangularIndexes = rowSponsors
+      .map((sponsor, index) => {
+        const naturalW = sponsor.logoWidth || 160;
+        const naturalH = sponsor.logoHeight || 60;
+        return naturalW / naturalH >= 1.5 ? index : -1;
+      })
+      .filter(index => index >= 0);
+
+    if (rectangularIndexes.length) {
+      const rectangularAspectTotal = rectangularIndexes.reduce(
+        (total, index) => {
+          const sponsor = rowSponsors[index];
+          return total + (sponsor.logoWidth || 160) / (sponsor.logoHeight || 60);
+        },
+        0,
+      );
+      const fixedLogoWidth = rowLayouts.reduce(
+        (total, layout, index) =>
+          rectangularIndexes.includes(index) ? total : total + layout.logoW,
+        0,
+      );
+      const gapWidth = minimumGap * Math.max(0, rowLayouts.length - 1);
+      const sharedRectangularHeight = Math.min(
+        52 * logoScale,
+        (availableWidth - fixedLogoWidth - gapWidth) /
+          rectangularAspectTotal,
+      );
+
+      rectangularIndexes.forEach(index => {
+        const sponsor = rowSponsors[index];
+        const aspect =
+          (sponsor.logoWidth || 160) / (sponsor.logoHeight || 60);
+        rowLayouts[index].logoH = sharedRectangularHeight;
+        rowLayouts[index].logoW = sharedRectangularHeight * aspect;
+        rowLayouts[index].logoY =
+          rowLayouts[index].barTop +
+          rowLayouts[index].row * rowLayouts[index].rowH +
+          8 +
+          (66 - sharedRectangularHeight) / 2;
+      });
+    }
 
     const totalLogoWidth = rowLayouts.reduce(
       (total, layout) => total + layout.logoW,
       0,
     );
-    const availableWidth = w - 72;
     const gap =
       rowLayouts.length === 1
         ? 0
         : Math.max(
-            12,
+            minimumGap,
             Math.min(
-              54,
+              maximumGap,
               (availableWidth - totalLogoWidth) / (rowLayouts.length - 1),
             ),
           );

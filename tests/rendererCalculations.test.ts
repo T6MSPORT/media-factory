@@ -407,3 +407,20 @@ test('mixed sponsor logo shapes keep equal visible gaps', () => {
     ) < 1e-9,
   );
 });
+
+test('rectangular sponsor logos share one height while retaining aspect ratio', () => {
+  const sponsors = [
+    { id: 'wide-1', name: 'Wide 1', logoWidth: 400, logoHeight: 100 },
+    { id: 'wide-2', name: 'Wide 2', logoWidth: 300, logoHeight: 100 },
+    { id: 'wide-3', name: 'Wide 3', logoWidth: 250, logoHeight: 100 },
+  ];
+  const layouts = getSponsorLayouts(1080, 1350, sponsors, 1);
+
+  layouts.forEach((layout, index) => {
+    assert.equal(layout.logoH, 52);
+    assert.equal(
+      layout.logoW / layout.logoH,
+      sponsors[index].logoWidth / sponsors[index].logoHeight,
+    );
+  });
+});
