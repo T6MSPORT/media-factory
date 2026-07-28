@@ -21,6 +21,7 @@ export function ProfileAssetUpload({ asset, onChange }: ProfileAssetUploadProps)
 type ProfileAssetCardProps = ProfileAssetUploadProps & {
   image?: string;
   fallback?: ReactNode;
+  onRemove?: () => void;
 };
 
 export function ProfileAssetCard({
@@ -28,6 +29,7 @@ export function ProfileAssetCard({
   image,
   fallback,
   onChange,
+  onRemove,
 }: ProfileAssetCardProps) {
   const config = PROFILE_ASSETS[asset];
   const driverClass = asset === 'driverImage' ? ' driver-asset-preview' : '';
@@ -38,6 +40,11 @@ export function ProfileAssetCard({
         {image ? <img src={image} /> : fallback || <span>{config.fallback}</span>}
       </div>
       <ProfileAssetUpload asset={asset} onChange={onChange} />
+      {image && onRemove && (
+        <button type="button" className="asset-remove" onClick={onRemove}>
+          Remove {config.label.toLowerCase()}
+        </button>
+      )}
     </div>
   );
 }

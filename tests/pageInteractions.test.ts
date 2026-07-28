@@ -396,6 +396,14 @@ test('profile fields update the permanent driver record and retain asset preview
     findElements(tree, 'img').map(image => image.props?.src),
     ['driver.png', 'team.png', 'competition.png'],
   );
+
+  (findButton(tree, 'Remove team logo').props?.onClick as () => void)();
+  (findButton(tree, 'Remove competition logo').props?.onClick as () => void)();
+
+  assert.equal(updates[1].profile.teamLogo, undefined);
+  assert.equal(updates[1].profile.competitionLogo, 'competition.png');
+  assert.equal(updates[2].profile.teamLogo, 'team.png');
+  assert.equal(updates[2].profile.competitionLogo, undefined);
 });
 
 test('branding controls expose five approved fonts and update the live preview', () => {

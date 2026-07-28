@@ -363,8 +363,9 @@ export function StandardTemplate({
                     strokeOpacity=".22"
                   />
                   <text
-                    x="4"
+                    x={layout.sessionX}
                     y={y}
+                    textAnchor="end"
                     dominantBaseline="middle"
                     fontSize={layout.sessionSize}
                     fontWeight="700"
@@ -374,6 +375,7 @@ export function StandardTemplate({
                   <text
                     x={layout.timeX}
                     y={y}
+                    textAnchor="start"
                     dominantBaseline="middle"
                     fontSize={layout.sessionSize}
                     fontWeight="900"

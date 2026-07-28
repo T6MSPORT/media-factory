@@ -47,11 +47,13 @@ export function ProfilePage({ data, setData }: ProfilePageProps) {
               asset="teamLogo"
               image={profile.teamLogo}
               onChange={teamLogo => update({ teamLogo })}
+              onRemove={() => update({ teamLogo: undefined })}
             />
             <ProfileAssetCard
               asset="competitionLogo"
               image={profile.competitionLogo}
               onChange={competitionLogo => update({ competitionLogo })}
+              onRemove={() => update({ competitionLogo: undefined })}
             />
           </div>
         </div>
