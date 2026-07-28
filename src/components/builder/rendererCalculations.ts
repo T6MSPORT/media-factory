@@ -161,6 +161,7 @@ export function getScheduleTemplateLayout(
     3,
     Math.max(1, project.details.scheduleDayCount || project.details.scheduleDays?.length || 1),
   );
+  let raceNumber = 0;
   const days = Array.from({ length: dayCount }, (_, dayIndex) => {
     const suppliedDay = project.details.scheduleDays?.[dayIndex];
     return (
@@ -174,7 +175,16 @@ export function getScheduleTemplateLayout(
     );
   }).map(day => ({
     ...day,
-    sessions: day.sessions.slice(0, 5).filter(session => Boolean(session.type)),
+    sessions: day.sessions
+      .slice(0, 5)
+      .filter(session => Boolean(session.type))
+      .map(session => ({
+        ...session,
+        label:
+          session.type === 'Race'
+            ? `RACE ${++raceNumber}`
+            : session.type.toUpperCase(),
+      })),
   }));
   const contentWidth = w - margin * 2;
   const titleY = isStory ? 350 : 310;
@@ -190,9 +200,14 @@ export function getScheduleTemplateLayout(
     0.6,
     1,
   );
-  const daysY = trackY + trackSize + (isStory ? 52 : 40);
+  const roundText = project.details.round.trim()
+    ? `ROUND${project.details.round.includes(',') || project.details.round.includes('&') ? 'S' : ''} ${project.details.round.trim()}`.toUpperCase()
+    : '';
+  const roundSize = isStory ? 31 : 26;
+  const roundY = trackY + trackSize + (isStory ? 22 : 16);
+  const daysY =
+    roundY + (roundText ? roundSize + (isStory ? 42 : 32) : isStory ? 24 : 20);
   const dayHeadingSize = dayCount === 3 ? (isStory ? 34 : 26) : isStory ? 40 : 32;
-  const sessionSize = dayCount === 3 ? (isStory ? 27 : 21) : isStory ? 30 : 25;
   const dayHeadingHeight = dayHeadingSize + (isStory ? 22 : 18);
   const dayGap = isStory ? 26 : 18;
   const totalRows = days.reduce((count, day) => count + day.sessions.length, 0);
@@ -206,6 +221,10 @@ export function getScheduleTemplateLayout(
             totalRows
         : isStory ? 62 : 52,
     ),
+  );
+  const sessionSize = Math.min(
+    isStory ? 40 : 34,
+    Math.max(isStory ? 31 : 27, rowHeight * 0.62),
   );
   let nextDayY = daysY;
   const positionedDays = days.map(day => {
@@ -228,6 +247,9 @@ export function getScheduleTemplateLayout(
     trackY,
     trackText,
     trackSize,
+    roundText,
+    roundY,
+    roundSize,
     contentWidth,
     daysY,
     dayHeadingSize,

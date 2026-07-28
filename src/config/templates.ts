@@ -65,6 +65,7 @@ export const TEMPLATE_FIELDS: Record<
   ],
   schedule: [
     { key: 'circuit', label: 'Track name' },
+    { key: 'round', label: 'Round(s)' },
   ],
   qualifying: [
     ...timedRaceFields,

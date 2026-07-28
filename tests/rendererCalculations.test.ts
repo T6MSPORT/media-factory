@@ -349,6 +349,7 @@ test('schedule layout keeps the title and track at the top with selected days un
     details: {
       ...details,
       circuit: 'Silverstone National',
+      round: '3 & 4',
       scheduleDayCount: 2,
       scheduleDays: [
         {
@@ -375,12 +376,19 @@ test('schedule layout keeps the title and track at the top with selected days un
   assert.equal(schedule.title, 'SCHEDULE');
   assert.equal(schedule.titleY, 350);
   assert.equal(schedule.trackText, 'SILVERSTONE NATIONAL');
+  assert.equal(schedule.roundText, 'ROUNDS 3 & 4');
   assert.ok(schedule.trackY > schedule.titleY);
-  assert.ok(schedule.daysY > schedule.trackY);
+  assert.ok(schedule.roundY > schedule.trackY);
+  assert.ok(schedule.daysY > schedule.roundY);
   assert.equal(schedule.days.length, 2);
   assert.deepEqual(schedule.days.map(day => day.day), ['Saturday', 'Sunday']);
   assert.equal(schedule.days[0].sessions.length, 2);
   assert.equal(schedule.days[1].sessions.length, 5);
+  assert.deepEqual(
+    schedule.days.flatMap(day => day.sessions.map(session => session.label)),
+    ['PRACTICE', 'QUALIFYING', 'RACE 1', 'RACE 2', 'RACE 3', 'RACE 4', 'RACE 5'],
+  );
+  assert.ok(schedule.sessionSize >= 31);
   assert.equal(schedule.days[0].x, schedule.days[1].x);
   assert.ok(schedule.days[1].y > schedule.days[0].y);
 });

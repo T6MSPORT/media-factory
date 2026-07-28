@@ -312,6 +312,19 @@ export function StandardTemplate({
         >
           {layout.trackText}
         </text>
+        {layout.roundText && (
+          <text
+            x={layout.margin + 2}
+            y={layout.roundY}
+            dominantBaseline="hanging"
+            fontFamily={bodyFont}
+            fontSize={layout.roundSize}
+            fontWeight="700"
+            letterSpacing="4"
+          >
+            {layout.roundText}
+          </text>
+        )}
         {layout.days.map(day => (
           <g key={`${day.day}-${day.y}`} transform={`translate(${day.x} ${day.y})`}>
             <rect
@@ -336,31 +349,32 @@ export function StandardTemplate({
               {day.day.toUpperCase()}
             </text>
             {day.sessions.map((session, sessionIndex) => {
-              const y =
-                layout.dayHeadingHeight +
-                layout.rowHeight * 0.7 +
-                sessionIndex * layout.rowHeight;
+              const rowTop =
+                layout.dayHeadingHeight + sessionIndex * layout.rowHeight;
+              const y = rowTop + layout.rowHeight / 2;
               return (
                 <g key={sessionIndex}>
                   <line
                     x1="0"
                     x2={day.width}
-                    y1={y - 11}
-                    y2={y - 11}
+                    y1={rowTop}
+                    y2={rowTop}
                     stroke={branding.accent}
                     strokeOpacity=".22"
                   />
                   <text
                     x="4"
                     y={y}
+                    dominantBaseline="middle"
                     fontSize={layout.sessionSize}
                     fontWeight="700"
                   >
-                    {session.type.toUpperCase()}
+                    {session.label}
                   </text>
                   <text
                     x={day.width - 4}
                     y={y}
+                    dominantBaseline="middle"
                     textAnchor="end"
                     fontSize={layout.sessionSize}
                     fontWeight="900"

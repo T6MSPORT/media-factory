@@ -91,17 +91,21 @@ export function BackgroundLayers({
           pointerEvents="none"
         />
       )}
-      <path
-        d={`M0 ${stripeLeftTop} L${w} ${stripeRightTop} L${w} ${stripeRightBottom} L0 ${stripeLeftBottom}Z`}
-        fill={branding.primary}
-        opacity=".9"
-      />
-      <path
-        d={`M0 ${stripeLineLeft} L${w} ${stripeLineRight}`}
-        stroke={branding.accent}
-        strokeWidth="5"
-        opacity=".8"
-      />
+      {project.template !== 'schedule' && (
+        <>
+          <path
+            d={`M0 ${stripeLeftTop} L${w} ${stripeRightTop} L${w} ${stripeRightBottom} L0 ${stripeLeftBottom}Z`}
+            fill={branding.primary}
+            opacity=".9"
+          />
+          <path
+            d={`M0 ${stripeLineLeft} L${w} ${stripeLineRight}`}
+            stroke={branding.accent}
+            strokeWidth="5"
+            opacity=".8"
+          />
+        </>
+      )}
       {driverImage && project.driverVisible !== false && (
         <g transform={driverTransform}>
           <image

@@ -188,6 +188,7 @@ test('template library exposes all templates and opens the chosen generator', ()
 });
 
 test('schedule fields show only the selected days and five inline session rows per day', () => {
+  const updates: Array<Partial<Project['details']>> = [];
   const baseProject: Project = {
     id: 'schedule',
     name: 'Schedule',
@@ -265,13 +266,23 @@ test('schedule fields show only the selected days and five inline session rows p
         })),
       },
     },
-    setDetails: () => {},
+    setDetails: details => updates.push(details),
   });
   assert.equal(findElements(threeDayTree, 'fieldset').length, 3);
   assert.equal(
     findElements(threeDayTree, 'input').filter(input => input.props?.type === 'time')
       .length,
     15,
+  );
+  const removeButtons = findElements(threeDayTree, 'button').filter(
+    button => textContent(button) === 'Remove day',
+  );
+  assert.equal(removeButtons.length, 2);
+  (removeButtons[0].props?.onClick as () => void)();
+  assert.equal(updates.at(-1)?.scheduleDayCount, 2);
+  assert.deepEqual(
+    updates.at(-1)?.scheduleDays?.map(day => day.day),
+    ['Friday', 'Sunday'],
   );
 });
 

@@ -112,11 +112,25 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           value={project.details.circuit}
           onChange={circuit => setDetails({ circuit })}
         />
+        <TextField
+          label="Round(s)"
+          value={project.details.round}
+          onChange={round => setDetails({ round })}
+        />
       </div>
 
       <div className="schedule-day-grid" data-days={dayCount}>
         {days.map((scheduleDay, dayIndex) => (
           <fieldset className="schedule-day" key={dayIndex}>
+          {dayIndex > 0 && (
+            <button
+              type="button"
+              className="schedule-remove-day"
+              onClick={() => updateDays(days.filter((_, index) => index !== dayIndex))}
+            >
+              Remove day
+            </button>
+          )}
           <label>
             Day {dayIndex + 1}
             <select

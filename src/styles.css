@@ -248,6 +248,7 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .schedule-session-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:5px}
 .schedule-session-row label{font-size:9px;letter-spacing:.3px}
 .schedule-session-row select,.schedule-session-row input{min-width:0;padding-inline:6px}
+.schedule-remove-day{float:right;margin:0 0 7px 8px;padding:5px 9px;font-size:10px}
 
 @media(max-width:700px){
   .schedule-top-fields,.schedule-day-grid{grid-template-columns:1fr}
