@@ -385,7 +385,7 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(race.positionGap, 48);
   assert.equal(race.podiumPosition, 2);
   assert.equal(race.titleY, 350);
-  assert.equal(race.positionY, 960);
+  assert.equal(race.positionY, qualifying.positionY);
 });
 
 test('schedule layout keeps the title and track at the top with selected days underneath', () => {
