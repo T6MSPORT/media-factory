@@ -97,11 +97,12 @@ function PoleStopwatch({
       transform={`translate(${x} ${y})`}
       fill="none"
       stroke={accent}
-      strokeWidth={Math.max(8, size * 0.08)}
+      strokeWidth={Math.max(8, size * 0.055)}
       strokeLinecap="round"
       strokeLinejoin="round"
+      opacity=".82"
     >
-      <circle r={radius} fill="#130c22" fillOpacity=".62" />
+      <circle r={radius} fill="#130c22" fillOpacity=".48" />
       <path d={`M0 ${-radius} V${-radius - size * 0.19}`} />
       <path d={`M${-size * 0.12} ${-radius - size * 0.19} H${size * 0.12}`} />
       <path
@@ -123,12 +124,6 @@ function ResultsTemplate({
   bodyFont,
 }: TemplateSharedProps & { w: number; h: number }) {
   const layout = getResultsTemplateLayout(w, h, project);
-  const podiumColour =
-    layout.podiumPosition === 1
-      ? '#d9aa24'
-      : layout.podiumPosition === 2
-        ? '#c3c8cf'
-        : '#b8753f';
 
   return (
     <g fill={branding.accent}>
@@ -186,6 +181,14 @@ function ResultsTemplate({
         position={layout.podiumPosition}
         scale={layout.laurelScale}
       />
+      {layout.isPole && (
+        <PoleStopwatch
+          x={layout.stopwatchX}
+          y={layout.stopwatchY}
+          size={layout.stopwatchSize}
+          accent="#a855f7"
+        />
+      )}
       <text
         x={layout.positionX}
         y={layout.positionY}
@@ -195,7 +198,7 @@ function ResultsTemplate({
         fontSize={layout.positionSize}
         fontWeight="900"
         letterSpacing="-12"
-        fill={layout.podiumPosition ? podiumColour : branding.accent}
+        fill={branding.accent}
         stroke="#08090a"
         strokeWidth="10"
         paintOrder="stroke fill"
@@ -203,12 +206,22 @@ function ResultsTemplate({
         {layout.positionText}
       </text>
       {layout.isPole && (
-        <PoleStopwatch
-          x={layout.stopwatchX}
-          y={layout.stopwatchY}
-          size={layout.stopwatchSize}
-          accent="#a855f7"
-        />
+        <text
+          x={layout.positionX}
+          y={layout.poleTextY}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontFamily={headingFont}
+          fontSize={layout.poleTextSize}
+          fontWeight="900"
+          letterSpacing="8"
+          fill="#a855f7"
+          stroke="#08090a"
+          strokeWidth="6"
+          paintOrder="stroke fill"
+        >
+          POLE
+        </text>
       )}
     </g>
   );
