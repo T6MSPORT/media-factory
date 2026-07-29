@@ -51,9 +51,10 @@ function BackgroundArtwork({ id, primary, accent }: ArtworkProps) {
     case 'speed-lines':
       return (
         <>
-          <path d="M-60 22 H72 L59 34 H-60 Z M-35 43 H121 L101 59 H-35 Z M-70 69 H61 L44 82 H-70 Z" fill={primary} opacity=".68" />
-          <path d="M40 17 H151 L137 29 H26 Z M72 65 H151 L135 79 H56 Z" fill={accent} opacity=".78" />
-          <path d="M-40 91 H95" {...stroke} stroke={accent} strokeWidth="2" opacity=".6" />
+          <path d="M-65 13 H55 L83 38 H-65 Z M-65 47 H96 L126 73 H-65 Z" fill={primary} opacity=".66" />
+          <path d="M31 13 H67 L96 38 H60 Z M75 47 H109 L139 73 H105 Z" fill={accent} opacity=".82" />
+          <path d="M-48 83 H64 L80 97 H-48 Z M89 83 H151 V97 H105 Z" fill={primary} opacity=".34" />
+          <path d="M-54 41 H105 L119 53 H151 M-30 78 H76" {...stroke} stroke={accent} strokeWidth="2.3" opacity=".78" />
         </>
       );
     case 'corner-frame':
@@ -68,43 +69,37 @@ function BackgroundArtwork({ id, primary, accent }: ArtworkProps) {
     case 'grid':
       return (
         <>
-          <path d="M-55 91 L-6 8 H126 L151 91 Z" fill={primary} opacity=".15" />
-          <g {...stroke} stroke={primary} strokeWidth="1.25" opacity=".72">
-            <path d="M-55 91 H151 M-35 76 H136 M-18 62 H126 M-2 49 H117 M12 37 H110 M25 26 H104" />
-            <path d="M-55 91 L44 8 M-4 91 L62 8 M47 91 L80 8 M98 91 L98 8 M149 91 L116 8" />
-          </g>
-          <path d="M-20 56 H91 L101 48 H137" {...stroke} stroke={accent} strokeWidth="2.3" />
+          <path d="M-59 16 H151 V34 H-59 Z M-59 66 H151 V84 H-59 Z" fill={primary} opacity=".24" />
+          <path d="M-43 9 H-18 V42 H-43 Z M8 9 H33 V42 H8 Z M59 9 H84 V42 H59 Z M110 9 H135 V42 H110 Z" fill={primary} opacity=".68" />
+          <path d="M-18 58 H8 V91 H-18 Z M33 58 H59 V91 H33 Z M84 58 H110 V91 H84 Z M135 58 H160 V91 H135 Z" fill={accent} opacity=".62" />
+          <path d="M-58 50 H38 L50 39 H101 L113 50 H151" {...stroke} stroke={accent} strokeWidth="2.5" />
         </>
       );
     case 'dot-matrix':
       return (
         <>
-          <path d="M-45 15 H129 L151 79 H-67 Z" fill={primary} opacity=".13" />
-          <g fill={primary} opacity=".72">
-            {Array.from({ length: 8 }, (_, row) =>
-              Array.from({ length: 16 }, (_, column) => (
-                <circle
-                  key={`${row}-${column}`}
-                  cx={-33 + column * 11 + row * 3}
-                  cy={18 + row * 8}
-                  r={row % 3 === 0 ? 1.45 : 1}
-                  opacity={Math.max(.18, .9 - Math.abs(column - 7) * .075)}
-                />
-              )),
-            )}
+          <path d="M-57 19 H82 L97 32 H-57 Z M-31 42 H119 L135 56 H-47 Z M-8 67 H151 V82 H-25 Z" fill={primary} opacity=".32" />
+          <g fill={primary} opacity=".8">
+            {Array.from({ length: 9 }, (_, index) => (
+              <rect key={`upper-${index}`} x={-48 + index * 17} y={13} width={index < 6 ? 11 : 6} height="7" />
+            ))}
+            {Array.from({ length: 11 }, (_, index) => (
+              <rect key={`middle-${index}`} x={-38 + index * 16} y={44} width={index % 3 === 0 ? 12 : 7} height="8" />
+            ))}
+            {Array.from({ length: 8 }, (_, index) => (
+              <rect key={`lower-${index}`} x={17 + index * 18} y={72} width={index < 5 ? 12 : 6} height="8" />
+            ))}
           </g>
-          <path d="M-22 71 H55 L69 58 H139" {...stroke} stroke={accent} strokeWidth="2.4" />
+          <path d="M-55 30 H62 L78 44 H151 M-15 61 H104 L117 73 H151" {...stroke} stroke={accent} strokeWidth="2.2" opacity=".9" />
         </>
       );
     case 'crosshair':
       return (
         <>
-          <path d="M-60 29 H50 L64 15 H151 V28 H71 L57 42 H-60 Z" fill={primary} opacity=".42" />
-          <path d="M-43 67 H14 L30 51 H151 V63 H37 L21 79 H-43 Z" fill={accent} opacity=".48" />
-          <g {...stroke} stroke={primary} strokeWidth="1.2" opacity=".72">
-            <path d="M-22 4 V94 M9 4 V94 M40 4 V94 M71 4 V94 M102 4 V94" />
-            <path d="M-50 20 H145 M-50 48 H145 M-50 76 H145" />
-          </g>
+          <path d="M-59 9 H50 L62 21 H151 V39 H78 L66 27 H-59 Z" fill={primary} opacity=".56" />
+          <path d="M-59 62 H9 L24 47 H151 V66 H41 L26 81 H-59 Z" fill={accent} opacity=".54" />
+          <path d="M-36 34 H47 L57 44 H113 L123 34 H151 V45 H128 L117 56 H53 L42 45 H-36 Z" fill={primary} opacity=".3" />
+          <path d="M-48 87 H18 L28 77 H91 M105 77 H151 M89 14 H126" {...stroke} stroke={accent} strokeWidth="2.4" />
         </>
       );
     case 'racing-stripes':
@@ -121,7 +116,6 @@ function BackgroundArtwork({ id, primary, accent }: ArtworkProps) {
           <path d="M-64 103 C-22 27 31 -1 151 8" {...stroke} stroke={primary} strokeWidth="22" strokeLinecap="round" opacity=".58" />
           <path d="M-62 95 C-17 28 34 9 151 17" {...stroke} stroke={accent} strokeWidth="4" strokeLinecap="round" />
           <path d="M-48 111 C-3 47 42 29 151 36" {...stroke} stroke={primary} strokeWidth="2" opacity=".75" />
-          <path d="M4 67 L18 47 L39 45" {...stroke} stroke={accent} strokeWidth="3" />
         </>
       );
     case 'split-blocks':
@@ -143,36 +137,34 @@ function BackgroundArtwork({ id, primary, accent }: ArtworkProps) {
     case 'diamond':
       return (
         <>
-          <path d="M-43 54 L7 5 H57 L8 54 L57 103 H7 Z" fill={primary} opacity=".45" />
-          <path d="M36 54 L84 7 H133 L85 54 L133 101 H84 Z" fill={accent} opacity=".35" />
-          <path d="M-43 54 L7 5 H57 L8 54 L57 103 H7 Z M36 54 L84 7 H133 L85 54 L133 101 H84 Z" {...stroke} stroke={primary} strokeWidth="2" opacity=".85" />
-          <path d="M8 54 H85" {...stroke} stroke={accent} strokeWidth="3" />
+          <path d="M-58 15 H36 L58 35 H-58 Z M21 43 H116 L139 64 H-2 Z M76 72 H151 V94 H52 Z" fill={primary} opacity=".54" />
+          <path d="M36 15 H65 L87 35 H58 Z M116 43 H145 L168 64 H139 Z M52 72 H82 L106 94 H76 Z" fill={accent} opacity=".72" />
+          <path d="M-42 39 H31 L45 52 H103 M18 69 H91 L106 82 H151" {...stroke} stroke={accent} strokeWidth="2.3" opacity=".78" />
         </>
       );
     case 'hexagon':
       return (
         <>
-          <path d="M-37 29 L-10 4 H39 L64 29 L37 54 H-12 Z M50 66 L76 41 H127 L151 66 L126 91 H75 Z" fill={primary} opacity=".4" />
-          <path d="M-17 77 L8 54 H55 L79 77 L54 101 H7 Z" fill={accent} opacity=".44" />
-          <path d="M-37 29 L-10 4 H39 L64 29 L37 54 H-12 Z M50 66 L76 41 H127 L151 66 L126 91 H75 Z M-17 77 L8 54 H55 L79 77 L54 101 H7 Z" {...stroke} stroke={primary} strokeWidth="1.8" />
+          <path d="M-59 13 H19 L31 25 H83 L95 13 H151 V34 H104 L92 46 H22 L10 34 H-59 Z" fill={primary} opacity=".48" />
+          <path d="M-35 60 H30 L42 48 H105 L117 60 H151 V82 H108 L96 70 H51 L39 82 H-35 Z" fill={accent} opacity=".48" />
+          <path d="M-51 49 H-7 L3 39 H67 L78 50 H127 L138 39 H151 M-12 91 H54 L65 80 H119" {...stroke} stroke={primary} strokeWidth="2.2" opacity=".86" />
+          <path d="M22 20 H78 M48 64 H100" {...stroke} stroke={accent} strokeWidth="3.2" />
         </>
       );
     case 'circle-ring':
       return (
         <>
-          <path d="M-55 91 A101 101 0 0 1 109 -4" {...stroke} stroke={primary} strokeWidth="18" strokeDasharray="34 8" opacity=".58" />
-          <path d="M-42 94 A88 88 0 0 1 111 14" {...stroke} stroke={accent} strokeWidth="3.5" strokeDasharray="14 6" />
-          <path d="M-23 91 A69 69 0 0 1 107 35" {...stroke} stroke={primary} strokeWidth="2" opacity=".8" />
-          <path d="M66 12 L79 30 M96 22 L103 43 M26 8 L35 29" {...stroke} stroke={accent} strokeWidth="3" />
+          <path d="M-58 93 L-33 64 H-12 L7 43 H29 L45 25 H68 L82 10 H151 V32 H94 L79 48 H57 L41 66 H19 L1 86 H-20 L-27 93 Z" fill={primary} opacity=".56" />
+          <path d="M-31 93 L-11 71 H10 L29 51 H51 L67 34 H90 L103 20 H151 V30 H108 L94 45 H72 L56 62 H34 L16 82 H-5 L-15 93 Z" fill={accent} opacity=".58" />
+          <path d="M-54 78 H-39 L-22 59 H0 L18 39 H40 L55 22 H77 L89 9 H132" {...stroke} stroke={accent} strokeWidth="2.6" />
         </>
       );
     case 'triangle':
       return (
         <>
-          <path d="M-47 95 L4 3 L55 95 Z" fill={primary} opacity=".35" />
-          <path d="M18 95 L69 3 L120 95 Z" fill={accent} opacity=".3" />
-          <path d="M-47 95 L4 3 L55 95 Z M18 95 L69 3 L120 95 Z M80 95 L130 5 L169 76" {...stroke} stroke={primary} strokeWidth="2.1" />
-          <path d="M-16 73 H95 L104 57 H144" {...stroke} stroke={accent} strokeWidth="3" />
+          <path d="M-61 88 L5 12 H39 L-27 88 Z M18 88 L72 25 H101 L47 88 Z M87 88 L128 40 H151 V67 L133 88 Z" fill={primary} opacity=".52" />
+          <path d="M-28 88 L38 12 H51 L-15 88 Z M48 88 L102 25 H114 L60 88 Z" fill={accent} opacity=".76" />
+          <path d="M-49 96 H22 L38 78 H94 L109 61 H151 M-43 58 H15 L31 40 H82" {...stroke} stroke={accent} strokeWidth="2.2" opacity=".82" />
         </>
       );
     case 'checkered-panel':
