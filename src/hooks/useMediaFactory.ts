@@ -6,44 +6,98 @@ import {
   createProject,
   updateProject,
 } from '../state/mediaFactoryState';
-import { loadResult, save, type StorageIssue } from '../store';
+import { loadDurableData, saveDurableData } from '../durableStore';
+import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
 import type { Data, Project, TemplateId } from '../types';
 
 export function useMediaFactory() {
   const initial = useRef(loadResult()).current;
   const [data, setData] = useState<Data>(initial.data);
   const [storageIssue, setStorageIssue] = useState<StorageIssue | undefined>(initial.issue);
+  const [storageReady, setStorageReady] = useState(false);
   const [page, setPage] = useState<PageId>('home');
   const [activeId, setActiveId] = useState<string>();
-  const mounted = useRef(false);
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  const clearLegacyStorage = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // IndexedDB is now authoritative, so a restricted localStorage API is harmless.
+    }
+  };
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
+    let cancelled = false;
+
+    const initialiseStorage = async () => {
+      try {
+        const savedData = await loadDurableData();
+        if (cancelled) return;
+
+        if (savedData) {
+          setData(savedData);
+        } else {
+          if (initial.issue?.operation === 'load') {
+            setStorageIssue(initial.issue);
+            return;
+          }
+          await saveDurableData(dataRef.current);
+        }
+
+        if (cancelled) return;
+        clearLegacyStorage();
+        setStorageIssue(undefined);
+        setStorageReady(true);
+      } catch (error) {
+        if (!cancelled) setStorageIssue({ operation: 'load', error });
+      }
+    };
+
+    void initialiseStorage();
+    return () => {
+      cancelled = true;
+    };
+  }, [initial]);
+
+  useEffect(() => {
+    if (!storageReady) return;
+
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      try {
+        await saveDurableData(data);
+        if (!cancelled) setStorageIssue(undefined);
+      } catch (error) {
+        if (!cancelled) setStorageIssue({ operation: 'save', error });
+      }
+    }, 100);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [data, storageReady]);
+
+  const retryStorage = async () => {
+    try {
+      if (storageIssue?.operation === 'load') {
+        const savedData = await loadDurableData();
+        if (savedData) setData(savedData);
+        else await saveDurableData(dataRef.current);
+        clearLegacyStorage();
+        setStorageReady(true);
+      } else {
+        await saveDurableData(dataRef.current);
+      }
+      setStorageIssue(undefined);
+    } catch (error) {
+      setStorageIssue({
+        operation: storageIssue?.operation || 'save',
+        error,
+      });
     }
-    if (storageIssue?.operation === 'load') return;
-
-    let error: unknown;
-    const saved = save(data, localStorage, nextError => {
-      error = nextError;
-    });
-    setStorageIssue(saved ? undefined : { operation: 'save', error });
-  }, [data]);
-
-  const retryStorage = () => {
-    if (storageIssue?.operation === 'load') {
-      const result = loadResult();
-      if (!result.issue) setData(result.data);
-      setStorageIssue(result.issue);
-      return;
-    }
-
-    let error: unknown;
-    const saved = save(data, localStorage, nextError => {
-      error = nextError;
-    });
-    setStorageIssue(saved ? undefined : { operation: 'save', error });
   };
 
   const finishOnboarding = (draft: Data) => {
