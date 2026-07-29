@@ -362,11 +362,11 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(qualifying.positionText, 'P1');
   assert.equal(qualifying.isPole, true);
   assert.equal(qualifying.podiumPosition, 0);
-  assert.equal(qualifying.titleY, 350);
+  assert.equal(qualifying.titleY, 82);
   assert.equal(qualifying.positionY, 960);
   assert.equal(qualifying.stopwatchX, 540);
-  assert.equal(qualifying.stopwatchY, 960);
-  assert.equal(qualifying.poleTextY, 1205);
+  assert.equal(qualifying.stopwatchY, 1310);
+  assert.equal(qualifying.poleTextY, 1515);
 
   const race = getResultsTemplateLayout(1080, 1920, {
     ...project,

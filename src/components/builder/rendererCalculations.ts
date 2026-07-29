@@ -76,7 +76,14 @@ export function getResultsTemplateLayout(
   const contentWidth = w - margin * 2;
   const session = project.details.resultSession || 'race';
   const title = `${session === 'qualifying' ? 'QUALIFYING' : 'RACE'} RESULT`;
-  const titleY = isStory ? 350 : 300;
+  const titleY =
+    session === 'qualifying'
+      ? isStory
+        ? 82
+        : 64
+      : isStory
+        ? 350
+        : 300;
   const titleSize = fitTextSize(
     title,
     isStory ? 104 : 88,
@@ -134,9 +141,9 @@ export function getResultsTemplateLayout(
     isPole,
     podiumPosition,
     stopwatchX: w / 2,
-    stopwatchY: positionY,
-    stopwatchSize: isStory ? 520 : 430,
-    poleTextY: positionY + (isStory ? 245 : 205),
+    stopwatchY: positionY + (isStory ? 350 : 275),
+    stopwatchSize: isStory ? 280 : 220,
+    poleTextY: positionY + (isStory ? 555 : 435),
     poleTextSize: isStory ? 72 : 60,
     laurelScale: isStory ? 1.65 : 1.38,
   };

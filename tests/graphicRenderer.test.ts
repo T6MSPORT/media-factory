@@ -216,3 +216,32 @@ for (const template of templates) {
     });
   }
 }
+
+test('qualifying result uses the dedicated top-first pole composition', () => {
+  const project = makeProject('results', 'story');
+  project.details = {
+    ...project.details,
+    circuit: 'Silverstone National',
+    position: 'P1',
+    resultSession: 'qualifying',
+  };
+
+  const markup = renderToStaticMarkup(
+    createElement(Graphic, {
+      project,
+      data,
+      sponsors,
+      ref: null,
+    }),
+  );
+
+  assert.match(markup, /QUALIFYING RESULT/);
+  assert.match(markup, /SILVERSTONE NATIONAL/);
+  assert.match(markup, />P1</);
+  assert.match(markup, /id="pole-stopwatch"/);
+  assert.match(markup, /stroke="#a855f7"/);
+  assert.match(markup, />POLE</);
+  assert.doesNotMatch(markup, /RICH WEATHERILL/);
+  assert.doesNotMatch(markup, /ROUND 3/);
+  assert.doesNotMatch(markup, /data:image\/png;base64,competition/);
+});

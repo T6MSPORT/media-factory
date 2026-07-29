@@ -94,6 +94,7 @@ function PoleStopwatch({
   const radius = size * 0.36;
   return (
     <g
+      id="pole-stopwatch"
       transform={`translate(${x} ${y})`}
       fill="none"
       stroke={accent}
@@ -127,14 +128,16 @@ function ResultsTemplate({
 
   return (
     <g fill={branding.accent}>
-      <ChampionshipDriverHeader
-        w={w}
-        project={project}
-        profile={profile}
-        branding={branding}
-        headingFont={headingFont}
-        bodyFont={bodyFont}
-      />
+      {layout.session === 'race' && (
+        <ChampionshipDriverHeader
+          w={w}
+          project={project}
+          profile={profile}
+          branding={branding}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+      )}
       <text
         x={layout.margin}
         y={layout.titleY}
@@ -207,7 +210,7 @@ function ResultsTemplate({
       </text>
       {layout.isPole && (
         <text
-          x={layout.positionX}
+          x={layout.stopwatchX}
           y={layout.poleTextY}
           textAnchor="middle"
           dominantBaseline="central"
