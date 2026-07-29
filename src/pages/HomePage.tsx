@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
@@ -29,14 +28,8 @@ function TemplateCard({
 }
 
 export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
-  const brandStyle = {
-    '--brand-primary': data.branding.primary,
-    '--brand-secondary': data.branding.secondary,
-    '--brand-accent': data.branding.accent,
-  } as CSSProperties;
-
   return (
-    <div className="page branded-home" style={brandStyle}>
+    <div className="page branded-home">
       <PageHeader
         title={`Welcome, ${data.profile.name}`}
         subtitle="Select a template whenever you need a new graphic."

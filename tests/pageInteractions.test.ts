@@ -42,6 +42,9 @@ const { TEMPLATE_CATALOGUE } = await server.ssrLoadModule(
 const { MOTORSPORT_FONTS } = await server.ssrLoadModule(
   '/src/config/branding.ts',
 );
+const { MEDIA_FACTORY_UI_COLORS } = await server.ssrLoadModule(
+  '/src/config/branding.ts',
+);
 const { DRIVER_FIELDS } = await server.ssrLoadModule('/src/config/profile.ts');
 const { SPONSOR_LIMIT } = await server.ssrLoadModule('/src/state/pageState.ts');
 const { TemplateFields } = await server.ssrLoadModule(
@@ -171,6 +174,29 @@ test('home actions open the template library and the selected popular template',
 
   assert.equal(browsed, 1);
   assert.deepEqual(opened, [TEMPLATE_CATALOGUE[0].id]);
+});
+
+test('home interface colours remain independent from selected branding colours', () => {
+  const tree = HomePage({
+    data: {
+      ...completeData,
+      branding: {
+        ...completeData.branding,
+        primary: '#00ff00',
+        secondary: '#0000ff',
+        accent: '#ffff00',
+      },
+    },
+    openTemplate: () => {},
+    openTemplates: () => {},
+  }) as ElementNode;
+
+  assert.equal(tree.props?.style, undefined);
+  assert.deepEqual(MEDIA_FACTORY_UI_COLORS, {
+    primary: '#ef3b3b',
+    secondary: '#111317',
+    accent: '#ffffff',
+  });
 });
 
 test('template library exposes all templates and opens the chosen generator', () => {

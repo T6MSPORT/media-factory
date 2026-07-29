@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { StorageRecovery } from './components/StorageRecovery';
 import { Builder } from './components/builder/Builder';
 import { Sidebar } from './components/navigation/Sidebar';
+import { MEDIA_FACTORY_UI_COLORS } from './config/branding';
 import { useMediaFactory } from './hooks/useMediaFactory';
 import {
   BrandingPage,
@@ -38,11 +39,9 @@ export default function App() {
   }
 
   const appStyle = {
-    '--brand-primary': data.branding.primary,
-    '--brand-secondary': data.branding.secondary,
-    '--brand-accent': data.branding.accent,
-    '--brand-heading': data.branding.headingFont,
-    '--brand-body': data.branding.bodyFont,
+    '--brand-primary': MEDIA_FACTORY_UI_COLORS.primary,
+    '--brand-secondary': MEDIA_FACTORY_UI_COLORS.secondary,
+    '--brand-accent': MEDIA_FACTORY_UI_COLORS.accent,
   } as CSSProperties;
 
   return (
