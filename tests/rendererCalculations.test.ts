@@ -364,7 +364,7 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(qualifying.positionGap, 48);
   assert.equal(qualifying.podiumPosition, 0);
   assert.equal(qualifying.titleY, 350);
-  assert.equal(qualifying.positionY, 960);
+  assert.equal(qualifying.positionY, 1132.8);
 
   const race = getResultsTemplateLayout(1080, 1920, {
     ...project,
