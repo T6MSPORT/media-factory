@@ -4,238 +4,233 @@ export const GRAPHIC_ELEMENTS: Array<{
   id: Exclude<GraphicElementId, 'none'>;
   name: string;
 }> = [
-  { id: 'chevrons', name: 'Apex chevron pattern' },
-  { id: 'speed-lines', name: 'Velocity line pattern' },
-  { id: 'corner-frame', name: 'Techwear stitch pattern' },
-  { id: 'grid', name: 'Perspective grid pattern' },
-  { id: 'dot-matrix', name: 'Telemetry dot pattern' },
-  { id: 'crosshair', name: 'Coordinate grid pattern' },
-  { id: 'racing-stripes', name: 'Racing line pattern' },
-  { id: 'apex-arc', name: 'Apex contour pattern' },
-  { id: 'split-blocks', name: 'Aero panel pattern' },
-  { id: 'slash-stack', name: 'Velocity slash pattern' },
-  { id: 'diamond', name: 'Circuit diamond mesh' },
-  { id: 'hexagon', name: 'Hex tech mesh' },
-  { id: 'circle-ring', name: 'Rev counter pattern' },
-  { id: 'triangle', name: 'Delta mesh pattern' },
-  { id: 'checkered-panel', name: 'Chequered pattern' },
-  { id: 'tech-bracket', name: 'HUD bracket pattern' },
-  { id: 'wave', name: 'Aero flow pattern' },
-  { id: 'starburst', name: 'Speed fan pattern' },
-  { id: 'target', name: 'Telemetry trace pattern' },
-  { id: 'wing', name: 'Aero blade pattern' },
+  { id: 'chevrons', name: 'Apex Attack' },
+  { id: 'speed-lines', name: 'Full Throttle' },
+  { id: 'corner-frame', name: 'Pitwall' },
+  { id: 'grid', name: 'Starting Grid' },
+  { id: 'dot-matrix', name: 'LED Velocity' },
+  { id: 'crosshair', name: 'Race Control' },
+  { id: 'racing-stripes', name: 'Racing Line' },
+  { id: 'apex-arc', name: 'Late Apex' },
+  { id: 'split-blocks', name: 'Aero Cut' },
+  { id: 'slash-stack', name: 'Slipstream' },
+  { id: 'diamond', name: 'Carbon Shift' },
+  { id: 'hexagon', name: 'Tech Sector' },
+  { id: 'circle-ring', name: 'Rev Limit' },
+  { id: 'triangle', name: 'Delta Force' },
+  { id: 'checkered-panel', name: 'Chequered Sweep' },
+  { id: 'tech-bracket', name: 'Telemetry Frame' },
+  { id: 'wave', name: 'Airflow' },
+  { id: 'starburst', name: 'Launch' },
+  { id: 'target', name: 'Live Trace' },
+  { id: 'wing', name: 'Downforce' },
 ];
 
-type PatternProps = {
+type ArtworkProps = {
   id: Exclude<GraphicElementId, 'none'>;
   primary: string;
   accent: string;
-  patternId: string;
 };
 
-function PatternTile({
-  id,
-  primary,
-  accent,
-}: Omit<PatternProps, 'patternId'>) {
-  const line = {
-    fill: 'none',
-    stroke: primary,
-    strokeWidth: 1.5,
-    vectorEffect: 'non-scaling-stroke' as const,
-  };
+const stroke = {
+  fill: 'none',
+  vectorEffect: 'non-scaling-stroke' as const,
+};
 
+function BackgroundArtwork({ id, primary, accent }: ArtworkProps) {
   switch (id) {
     case 'chevrons':
       return (
-        <g {...line}>
-          <path d="M-8 0 L8 12 L-8 24 M8 0 L24 12 L8 24 M24 0 L40 12 L24 24" />
-          <path d="M0 0 L16 12 L0 24 M16 0 L32 12 L16 24" stroke={accent} opacity=".45" />
-        </g>
+        <>
+          <path d="M-55 94 L12 -18 H43 L-24 94 Z" fill={primary} opacity=".82" />
+          <path d="M-10 105 L57 -7 H74 L7 105 Z" fill={accent} opacity=".72" />
+          <path d="M35 112 L102 0 H111 L44 112 Z" fill={primary} opacity=".35" />
+          <path d="M-35 82 H48 L65 54 H150" {...stroke} stroke={accent} strokeWidth="2.2" opacity=".8" />
+        </>
       );
     case 'speed-lines':
       return (
-        <g fill={primary}>
-          <path d="M0 2 H34 L28 6 H0 Z M0 10 H22 L17 13 H0 Z M0 17 H39 L32 21 H0 Z" />
-          <path d="M25 10 H40 L35 13 H20 Z" fill={accent} opacity=".65" />
-        </g>
+        <>
+          <path d="M-60 22 H72 L59 34 H-60 Z M-35 43 H121 L101 59 H-35 Z M-70 69 H61 L44 82 H-70 Z" fill={primary} opacity=".68" />
+          <path d="M40 17 H151 L137 29 H26 Z M72 65 H151 L135 79 H56 Z" fill={accent} opacity=".78" />
+          <path d="M-40 91 H95" {...stroke} stroke={accent} strokeWidth="2" opacity=".6" />
+        </>
       );
     case 'corner-frame':
       return (
-        <g {...line}>
-          <path d="M1 9 V1 H9 M31 1 H39 V9 M39 15 V23 H31 M9 23 H1 V15" />
-          <path d="M6 7 V5 H12 M28 5 H34 V7 M34 17 V19 H28 M12 19 H6 V17" stroke={accent} opacity=".55" />
-        </g>
+        <>
+          <path d="M-42 78 L-5 3 H72 L62 17 H7 L-23 78 Z" fill={primary} opacity=".58" />
+          <path d="M23 94 L44 49 H141 L129 64 H55 L41 94 Z" fill={accent} opacity=".64" />
+          <path d="M-15 31 H42 L52 19 H115 M7 83 H67 L77 71 H145" {...stroke} stroke={primary} strokeWidth="2.1" opacity=".85" />
+          <path d="M18 26 H31 M73 76 H90" {...stroke} stroke={accent} strokeWidth="4" />
+        </>
       );
     case 'grid':
       return (
-        <g {...line} opacity=".8">
-          <path d="M0 0 H40 M0 12 H40 M0 24 H40 M0 0 V24 M20 0 V24 M40 0 V24" />
-          <path d="M0 24 L20 0 L40 24" stroke={accent} opacity=".35" />
-        </g>
+        <>
+          <path d="M-55 91 L-6 8 H126 L151 91 Z" fill={primary} opacity=".15" />
+          <g {...stroke} stroke={primary} strokeWidth="1.25" opacity=".72">
+            <path d="M-55 91 H151 M-35 76 H136 M-18 62 H126 M-2 49 H117 M12 37 H110 M25 26 H104" />
+            <path d="M-55 91 L44 8 M-4 91 L62 8 M47 91 L80 8 M98 91 L98 8 M149 91 L116 8" />
+          </g>
+          <path d="M-20 56 H91 L101 48 H137" {...stroke} stroke={accent} strokeWidth="2.3" />
+        </>
       );
     case 'dot-matrix':
       return (
-        <g fill={primary}>
-          {[4, 12, 20, 28, 36].flatMap((x, column) =>
-            [4, 12, 20].map((y, row) => (
-              <circle
-                key={`${x}-${y}`}
-                cx={x}
-                cy={y}
-                r={1 + ((row + column) % 3) * 0.55}
-                opacity={0.35 + ((row + column) % 3) * 0.23}
-              />
-            )),
-          )}
-          <rect x="27" y="17" width="7" height="2" fill={accent} opacity=".7" />
-        </g>
+        <>
+          <path d="M-45 15 H129 L151 79 H-67 Z" fill={primary} opacity=".13" />
+          <g fill={primary} opacity=".72">
+            {Array.from({ length: 8 }, (_, row) =>
+              Array.from({ length: 16 }, (_, column) => (
+                <circle
+                  key={`${row}-${column}`}
+                  cx={-33 + column * 11 + row * 3}
+                  cy={18 + row * 8}
+                  r={row % 3 === 0 ? 1.45 : 1}
+                  opacity={Math.max(.18, .9 - Math.abs(column - 7) * .075)}
+                />
+              )),
+            )}
+          </g>
+          <path d="M-22 71 H55 L69 58 H139" {...stroke} stroke={accent} strokeWidth="2.4" />
+        </>
       );
     case 'crosshair':
       return (
-        <g {...line}>
-          <path d="M0 6 H40 M0 18 H40 M10 0 V24 M30 0 V24" opacity=".42" />
-          <path d="M4 12 H16 M24 12 H36 M20 2 V9 M20 15 V22" stroke={accent} />
-          <circle cx="20" cy="12" r="2" />
-        </g>
+        <>
+          <path d="M-60 29 H50 L64 15 H151 V28 H71 L57 42 H-60 Z" fill={primary} opacity=".42" />
+          <path d="M-43 67 H14 L30 51 H151 V63 H37 L21 79 H-43 Z" fill={accent} opacity=".48" />
+          <g {...stroke} stroke={primary} strokeWidth="1.2" opacity=".72">
+            <path d="M-22 4 V94 M9 4 V94 M40 4 V94 M71 4 V94 M102 4 V94" />
+            <path d="M-50 20 H145 M-50 48 H145 M-50 76 H145" />
+          </g>
+        </>
       );
     case 'racing-stripes':
       return (
-        <g fill="none" strokeLinecap="round">
-          <path d="M-8 25 C1 5 18 3 29 14 C35 20 41 20 48 10" stroke={primary} strokeWidth="6" />
-          <path d="M-8 25 C1 5 18 3 29 14 C35 20 41 20 48 10" stroke={accent} strokeWidth="1.25" strokeDasharray="4 4" />
-        </g>
+        <>
+          <path d="M-61 88 C-12 83 4 58 28 31 C46 10 78 5 151 9" {...stroke} stroke={primary} strokeWidth="18" strokeLinecap="round" opacity=".72" />
+          <path d="M-61 88 C-12 83 4 58 28 31 C46 10 78 5 151 9" {...stroke} stroke={accent} strokeWidth="4" strokeLinecap="round" opacity=".95" />
+          <path d="M-53 101 C-5 94 14 67 38 41 C56 21 87 18 151 20" {...stroke} stroke={primary} strokeWidth="2" strokeDasharray="8 7" opacity=".75" />
+        </>
       );
     case 'apex-arc':
       return (
-        <g {...line} strokeLinecap="round">
-          <path d="M-2 23 A24 24 0 0 1 22 -1 M8 25 A24 24 0 0 1 32 1 M18 25 A24 24 0 0 1 42 1" />
-          <path d="M4 23 A24 24 0 0 1 28 -1" stroke={accent} strokeWidth="3" opacity=".55" />
-        </g>
+        <>
+          <path d="M-64 103 C-22 27 31 -1 151 8" {...stroke} stroke={primary} strokeWidth="22" strokeLinecap="round" opacity=".58" />
+          <path d="M-62 95 C-17 28 34 9 151 17" {...stroke} stroke={accent} strokeWidth="4" strokeLinecap="round" />
+          <path d="M-48 111 C-3 47 42 29 151 36" {...stroke} stroke={primary} strokeWidth="2" opacity=".75" />
+          <path d="M4 67 L18 47 L39 45" {...stroke} stroke={accent} strokeWidth="3" />
+        </>
       );
     case 'split-blocks':
       return (
-        <g fill={primary}>
-          <path d="M0 2 H23 L18 10 H0 Z M20 2 H40 V10 H15 Z M0 14 H15 L10 22 H0 Z M12 14 H34 L29 22 H7 Z" />
-          <path d="M31 14 H40 V22 H26 Z" fill={accent} opacity=".7" />
-        </g>
+        <>
+          <path d="M-60 2 H62 L39 43 H-60 Z M51 2 H151 V24 H39 Z" fill={primary} opacity=".66" />
+          <path d="M-39 51 H51 L28 95 H-39 Z M40 51 H151 V75 H27 Z" fill={accent} opacity=".58" />
+          <path d="M-50 45 H78 L89 34 H142" {...stroke} stroke={accent} strokeWidth="2.3" />
+        </>
       );
     case 'slash-stack':
       return (
-        <g fill={primary}>
-          <path d="M-5 24 L7 0 H13 L1 24 Z M9 24 L21 0 H27 L15 24 Z M23 24 L35 0 H41 L29 24 Z" />
-          <path d="M36 24 L40 16 V24 Z" fill={accent} />
-        </g>
+        <>
+          <path d="M-42 104 L17 -5 H42 L-17 104 Z M5 104 L64 -5 H78 L19 104 Z M47 104 L106 -5 H115 L56 104 Z" fill={primary} opacity=".67" />
+          <path d="M81 104 L140 -5 H151 L92 104 Z" fill={accent} opacity=".78" />
+          <path d="M-53 88 H33 M47 19 H142" {...stroke} stroke={accent} strokeWidth="2.2" />
+        </>
       );
     case 'diamond':
       return (
-        <g {...line}>
-          <path d="M0 12 L10 0 L20 12 L10 24 Z M20 12 L30 0 L40 12 L30 24 Z" />
-          <path d="M10 0 L20 12 L10 24 L0 12 M30 0 L40 12 L30 24 L20 12" stroke={accent} opacity=".42" />
-        </g>
+        <>
+          <path d="M-43 54 L7 5 H57 L8 54 L57 103 H7 Z" fill={primary} opacity=".45" />
+          <path d="M36 54 L84 7 H133 L85 54 L133 101 H84 Z" fill={accent} opacity=".35" />
+          <path d="M-43 54 L7 5 H57 L8 54 L57 103 H7 Z M36 54 L84 7 H133 L85 54 L133 101 H84 Z" {...stroke} stroke={primary} strokeWidth="2" opacity=".85" />
+          <path d="M8 54 H85" {...stroke} stroke={accent} strokeWidth="3" />
+        </>
       );
     case 'hexagon':
       return (
-        <g {...line}>
-          <path d="M3 6 L10 2 L17 6 V14 L10 18 L3 14 Z M23 6 L30 2 L37 6 V14 L30 18 L23 14 Z" />
-          <path d="M13 18 L20 14 L27 18 V26 L20 30 L13 26 Z" stroke={accent} opacity=".5" />
-        </g>
+        <>
+          <path d="M-37 29 L-10 4 H39 L64 29 L37 54 H-12 Z M50 66 L76 41 H127 L151 66 L126 91 H75 Z" fill={primary} opacity=".4" />
+          <path d="M-17 77 L8 54 H55 L79 77 L54 101 H7 Z" fill={accent} opacity=".44" />
+          <path d="M-37 29 L-10 4 H39 L64 29 L37 54 H-12 Z M50 66 L76 41 H127 L151 66 L126 91 H75 Z M-17 77 L8 54 H55 L79 77 L54 101 H7 Z" {...stroke} stroke={primary} strokeWidth="1.8" />
+        </>
       );
     case 'circle-ring':
       return (
-        <g {...line}>
-          <path d="M4 18 A10 10 0 0 1 20 6 M24 18 A10 10 0 0 1 40 6" strokeWidth="3" strokeDasharray="4 2" />
-          <path d="M5 20 H19 M25 20 H39" stroke={accent} />
-          <path d="M8 17 L12 11 M28 17 L34 9" />
-        </g>
+        <>
+          <path d="M-55 91 A101 101 0 0 1 109 -4" {...stroke} stroke={primary} strokeWidth="18" strokeDasharray="34 8" opacity=".58" />
+          <path d="M-42 94 A88 88 0 0 1 111 14" {...stroke} stroke={accent} strokeWidth="3.5" strokeDasharray="14 6" />
+          <path d="M-23 91 A69 69 0 0 1 107 35" {...stroke} stroke={primary} strokeWidth="2" opacity=".8" />
+          <path d="M66 12 L79 30 M96 22 L103 43 M26 8 L35 29" {...stroke} stroke={accent} strokeWidth="3" />
+        </>
       );
     case 'triangle':
       return (
-        <g {...line}>
-          <path d="M0 24 L10 4 L20 24 Z M20 24 L30 4 L40 24 Z M10 4 L20 24 L30 4 Z" />
-          <path d="M10 14 L15 24 H5 Z M30 14 L35 24 H25 Z" stroke={accent} opacity=".55" />
-        </g>
+        <>
+          <path d="M-47 95 L4 3 L55 95 Z" fill={primary} opacity=".35" />
+          <path d="M18 95 L69 3 L120 95 Z" fill={accent} opacity=".3" />
+          <path d="M-47 95 L4 3 L55 95 Z M18 95 L69 3 L120 95 Z M80 95 L130 5 L169 76" {...stroke} stroke={primary} strokeWidth="2.1" />
+          <path d="M-16 73 H95 L104 57 H144" {...stroke} stroke={accent} strokeWidth="3" />
+        </>
       );
     case 'checkered-panel':
       return (
-        <g fill={primary}>
-          {[0, 1, 2].flatMap(row =>
-            [0, 1, 2, 3, 4].map(column =>
-              (row + column) % 2 ? (
-                <path
-                  key={`${row}-${column}`}
-                  d={`M${column * 8} ${row * 8} h8 l-2 8 h-8 Z`}
-                />
-              ) : null,
-            ),
-          )}
-          <path d="M0 23 H40" stroke={accent} strokeWidth="1.5" opacity=".55" />
-        </g>
+        <>
+          <g fill={primary} opacity=".72" transform="skewX(-12)">
+            {Array.from({ length: 5 }, (_, row) =>
+              Array.from({ length: 12 }, (_, column) =>
+                (row + column) % 2 === 0 ? (
+                  <rect key={`${row}-${column}`} x={-48 + column * 17} y={8 + row * 17} width="17" height="17" />
+                ) : null,
+              ),
+            )}
+          </g>
+          <path d="M-55 7 H151 M-55 94 H151" {...stroke} stroke={accent} strokeWidth="2.5" opacity=".8" />
+        </>
       );
     case 'tech-bracket':
       return (
-        <g {...line}>
-          <path d="M1 9 V2 H9 M15 2 H23 M31 2 H39 V9 M39 15 V22 H31 M25 22 H17 M9 22 H1 V15" />
-          <path d="M8 8 H14 V5 M32 16 H26 V19" stroke={accent} />
-        </g>
+        <>
+          <path d="M-47 28 V7 H21 L33 19 H89 L101 7 H150 V29 H137 V20 H107 L95 32 H27 L15 20 H-34 V28 Z" fill={primary} opacity=".55" />
+          <path d="M-47 72 V93 H21 L33 81 H89 L101 93 H150 V71 H137 V80 H107 L95 68 H27 L15 80 H-34 V72 Z" fill={accent} opacity=".48" />
+          <path d="M-22 50 H32 L40 42 H91 L99 50 H139" {...stroke} stroke={primary} strokeWidth="2.2" />
+        </>
       );
     case 'wave':
       return (
-        <g fill="none" strokeLinecap="round">
-          <path d="M-4 6 C5 0 11 12 20 6 C29 0 35 12 44 6 M-4 13 C5 7 11 19 20 13 C29 7 35 19 44 13 M-4 20 C5 14 11 26 20 20 C29 14 35 26 44 20" stroke={primary} strokeWidth="2" />
-          <path d="M-4 16 C5 10 11 22 20 16 C29 10 35 22 44 16" stroke={accent} />
-        </g>
+        <>
+          <path d="M-61 82 C-15 13 30 96 76 28 C97 -3 121 2 151 26" {...stroke} stroke={primary} strokeWidth="18" strokeLinecap="round" opacity=".55" />
+          <path d="M-61 82 C-15 13 30 96 76 28 C97 -3 121 2 151 26" {...stroke} stroke={accent} strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M-57 99 C-11 30 35 112 81 45 C103 13 126 18 151 41" {...stroke} stroke={primary} strokeWidth="2" opacity=".7" />
+        </>
       );
     case 'starburst':
       return (
-        <g fill={primary}>
-          <path d="M-7 24 L9 0 H14 L3 24 Z M4 24 L18 0 H21 L14 24 Z M17 24 L27 0 H30 L27 24 Z M30 24 L36 0 H39 L40 24 Z" />
-          <path d="M12 24 L24 0 H27 L22 24 Z" fill={accent} opacity=".7" />
-        </g>
+        <>
+          <path d="M-56 98 L12 43 L-23 97 Z M-42 12 L13 43 L-18 3 Z M29 -8 L13 43 L54 -8 Z M151 10 L13 43 L151 35 Z M151 55 L13 43 L151 88 Z M88 108 L13 43 L52 108 Z" fill={primary} opacity=".53" />
+          <path d="M-54 71 L13 43 L-46 57 Z M105 -9 L13 43 L126 -9 Z M151 39 L13 43 L151 50 Z" fill={accent} opacity=".72" />
+          <path d="M-40 83 L13 43 L137 18" {...stroke} stroke={accent} strokeWidth="2" />
+        </>
       );
     case 'target':
       return (
-        <g {...line}>
-          <path d="M0 17 H6 L10 8 L15 21 L20 12 L25 15 L30 4 L35 17 H40" />
-          <path d="M0 22 H40 M0 2 V22 M10 2 V22 M20 2 V22 M30 2 V22 M40 2 V22" opacity=".25" />
-          <circle cx="30" cy="4" r="2" fill={accent} stroke="none" />
-        </g>
+        <>
+          <path d="M-55 74 H-27 L-12 49 L6 83 L26 22 L45 66 L65 42 L83 55 L103 17 L121 74 H151" {...stroke} stroke={primary} strokeWidth="12" strokeLinejoin="bevel" opacity=".5" />
+          <path d="M-55 74 H-27 L-12 49 L6 83 L26 22 L45 66 L65 42 L83 55 L103 17 L121 74 H151" {...stroke} stroke={accent} strokeWidth="3" strokeLinejoin="bevel" />
+          <path d="M-51 88 H147" {...stroke} stroke={primary} strokeWidth="2" strokeDasharray="15 6" opacity=".75" />
+        </>
       );
     case 'wing':
       return (
-        <g fill={primary}>
-          <path d="M-5 10 L11 1 H33 L18 10 Z M3 16 L16 9 H36 L24 16 Z M12 22 L22 16 H41 L31 22 Z" />
-          <path d="M28 22 L38 16 H41 L31 22 Z" fill={accent} />
-        </g>
+        <>
+          <path d="M-57 72 L16 7 H151 L84 35 H30 L-12 72 Z" fill={primary} opacity=".62" />
+          <path d="M-38 91 L35 35 H151 L102 55 H48 L3 91 Z" fill={accent} opacity=".5" />
+          <path d="M-48 79 L22 19 H128 M-20 96 L45 45 H151" {...stroke} stroke={primary} strokeWidth="2.2" />
+        </>
       );
   }
-}
-
-function PatternArtwork({ id, primary, accent, patternId }: PatternProps) {
-  return (
-    <>
-      <defs>
-        <pattern
-          id={patternId}
-          width="40"
-          height="24"
-          patternUnits="userSpaceOnUse"
-          patternTransform="skewX(-8)"
-        >
-          <PatternTile id={id} primary={primary} accent={accent} />
-        </pattern>
-      </defs>
-      <rect x="-45" y="-12" width="190" height="124" fill={`url(#${patternId})`} />
-      <path
-        d="M-40 8 H28 L36 2 H140 M-40 94 H62 L70 100 H140"
-        fill="none"
-        stroke={accent}
-        strokeWidth="1.2"
-        opacity=".42"
-        vectorEffect="non-scaling-stroke"
-      />
-    </>
-  );
 }
 
 export function GraphicElementLayer({
@@ -257,35 +252,33 @@ export function GraphicElementLayer({
   const size = Math.min(w, h) * ((project.graphicElementSize ?? 45) / 100);
   const scaleX = Number((size / 100 * 1.8).toFixed(3));
   const scaleY = Number((size / 100).toFixed(3));
-  const patternId = `graphic-pattern-${id}`;
 
   return (
     <>
       <defs>
         <linearGradient id="graphicBackdropFade" x1="0" y1="0" x2="1" y2="0">
           <stop stopColor="white" stopOpacity="0" />
-          <stop offset=".12" stopColor="white" stopOpacity=".7" />
+          <stop offset=".08" stopColor="white" stopOpacity=".85" />
           <stop offset=".5" stopColor="white" />
-          <stop offset=".88" stopColor="white" stopOpacity=".7" />
+          <stop offset=".92" stopColor="white" stopOpacity=".85" />
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="graphicBackdropMask">
-          <rect x="-45" y="-15" width="190" height="130" fill="url(#graphicBackdropFade)" />
+          <rect x="-70" y="-15" width="230" height="130" fill="url(#graphicBackdropFade)" />
         </mask>
       </defs>
       <g
         data-graphic-element={id}
-        data-graphic-role="background-pattern"
+        data-graphic-role="background-graphic"
         transform={`translate(${x} ${y}) scale(${scaleX} ${scaleY}) translate(-50 -50)`}
-        opacity=".5"
+        opacity=".55"
         mask="url(#graphicBackdropMask)"
         pointerEvents="none"
       >
-        <PatternArtwork
+        <BackgroundArtwork
           id={id}
           primary={branding.primary}
           accent={branding.accent}
-          patternId={patternId}
         />
       </g>
     </>
