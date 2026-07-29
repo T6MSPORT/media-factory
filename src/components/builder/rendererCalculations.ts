@@ -106,8 +106,8 @@ export function getResultsTemplateLayout(
   const positionText = numericPosition > 0
     ? `P${numericPosition}`
     : 'P#';
-  const positionY = isStory ? h * 0.57 : h * 0.6;
-  const positionSize = isStory ? 310 : 250;
+  const positionY = h / 2;
+  const positionSize = isStory ? 350 : 290;
   const isPole = session === 'qualifying' && numericPosition === 1;
   const podiumPosition =
     session === 'race' && numericPosition >= 1 && numericPosition <= 3
@@ -133,10 +133,12 @@ export function getResultsTemplateLayout(
     positionSize,
     isPole,
     podiumPosition,
-    stopwatchX: w / 2 + (isStory ? 275 : 225),
-    stopwatchY: positionY + (isStory ? 28 : 22),
-    stopwatchSize: isStory ? 148 : 120,
-    laurelScale: isStory ? 1.12 : 0.9,
+    stopwatchX: w / 2,
+    stopwatchY: positionY,
+    stopwatchSize: isStory ? 520 : 430,
+    poleTextY: positionY + (isStory ? 245 : 205),
+    poleTextSize: isStory ? 72 : 60,
+    laurelScale: isStory ? 1.65 : 1.38,
   };
 }
 
