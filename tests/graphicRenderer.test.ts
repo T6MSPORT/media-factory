@@ -17,6 +17,9 @@ const server = await createServer({
 const { Graphic } = await server.ssrLoadModule(
   '/src/components/builder/Graphic.tsx',
 );
+const { GRAPHIC_ELEMENTS } = await server.ssrLoadModule(
+  '/src/components/builder/GraphicElements.tsx',
+);
 
 after(() => server.close());
 
@@ -94,25 +97,25 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '379ea9314d4db54c6ce1c0ded64658769ca6995e064343f378c34915d26f036f',
+    '9f04a26920adb96f5d4a64344721c89a0ed0ce3069ebbee734a3613c24c10957',
   'event:feed':
-    '0db95560680f00778a69163c47a47910e90dc10055199fdbf7119032da7a4219',
+    'd930f6b2f60f028f3cb932fa8a4600332cee9af974231a5ad2945e1372ffb05f',
   'announcement:story':
-    '22ab05cdb5353aef6918a8217a7b98f761b1364069cbfde547ede91addc4f37e',
+    'd3ea7d6941212ef14ed4c73bccde9a9d63a28b10e5badeca4c26b50bd7c41d87',
   'announcement:feed':
-    'c703db614c36926edf64ea50a904c59c9d35494dc4cb91c06975e305b48803ca',
+    '43221ad040562ccfd1b0505eae866c688dfa40fe4687f093d3de1aed942729ba',
   'schedule:story':
     '3da9e59e75e51bfb68d943312e50852f21cc559b285d5eb09c73f0002a339ee1',
   'schedule:feed':
     '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
   'results:story':
-    '2c54b845a4d7d2d60e6fcc9b6337661c5fcd07818db3cc3cb8c939d1b74d8aca',
+    'f2775a1f722dbd03ecb6aaba93473e3c0a31bf48dad488c6ddfc3c79cdcdaf8c',
   'results:feed':
-    'aa9e2cfa21717ac3719ea823dfbde1b25d02e1dbe0b79b746d0a50b3eaf93b07',
+    '8a91ff6d718b9a4d1a9cb2badda2d5c65042dc865390c7f3c0e429917bc6eb57',
   'sponsor:story':
-    '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
+    '8680fca25fd5599a4b1050adb476b0594fa5ffd20952dbe887feeb1e57e6a90e',
   'sponsor:feed':
-    'e45bce0e37bf70d1d324dad4872246d25a0bb9f3499ba5ecac241b1211285dfe',
+    'bb1bff5f74e41e905d4ba0c3b67d691eecb886bc4d7a664b5b849f1ef7dbe1d2',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -135,6 +138,10 @@ function makeProject(template: TemplateId, format: FormatId): Project {
     driverY: 24,
     driverScale: 1.1,
     driverVisible: true,
+    graphicElement: 'none',
+    graphicElementX: 50,
+    graphicElementY: 55,
+    graphicElementSize: 45,
     details,
   };
 }
@@ -175,6 +182,7 @@ for (const template of templates) {
       assert.match(markup, /data:image\/png;base64,corbeau/);
       assert.match(markup, /data:image\/png;base64,competition/);
       assert.match(markup, /data:image\/png;base64,team/);
+      assert.doesNotMatch(markup, /data-graphic-element=/);
       assert.match(markup, /RICH WEATHERILL/);
       assert.match(markup, />#46</);
       assert.match(markup, /transform="skewX\(-14\)"/);
@@ -258,4 +266,32 @@ test('qualifying result restores identity and centres the combined position comp
   assert.doesNotMatch(markup, /ROUND 3/);
   assert.doesNotMatch(markup, /pole-stopwatch/);
   assert.doesNotMatch(markup, />POLE</);
+});
+
+test('catalogue exposes 20 optional graphical elements', () => {
+  assert.equal(GRAPHIC_ELEMENTS.length, 20);
+  assert.equal(new Set(GRAPHIC_ELEMENTS.map((item: { id: string }) => item.id)).size, 20);
+});
+
+test('selected graphical element uses percentage placement and size controls', () => {
+  const project = makeProject('event', 'feed');
+  project.graphicElement = 'chevrons';
+  project.graphicElementX = 25;
+  project.graphicElementY = 70;
+  project.graphicElementSize = 60;
+
+  const markup = renderToStaticMarkup(
+    createElement(Graphic, {
+      project,
+      data,
+      sponsors,
+      ref: null,
+    }),
+  );
+
+  assert.match(markup, /data-graphic-element="chevrons"/);
+  assert.match(
+    markup,
+    /transform="translate\(270 945\) scale\(6\.48\) translate\(-50 -50\)"/,
+  );
 });

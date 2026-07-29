@@ -53,7 +53,7 @@ textarea{width:100%;min-height:100px;border:1px solid #303640;background:#0f1115
   .profile-previews>.asset-preview-card .asset-preview-image{height:460px}
 }
 
-.control-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.control-actions button{min-width:0}.control-hint{margin:4px 0 14px;color:#8d96a4;font-size:12px}.graphic{touch-action:none;user-select:none}
+.control-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.control-actions button{min-width:0}.control-hint{margin:4px 0 14px;color:#8d96a4;font-size:12px}.graphic{touch-action:none;user-select:none}.thumb:before,.project-thumb:before,.preview-stripe{display:none}
 
 /* v2.5 consistent branding, saved-on-export and profile preview fixes */
 .app{font-family:Inter,Arial,sans-serif;background:color-mix(in srgb,var(--brand-secondary,#111317) 72%,#090b0e)}

@@ -63,6 +63,10 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
     driverY: 0,
     driverScale: 1,
     driverVisible: true,
+    graphicElement: 'none',
+    graphicElementX: 50,
+    graphicElementY: 55,
+    graphicElementSize: 45,
     details: {
       eventName: '',
       round: '',

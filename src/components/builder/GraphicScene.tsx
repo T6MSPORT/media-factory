@@ -11,6 +11,7 @@ import {
   StandardTemplate,
   TemplateExtras,
 } from './GraphicTemplates';
+import { GraphicElementLayer } from './GraphicElements';
 import { getGraphicCopy } from './rendererCalculations';
 import type { HeroDimensions } from './useHeroDimensions';
 
@@ -57,6 +58,12 @@ export function GraphicScene({
         branding={branding}
         loadedHeroSize={loadedHeroSize}
         driverImage={profile.driverImage}
+      />
+      <GraphicElementLayer
+        w={w}
+        h={h}
+        project={project}
+        branding={branding}
       />
       {project.template === 'event' ? (
         <EventTemplate w={w} {...templateProps} />

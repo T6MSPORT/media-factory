@@ -1,6 +1,28 @@
 export type TemplateId = 'event'|'announcement'|'schedule'|'results'|'sponsor';
 export type FormatId = 'feed'|'story';
 export type ResultSessionType = 'qualifying'|'race';
+export type GraphicElementId =
+  | 'none'
+  | 'chevrons'
+  | 'speed-lines'
+  | 'corner-frame'
+  | 'grid'
+  | 'dot-matrix'
+  | 'crosshair'
+  | 'racing-stripes'
+  | 'apex-arc'
+  | 'split-blocks'
+  | 'slash-stack'
+  | 'diamond'
+  | 'hexagon'
+  | 'circle-ring'
+  | 'triangle'
+  | 'checkered-panel'
+  | 'tech-bracket'
+  | 'wave'
+  | 'starburst'
+  | 'target'
+  | 'wing';
 export type DriverProfile = {
   name:string; number:string; team:string;
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
@@ -24,6 +46,7 @@ export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];
   createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean;
   driverX:number; driverY:number; driverScale:number; driverVisible:boolean; exportedAt?:string;
+  graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;
   details:GraphicDetails;
 };
 export type Data = {

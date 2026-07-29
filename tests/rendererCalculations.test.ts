@@ -81,24 +81,8 @@ test('background geometry preserves fill-to-canvas sizing and manual controls', 
     layout.driverTransform,
     'translate(12 24) translate(712.8000000000001 883.2) scale(1.1) translate(-712.8000000000001 -883.2)',
   );
-  assert.deepEqual(
-    {
-      stripeLeftTop: layout.stripeLeftTop,
-      stripeRightTop: layout.stripeRightTop,
-      stripeRightBottom: layout.stripeRightBottom,
-      stripeLeftBottom: layout.stripeLeftBottom,
-      stripeLineLeft: layout.stripeLineLeft,
-      stripeLineRight: layout.stripeLineRight,
-    },
-    {
-      stripeLeftTop: 1459.2,
-      stripeRightTop: 960,
-      stripeRightBottom: 1248,
-      stripeLeftBottom: 1728,
-      stripeLineLeft: 1516.8000000000002,
-      stripeLineRight: 1017.6,
-    },
-  );
+  assert.equal('stripeLeftTop' in layout, false);
+  assert.equal('stripeRightTop' in layout, false);
 });
 
 test('event layout preserves the approved story positions and round wording', () => {

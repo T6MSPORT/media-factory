@@ -19,6 +19,7 @@ import {
   zoomBackgroundToFillPatch,
 } from './builderInteractions';
 import { Graphic } from './Graphic';
+import { GRAPHIC_ELEMENTS } from './GraphicElements';
 import { TemplateFields } from './TemplateFields';
 
 type BuilderProps = {
@@ -81,6 +82,56 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
             <option value="story">Story · 1080×1920</option>
           </SelectField>
           <TemplateFields project={project} setDetails={setDetails} />
+
+          <h3>Graphical element</h3>
+          <SelectField
+            label="Element"
+            value={project.graphicElement || 'none'}
+            onChange={graphicElement => patch({ graphicElement })}
+          >
+            <option value="none">None</option>
+            {GRAPHIC_ELEMENTS.map(element => (
+              <option key={element.id} value={element.id}>
+                {element.name}
+              </option>
+            ))}
+          </SelectField>
+          {(project.graphicElement || 'none') !== 'none' && (
+            <>
+              <RangeField
+                label="Move left / right"
+                min={0}
+                max={100}
+                value={project.graphicElementX ?? 50}
+                onChange={graphicElementX => patch({ graphicElementX })}
+              />
+              <RangeField
+                label="Move up / down"
+                min={0}
+                max={100}
+                value={project.graphicElementY ?? 55}
+                onChange={graphicElementY => patch({ graphicElementY })}
+              />
+              <RangeField
+                label="Element size"
+                min={10}
+                max={100}
+                value={project.graphicElementSize ?? 45}
+                onChange={graphicElementSize => patch({ graphicElementSize })}
+              />
+              <button
+                onClick={() =>
+                  patch({
+                    graphicElementX: 50,
+                    graphicElementY: 55,
+                    graphicElementSize: 45,
+                  })
+                }
+              >
+                Reset graphical element
+              </button>
+            </>
+          )}
 
           <h3>Background hero image</h3>
           <BackgroundUpload

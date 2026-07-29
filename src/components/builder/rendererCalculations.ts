@@ -413,20 +413,12 @@ export function getBackgroundLayout(
   const renderedHeroHeight = heroHeight * fillScale * project.heroScale;
   const renderedHeroX = (w - renderedHeroWidth) / 2 + project.heroX;
   const renderedHeroY = (h - renderedHeroHeight) / 2 + project.heroY;
-  const eventStripe = project.template === 'event';
-
   return {
     renderedHeroWidth,
     renderedHeroHeight,
     renderedHeroX,
     renderedHeroY,
     driverTransform: `translate(${project.driverX || 0} ${project.driverY || 0}) translate(${w * 0.66} ${h * 0.46}) scale(${project.driverScale || 1}) translate(${-w * 0.66} ${-h * 0.46})`,
-    stripeLeftTop: h * (eventStripe ? 0.76 : 0.68),
-    stripeRightTop: h * (eventStripe ? 0.5 : 0.42),
-    stripeRightBottom: h * (eventStripe ? 0.65 : 0.57),
-    stripeLeftBottom: h * (eventStripe ? 0.9 : 0.82),
-    stripeLineLeft: h * (eventStripe ? 0.79 : 0.71),
-    stripeLineRight: h * (eventStripe ? 0.53 : 0.45),
   };
 }
 

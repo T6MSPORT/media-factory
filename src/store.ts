@@ -7,6 +7,7 @@ import type {
   ScheduleDay,
   ScheduleDayName,
   ScheduleSessionType,
+  GraphicElementId,
 } from './types';
 
 export const STORAGE_KEY = 'media-factory-individual-v1';
@@ -43,6 +44,29 @@ const scheduleSessionTypes: ScheduleSessionType[] = [
   'Practice',
   'Qualifying',
   'Race',
+];
+const graphicElementIds: GraphicElementId[] = [
+  'none',
+  'chevrons',
+  'speed-lines',
+  'corner-frame',
+  'grid',
+  'dot-matrix',
+  'crosshair',
+  'racing-stripes',
+  'apex-arc',
+  'split-blocks',
+  'slash-stack',
+  'diamond',
+  'hexagon',
+  'circle-ring',
+  'triangle',
+  'checkered-panel',
+  'tech-bracket',
+  'wave',
+  'starburst',
+  'target',
+  'wing',
 ];
 
 function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] {
@@ -174,6 +198,18 @@ export function normaliseData(value: unknown): Data {
     driverY: Number.isFinite(project.driverY) ? project.driverY! : 0,
     driverScale: Number.isFinite(project.driverScale) ? project.driverScale! : 1,
     driverVisible: project.driverVisible !== false,
+    graphicElement: graphicElementIds.includes(project.graphicElement as GraphicElementId)
+      ? project.graphicElement as GraphicElementId
+      : 'none',
+    graphicElementX: Number.isFinite(project.graphicElementX)
+      ? Math.min(100, Math.max(0, project.graphicElementX!))
+      : 50,
+    graphicElementY: Number.isFinite(project.graphicElementY)
+      ? Math.min(100, Math.max(0, project.graphicElementY!))
+      : 55,
+    graphicElementSize: Number.isFinite(project.graphicElementSize)
+      ? Math.min(100, Math.max(10, project.graphicElementSize!))
+      : 45,
     exportedAt: typeof project.exportedAt === 'string' ? project.exportedAt : undefined,
     heroScale:
       Number.isFinite(project.heroScale) && project.heroScale! >= 1 ? project.heroScale! : 1,

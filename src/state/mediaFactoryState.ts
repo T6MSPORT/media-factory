@@ -34,6 +34,10 @@ export function createProject(
     driverY: 0,
     driverScale: 1,
     driverVisible: true,
+    graphicElement: 'none',
+    graphicElementX: 50,
+    graphicElementY: 55,
+    graphicElementSize: 45,
     details: { ...emptyDetails },
   };
 }
