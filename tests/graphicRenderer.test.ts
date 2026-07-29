@@ -106,9 +106,9 @@ const expectedHashes: Record<string, string> = {
   'schedule:feed':
     '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
   'results:story':
-    'e764bc06fa85dd33acb3572768d3cff3ca48b609ead150ba9be61ae5a1a89b04',
+    '2c54b845a4d7d2d60e6fcc9b6337661c5fcd07818db3cc3cb8c939d1b74d8aca',
   'results:feed':
-    '2a13daf2e36dc9765e34273a0442b0eff306c5ebe7d2177a18c05cac82823dcc',
+    'aa9e2cfa21717ac3719ea823dfbde1b25d02e1dbe0b79b746d0a50b3eaf93b07',
   'sponsor:story':
     '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
   'sponsor:feed':
@@ -248,6 +248,9 @@ test('qualifying result restores identity and centres the combined position comp
   assert.match(markup, /skewX\(-12\)/);
   assert.match(markup, /<text x="0" y="0" text-anchor="middle">/);
   assert.match(markup, /<tspan dx="48">1<\/tspan>/);
+  assert.match(markup, /data-podium-wreath="1"/);
+  assert.match(markup, /flood-color="#8b5cf6"/);
+  assert.match(markup, /opacity="1"/);
   assert.doesNotMatch(markup, /stroke="#08090a"/);
   assert.doesNotMatch(markup, /paint-order="stroke fill"/);
   assert.match(markup, /RICH WEATHERILL/);
