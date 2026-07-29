@@ -325,6 +325,54 @@ test('graphical element is an original background composition behind the driver 
   assert.match(markup, /C-12 83 4 58 28 31/);
 });
 
+test('replacement set uses the new motorsport background compositions', () => {
+  const replacements = {
+    'speed-lines': 'M-65 13 H55 L83 38',
+    grid: 'M-43 9 H-18 V42',
+    'dot-matrix': 'M-57 19 H82 L97 32',
+    crosshair: 'M-59 9 H50 L62 21',
+    diamond: 'M-58 15 H36 L58 35',
+    hexagon: 'M-59 13 H19 L31 25',
+    'circle-ring': 'M-58 93 L-33 64',
+    triangle: 'M-61 88 L5 12',
+  } as const;
+
+  for (const [graphicElement, signature] of Object.entries(replacements)) {
+    const project = makeProject('driver', 'feed');
+    project.graphicElement = graphicElement as Project['graphicElement'];
+
+    const markup = renderToStaticMarkup(
+      createElement(Graphic, {
+        project,
+        data,
+        sponsors,
+        ref: null,
+      }),
+    );
+
+    assert.match(markup, new RegExp(`data-graphic-element="${graphicElement}"`));
+    assert.ok(markup.includes(signature));
+  }
+});
+
+test('late apex keeps the racing curve without the angled marker', () => {
+  const project = makeProject('driver', 'feed');
+  project.graphicElement = 'apex-arc';
+
+  const markup = renderToStaticMarkup(
+    createElement(Graphic, {
+      project,
+      data,
+      sponsors,
+      ref: null,
+    }),
+  );
+
+  assert.match(markup, /data-graphic-element="apex-arc"/);
+  assert.match(markup, /C-22 27 31 -1 151 8/);
+  assert.doesNotMatch(markup, /M4 67 L18 47 L39 45/);
+});
+
 test('chequered panel uses transparent gaps rather than white squares', () => {
   const project = makeProject('event', 'feed');
   project.graphicElement = 'checkered-panel';
