@@ -114,7 +114,9 @@ export function getResultsTemplateLayout(
   const positionNumber = numericPosition > 0
     ? String(numericPosition)
     : '#';
-  const positionY = h / 2;
+  // Keep qualifying and race positions on the same lower visual centre.
+  // Podium wreaths share this anchor so they move with the race position.
+  const positionY = h * 0.59;
   const positionSize = isStory ? 520 : 420;
   const podiumPosition =
     session === 'race' && numericPosition >= 1 && numericPosition <= 3
