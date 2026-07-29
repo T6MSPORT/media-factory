@@ -374,13 +374,15 @@ test('combined results layout switches qualifying and race presentation', () => 
       round: '4',
       position: '2',
       resultSession: 'race',
+      raceNumber: '2',
     },
   });
-  assert.equal(race.title, 'RACE RESULT');
+  assert.equal(race.title, 'RACE 2 RESULT');
+  assert.equal(race.raceNumber, '2');
   assert.equal(race.roundText, 'ROUND 4');
   assert.equal(race.positionNumber, '2');
-  assert.equal(race.positionSize, 440);
-  assert.equal(race.positionGap, 72);
+  assert.equal(race.positionSize, 520);
+  assert.equal(race.positionGap, 48);
   assert.equal(race.podiumPosition, 2);
   assert.equal(race.titleY, 350);
   assert.equal(race.positionY, 960);

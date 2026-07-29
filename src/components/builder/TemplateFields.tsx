@@ -80,11 +80,24 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
         onChange={circuit => setDetails({ circuit })}
       />
       {resultSession === 'race' && (
-        <TextField
-          label="Round(s)"
-          value={project.details.round}
-          onChange={round => setDetails({ round })}
-        />
+        <>
+          <label>
+            Race
+            <select
+              value={project.details.raceNumber || '1'}
+              onChange={event => setDetails({ raceNumber: event.target.value })}
+            >
+              <option value="1">Race 1</option>
+              <option value="2">Race 2</option>
+              <option value="3">Race 3</option>
+            </select>
+          </label>
+          <TextField
+            label="Round number"
+            value={project.details.round}
+            onChange={round => setDetails({ round })}
+          />
+        </>
       )}
       <TextField
         label="Position"

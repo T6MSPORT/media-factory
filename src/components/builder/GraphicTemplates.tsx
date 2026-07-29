@@ -1,5 +1,6 @@
 import type { Branding, DriverProfile, Project } from '../../types';
 import { formatEventDate } from '../../utils/format';
+import podiumWreath from '../../assets/wreath.png';
 import {
   getAnnouncementTemplateLayout,
   getEventTemplateLayout,
@@ -17,66 +18,43 @@ type TemplateSharedProps = {
   bodyFont: string;
 };
 
-function PodiumLaurel({
+function PodiumWreath({
   x,
   y,
   position,
-  scale,
+  size,
 }: {
   x: number;
   y: number;
   position: number;
-  scale: number;
+  size: number;
 }) {
   if (!position) return null;
 
   const colour =
     position === 1 ? '#d9aa24' : position === 2 ? '#c3c8cf' : '#b8753f';
-  const leaves = Array.from({ length: 9 }, (_, index) => {
-    const offsetY = 138 - index * 34;
-    const offsetX = 124 + Math.sin(index / 8 * Math.PI) * 40;
-    const rotation = 48 - index * 8;
-    return { offsetX, offsetY, rotation };
-  });
+  const filterId = `podium-wreath-${position}`;
 
   return (
-    <g
-      transform={`translate(${x} ${y}) scale(${scale})`}
-      fill={colour}
-      stroke={colour}
-      opacity=".94"
-    >
-      <path
-        d="M-42 176 C-176 98 -214 -66 -126 -188"
-        fill="none"
-        strokeWidth="9"
-        strokeLinecap="round"
+    <>
+      <defs>
+        <filter id={filterId} colorInterpolationFilters="sRGB">
+          <feFlood floodColor={colour} result="colour" />
+          <feComposite in="colour" in2="SourceAlpha" operator="in" />
+        </filter>
+      </defs>
+      <image
+        data-podium-wreath={position}
+        href={podiumWreath}
+        x={x - size / 2}
+        y={y - size / 2}
+        width={size}
+        height={size}
+        preserveAspectRatio="xMidYMid meet"
+        filter={`url(#${filterId})`}
+        opacity=".96"
       />
-      <path
-        d="M42 176 C176 98 214 -66 126 -188"
-        fill="none"
-        strokeWidth="9"
-        strokeLinecap="round"
-      />
-      {leaves.map((leaf, index) => (
-        <g key={index}>
-          <ellipse
-            cx={-leaf.offsetX}
-            cy={leaf.offsetY}
-            rx="18"
-            ry="42"
-            transform={`rotate(${-leaf.rotation} ${-leaf.offsetX} ${leaf.offsetY})`}
-          />
-          <ellipse
-            cx={leaf.offsetX}
-            cy={leaf.offsetY}
-            rx="18"
-            ry="42"
-            transform={`rotate(${leaf.rotation} ${leaf.offsetX} ${leaf.offsetY})`}
-          />
-        </g>
-      ))}
-    </g>
+    </>
   );
 }
 
@@ -141,11 +119,11 @@ function ResultsTemplate({
           {layout.roundText}
         </text>
       )}
-      <PodiumLaurel
+      <PodiumWreath
         x={layout.positionX}
         y={layout.positionY}
         position={layout.podiumPosition}
-        scale={layout.laurelScale}
+        size={layout.laurelSize}
       />
       <g
         transform={`translate(${layout.positionX} ${layout.positionY}) skewX(-12)`}
@@ -153,38 +131,12 @@ function ResultsTemplate({
         fontSize={layout.positionSize}
         fontWeight="900"
         fill={branding.accent}
-        {...(layout.session === 'race'
-          ? {
-              stroke: '#08090a',
-              strokeWidth: 10,
-              paintOrder: 'stroke fill',
-            }
-          : {})}
         dominantBaseline="central"
       >
-        {layout.session === 'qualifying' ? (
-          <text x="0" y="0" textAnchor="middle">
-            <tspan>P</tspan>
-            <tspan dx={layout.positionGap}>{layout.positionNumber}</tspan>
-          </text>
-        ) : (
-          <>
-            <text
-              x={-layout.positionGap / 2}
-              y="0"
-              textAnchor="end"
-            >
-              P
-            </text>
-            <text
-              x={layout.positionGap / 2}
-              y="0"
-              textAnchor="start"
-            >
-              {layout.positionNumber}
-            </text>
-          </>
-        )}
+        <text x="0" y="0" textAnchor="middle">
+          <tspan>P</tspan>
+          <tspan dx={layout.positionGap}>{layout.positionNumber}</tspan>
+        </text>
       </g>
     </g>
   );

@@ -77,6 +77,7 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
       sponsorName: '',
       scheduleDayCount: 1,
       resultSession: 'race',
+      raceNumber: '1',
       scheduleDays: [
         {
           day: '',

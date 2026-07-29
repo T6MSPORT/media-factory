@@ -75,7 +75,15 @@ export function getResultsTemplateLayout(
   const margin = 70;
   const contentWidth = w - margin * 2;
   const session = project.details.resultSession || 'race';
-  const title = `${session === 'qualifying' ? 'QUALIFYING' : 'RACE'} RESULT`;
+  const raceNumber = ['1', '2', '3'].includes(
+    String(project.details.raceNumber),
+  )
+    ? String(project.details.raceNumber)
+    : '1';
+  const title =
+    session === 'qualifying'
+      ? 'QUALIFYING RESULT'
+      : `RACE ${raceNumber} RESULT`;
   const titleY = isStory ? 350 : 300;
   const titleSize = fitTextSize(
     title,
@@ -107,14 +115,7 @@ export function getResultsTemplateLayout(
     ? String(numericPosition)
     : '#';
   const positionY = h / 2;
-  const positionSize =
-    session === 'qualifying'
-      ? isStory
-        ? 520
-        : 420
-      : isStory
-        ? 440
-        : 360;
+  const positionSize = isStory ? 520 : 420;
   const podiumPosition =
     session === 'race' && numericPosition >= 1 && numericPosition <= 3
       ? numericPosition
@@ -124,6 +125,7 @@ export function getResultsTemplateLayout(
     margin,
     contentWidth,
     session,
+    raceNumber,
     title,
     titleY,
     titleSize,
@@ -137,16 +139,9 @@ export function getResultsTemplateLayout(
     positionX: w / 2,
     positionY,
     positionSize,
-    positionGap:
-      session === 'qualifying'
-        ? isStory
-          ? 48
-          : 40
-        : isStory
-          ? 72
-          : 60,
+    positionGap: isStory ? 48 : 40,
     podiumPosition,
-    laurelScale: isStory ? 1.65 : 1.38,
+    laurelSize: isStory ? 760 : 620,
   };
 }
 

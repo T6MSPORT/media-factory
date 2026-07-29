@@ -106,9 +106,9 @@ const expectedHashes: Record<string, string> = {
   'schedule:feed':
     '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
   'results:story':
-    '82779f5f5242efa3c2972a975744908f1ed71cbc5dc3c8d1f84c031b1ebe9e04',
+    '3da1afdcb935504f1af4d87348822616823efc75ef8ae836300469f845486aab',
   'results:feed':
-    '86b19ba93d895fb27702704279e1d66b6d5d97c7c336c48c0c68f262330b4080',
+    '290cbc04e98a04da31a7eb1e339e6222c8c5aa10cac7517aee06b737fbd467cd',
   'sponsor:story':
     '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
   'sponsor:feed':
@@ -208,12 +208,16 @@ for (const template of templates) {
         );
       }
       if (template === 'results') {
-        assert.match(markup, /RACE RESULT/);
+        assert.match(markup, /RACE 1 RESULT/);
         assert.match(markup, /ROUND 3/);
         assert.match(markup, />P</);
         assert.match(markup, />2</);
         assert.match(markup, /skewX\(-12\)/);
-        assert.match(markup, /fill="#c3c8cf"/);
+        assert.match(markup, /data-podium-wreath="2"/);
+        assert.match(markup, /flood-color="#c3c8cf"/);
+        assert.match(markup, /<text x="0" y="0" text-anchor="middle">/);
+        assert.match(markup, /<tspan dx="(?:40|48)">2<\/tspan>/);
+        assert.doesNotMatch(markup, /stroke="#08090a"/);
       }
     });
   }

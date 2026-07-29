@@ -18,7 +18,7 @@ export type GraphicDetails = {
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
-  resultSession?:ResultSessionType;
+  resultSession?:ResultSessionType; raceNumber?:string;
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];

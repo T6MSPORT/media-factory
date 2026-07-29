@@ -24,7 +24,7 @@ export const TEMPLATE_CATALOGUE: readonly TemplateDefinition[] = [
   {
     id: 'results',
     name: 'Results',
-    description: 'Share a qualifying or race result with automatic pole and podium styling.',
+    description: 'Share a qualifying or numbered race result with podium styling.',
   },
   { id: 'sponsor', name: 'Sponsor Recognition', description: 'Thank and feature a partner.' },
 ] as const;

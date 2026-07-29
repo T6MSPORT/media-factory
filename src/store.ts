@@ -25,6 +25,7 @@ export const emptyDetails: GraphicDetails = {
   sponsorName: '',
   scheduleDayCount: 1,
   resultSession: 'race',
+  raceNumber: '1',
   scheduleDays: [
     {
       day: '',
@@ -155,6 +156,9 @@ export function normaliseData(value: unknown): Data {
         : project.details?.resultSession === 'qualifying'
           ? 'qualifying'
           : 'race',
+      raceNumber: ['1', '2', '3'].includes(String(project.details?.raceNumber))
+        ? String(project.details?.raceNumber)
+        : '1',
     };
     const scheduleDays = normaliseScheduleDays(details);
 
