@@ -219,7 +219,7 @@ for (const template of templates) {
   }
 }
 
-test('qualifying result restores identity and uses the large split position composition', () => {
+test('qualifying result restores identity and centres the combined position composition', () => {
   const project = makeProject('results', 'story');
   project.details = {
     ...project.details,
@@ -242,6 +242,8 @@ test('qualifying result restores identity and uses the large split position comp
   assert.match(markup, />P</);
   assert.match(markup, />1</);
   assert.match(markup, /skewX\(-12\)/);
+  assert.match(markup, /<text x="0" y="0" text-anchor="middle">/);
+  assert.match(markup, /<tspan dx="48">1<\/tspan>/);
   assert.doesNotMatch(markup, /stroke="#08090a"/);
   assert.doesNotMatch(markup, /paint-order="stroke fill"/);
   assert.match(markup, /RICH WEATHERILL/);

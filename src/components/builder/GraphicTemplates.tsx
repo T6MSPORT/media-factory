@@ -162,20 +162,29 @@ function ResultsTemplate({
           : {})}
         dominantBaseline="central"
       >
-        <text
-          x={-layout.positionGap / 2}
-          y="0"
-          textAnchor="end"
-        >
-          P
-        </text>
-        <text
-          x={layout.positionGap / 2}
-          y="0"
-          textAnchor="start"
-        >
-          {layout.positionNumber}
-        </text>
+        {layout.session === 'qualifying' ? (
+          <text x="0" y="0" textAnchor="middle">
+            <tspan>P</tspan>
+            <tspan dx={layout.positionGap}>{layout.positionNumber}</tspan>
+          </text>
+        ) : (
+          <>
+            <text
+              x={-layout.positionGap / 2}
+              y="0"
+              textAnchor="end"
+            >
+              P
+            </text>
+            <text
+              x={layout.positionGap / 2}
+              y="0"
+              textAnchor="start"
+            >
+              {layout.positionNumber}
+            </text>
+          </>
+        )}
       </g>
     </g>
   );
