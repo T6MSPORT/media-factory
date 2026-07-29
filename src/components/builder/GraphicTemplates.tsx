@@ -23,17 +23,20 @@ function PodiumWreath({
   y,
   position,
   size,
+  colour: colourOverride,
 }: {
   x: number;
   y: number;
   position: number;
   size: number;
+  colour?: string;
 }) {
   if (!position) return null;
 
   const colour =
-    position === 1 ? '#d9aa24' : position === 2 ? '#c3c8cf' : '#b8753f';
-  const filterId = `podium-wreath-${position}`;
+    colourOverride ||
+    (position === 1 ? '#d9aa24' : position === 2 ? '#c3c8cf' : '#b8753f');
+  const filterId = `podium-wreath-${position}-${colour.replace('#', '')}`;
 
   return (
     <>
@@ -52,7 +55,7 @@ function PodiumWreath({
         height={size}
         preserveAspectRatio="xMidYMid meet"
         filter={`url(#${filterId})`}
-        opacity=".96"
+        opacity="1"
       />
     </>
   );
@@ -124,6 +127,7 @@ function ResultsTemplate({
         y={layout.positionY}
         position={layout.podiumPosition}
         size={layout.laurelSize}
+        colour={layout.session === 'qualifying' ? '#8b5cf6' : undefined}
       />
       <g
         transform={`translate(${layout.positionX} ${layout.positionY}) skewX(-12)`}
