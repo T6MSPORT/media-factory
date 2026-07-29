@@ -1,12 +1,20 @@
 import type { PageId } from '../../config/navigation';
 import { NAVIGATION_ITEMS } from '../../config/navigation';
+import { LogOut } from 'lucide-react';
 
 interface SidebarProps {
   activePage: PageId;
   onNavigate: (page: PageId) => void;
+  accountEmail?: string;
+  onSignOut?: () => void;
 }
 
-export function Sidebar({ activePage, onNavigate }: SidebarProps) {
+export function Sidebar({
+  activePage,
+  onNavigate,
+  accountEmail,
+  onSignOut,
+}: SidebarProps) {
   return (
     <aside>
       <div className="logo">
@@ -29,7 +37,16 @@ export function Sidebar({ activePage, onNavigate }: SidebarProps) {
           </button>
         ))}
       </nav>
-      <div className="aside-foot">Individual driver plan · v3.5</div>
+      <div className="aside-foot">
+        {accountEmail && <span title={accountEmail}>{accountEmail}</span>}
+        <small>Individual driver plan · v3.5</small>
+        {onSignOut && (
+          <button type="button" onClick={onSignOut}>
+            <LogOut size={15} aria-hidden="true" />
+            Sign out
+          </button>
+        )}
+      </div>
     </aside>
   );
 }

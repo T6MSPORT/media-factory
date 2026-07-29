@@ -36,7 +36,19 @@ export type BackgroundGraphicSettings = {
 };
 export type DriverProfile = {
   name:string; number:string; team:string;
+  nameLocked:boolean;
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
+};
+export type Account = {
+  email:string;
+  driverName:string;
+  passwordHash:string;
+  passwordSalt:string;
+  createdAt:string;
+};
+export type Authentication = {
+  account?:Account;
+  signedIn:boolean;
 };
 export type Branding = {
   primary:string; secondary:string; accent:string; headingFont:string; bodyFont:string; sponsorLogoScale:number;
@@ -65,4 +77,5 @@ export type Data = {
   onboardingComplete:boolean; profile:DriverProfile; branding:Branding;
   sponsors:Sponsor[]; projects:Project[];
   backgroundGraphic:BackgroundGraphicSettings;
+  authentication:Authentication;
 };

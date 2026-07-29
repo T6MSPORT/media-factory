@@ -139,6 +139,7 @@ export const starter: Data = {
     name: '',
     number: '',
     team: '',
+    nameLocked: false,
   },
   branding: {
     primary: '#ef3b3b',
@@ -154,6 +155,9 @@ export const starter: Data = {
     locked: false,
     feed: { ...defaultBackgroundGraphicLayout },
     story: { ...defaultBackgroundGraphicLayout },
+  },
+  authentication: {
+    signedIn: false,
   },
 };
 
@@ -178,6 +182,9 @@ export function normaliseData(value: unknown): Data {
     name: parsed.profile?.name || '',
     number: parsed.profile?.number || '',
     team: parsed.profile?.team || '',
+    nameLocked:
+      parsed.profile?.nameLocked === true ||
+      Boolean(parsed.authentication?.account),
   };
   if (parsed.profile?.driverImage) profile.driverImage = parsed.profile.driverImage;
   if (parsed.profile?.teamLogo) profile.teamLogo = parsed.profile.teamLogo;
@@ -263,7 +270,42 @@ export function normaliseData(value: unknown): Data {
     story: normaliseBackgroundGraphicLayout(suppliedBackgroundGraphic?.story),
   };
 
-  return { ...starter, ...parsed, profile, branding, projects, backgroundGraphic };
+  const suppliedAccount = parsed.authentication?.account;
+  const account =
+    suppliedAccount &&
+    typeof suppliedAccount.email === 'string' &&
+    typeof suppliedAccount.driverName === 'string' &&
+    typeof suppliedAccount.passwordHash === 'string' &&
+    typeof suppliedAccount.passwordSalt === 'string'
+      ? {
+          email: suppliedAccount.email.trim().toLowerCase(),
+          driverName: suppliedAccount.driverName.trim(),
+          passwordHash: suppliedAccount.passwordHash,
+          passwordSalt: suppliedAccount.passwordSalt,
+          createdAt:
+            typeof suppliedAccount.createdAt === 'string'
+              ? suppliedAccount.createdAt
+              : '',
+        }
+      : undefined;
+  const authentication = account
+    ? {
+        account,
+        signedIn: Boolean(parsed.authentication?.signedIn),
+      }
+    : { signedIn: false };
+
+  return {
+    ...starter,
+    ...parsed,
+    profile: account
+      ? { ...profile, name: account.driverName, nameLocked: true }
+      : profile,
+    branding,
+    projects,
+    backgroundGraphic,
+    authentication,
+  };
 }
 
 export function loadResult(storage: Pick<Storage, 'getItem'> = localStorage): LoadResult {

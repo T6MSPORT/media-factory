@@ -1,4 +1,4 @@
-import { UserRound } from 'lucide-react';
+import { LockKeyhole, UserRound } from 'lucide-react';
 import { ProfileAssetCard } from '../components/forms/ProfileAsset';
 import { TextField } from '../components/forms/PropertyEditor';
 import { PageHeader } from '../components/ui';
@@ -26,12 +26,19 @@ export function ProfilePage({ data, setData }: ProfilePageProps) {
         <div className="panel profile-inputs">
           <div className="form-grid">
             {DRIVER_FIELDS.map((key) => (
-              <TextField
-                key={key}
-                label={labelForDriverField(key)}
-                value={profile[key]}
-                onChange={value => update({ [key]: value })}
-              />
+              <div key={key} className={key === 'name' ? 'locked-profile-field' : ''}>
+                <TextField
+                  label={labelForDriverField(key)}
+                  value={profile[key]}
+                  readOnly={key === 'name' && profile.nameLocked}
+                  onChange={value => update({ [key]: value })}
+                />
+                {key === 'name' && profile.nameLocked && (
+                  <span className="field-lock-note">
+                    <LockKeyhole size={12} /> Locked to this account
+                  </span>
+                )}
+              </div>
             ))}
           </div>
         </div>

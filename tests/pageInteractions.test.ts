@@ -456,6 +456,7 @@ test('profile fields update the permanent driver record and retain asset preview
     ...completeData,
     profile: {
       ...completeData.profile,
+      nameLocked: true,
       driverImage: 'driver.png',
       teamLogo: 'team.png',
       competitionLogo: 'competition.png',
@@ -473,7 +474,9 @@ test('profile fields update the permanent driver record and retain asset preview
     ) => void
   )({ target: { value: 'Updated Driver' } });
 
-  assert.equal(updates[0].profile.name, 'Updated Driver');
+  assert.equal(fieldInLabel(tree, 'Driver name', 'input').props?.readOnly, true);
+  assert.equal(updates[0].profile.name, 'Rich Weatherill');
+  assert.match(textContent(tree), /Locked to this account/);
   assert.equal(updates[0].profile.driverImage, 'driver.png');
   assert.deepEqual(
     findElements(tree, 'img').map(image => image.props?.src),

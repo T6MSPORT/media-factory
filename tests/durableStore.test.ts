@@ -29,6 +29,7 @@ test('durable browser storage retains full image-heavy state', async () => {
       name: 'Rich Weatherill',
       number: '46',
       team: 'T6 Msport',
+      nameLocked: false,
       driverImage: image,
       teamLogo: image,
       competitionLogo: image,

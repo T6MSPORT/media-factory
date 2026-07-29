@@ -8,6 +8,7 @@ import {
   setBackgroundGraphicLocked,
   updateProjectWithBackgroundGraphicLock,
 } from '../state/mediaFactoryState';
+import { registerAccount, signIn, signOut } from '../state/authState';
 import { loadDurableData, saveDurableData } from '../durableStore';
 import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
 import type { Data, Project, TemplateId } from '../types';
@@ -107,6 +108,32 @@ export function useMediaFactory() {
     setPage('templates');
   };
 
+  const register = async (
+    email: string,
+    password: string,
+    profile: Data['profile'],
+  ) => {
+    const registered = await registerAccount(dataRef.current, {
+      email,
+      password,
+      profile,
+    });
+    setData(registered);
+    setPage('templates');
+  };
+
+  const login = async (email: string, password: string) => {
+    const authenticated = await signIn(dataRef.current, email, password);
+    setData(authenticated);
+    setPage('home');
+  };
+
+  const logout = () => {
+    setData(current => signOut(current));
+    setActiveId(undefined);
+    setPage('home');
+  };
+
   const openTemplate = (template: TemplateId) => {
     const project = createProject(template, data);
     setData(current => addProject(current, project));
@@ -137,6 +164,8 @@ export function useMediaFactory() {
     activeProject: data.projects.find(project => project.id === activeId),
     data,
     finishOnboarding,
+    login,
+    logout,
     openProject,
     openTemplate,
     page,
@@ -147,5 +176,6 @@ export function useMediaFactory() {
     setPage,
     storageIssue,
     retryStorage,
+    register,
   };
 }

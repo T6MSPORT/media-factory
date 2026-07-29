@@ -65,6 +65,20 @@ test('profile updates preserve all unrelated state', () => {
   assert.equal(next.projects, data.projects);
 });
 
+test('a locked driver name cannot be changed through profile updates', () => {
+  const locked: Data = {
+    ...data,
+    profile: { ...data.profile, nameLocked: true },
+  };
+  const next = updateProfile(locked, {
+    name: 'Different Driver',
+    number: '99',
+  });
+
+  assert.equal(next.profile.name, 'Rich');
+  assert.equal(next.profile.number, '99');
+});
+
 test('branding updates preserve the profile, sponsors and projects', () => {
   const next = updateBranding(data, {
     primary: '#c70000',

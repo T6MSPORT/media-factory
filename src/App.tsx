@@ -5,6 +5,7 @@ import { Sidebar } from './components/navigation/Sidebar';
 import { MEDIA_FACTORY_UI_COLORS } from './config/branding';
 import { useMediaFactory } from './hooks/useMediaFactory';
 import {
+  AuthPage,
   BrandingPage,
   HomePage,
   OnboardingPage,
@@ -22,14 +23,26 @@ export default function App() {
     finishOnboarding,
     openProject,
     openTemplate,
+    login,
+    logout,
     page,
     patchProject,
     retryStorage,
+    register,
     setBackgroundGraphicLock,
     setData,
     setPage,
     storageIssue,
   } = useMediaFactory();
+
+  if (!data.authentication.signedIn) {
+    return (
+      <>
+        <StorageRecovery issue={storageIssue} retry={retryStorage} />
+        <AuthPage data={data} register={register} login={login} />
+      </>
+    );
+  }
 
   if (!data.onboardingComplete) {
     return (
@@ -50,7 +63,12 @@ export default function App() {
     <>
       <StorageRecovery issue={storageIssue} retry={retryStorage} />
       <div className="app" style={appStyle}>
-        <Sidebar activePage={page} onNavigate={setPage} />
+        <Sidebar
+          activePage={page}
+          accountEmail={data.authentication.account?.email}
+          onNavigate={setPage}
+          onSignOut={logout}
+        />
         <main>
           {page === 'home' && (
             <HomePage

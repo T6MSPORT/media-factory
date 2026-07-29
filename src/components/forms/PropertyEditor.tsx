@@ -4,7 +4,10 @@ type TextFieldProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: 'text' | 'date' | 'time';
+  type?: 'text' | 'date' | 'time' | 'email' | 'password';
+  readOnly?: boolean;
+  autoComplete?: string;
+  placeholder?: string;
 };
 
 export function TextField({
@@ -12,6 +15,9 @@ export function TextField({
   value,
   onChange,
   type = 'text',
+  readOnly = false,
+  autoComplete,
+  placeholder,
 }: TextFieldProps) {
   return (
     <label>
@@ -19,6 +25,9 @@ export function TextField({
       <input
         type={type}
         value={value}
+        readOnly={readOnly}
+        autoComplete={autoComplete}
+        placeholder={placeholder}
         onChange={event => onChange(event.target.value)}
       />
     </label>

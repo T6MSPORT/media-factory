@@ -4,9 +4,12 @@ import type { Branding, Data, DriverProfile, Project, Sponsor } from '../types';
 export const SPONSOR_LIMIT = 10;
 
 export function updateProfile(data: Data, patch: Partial<DriverProfile>): Data {
+  const safePatch = { ...patch };
+  if (data.profile.nameLocked) delete safePatch.name;
+
   return {
     ...data,
-    profile: { ...data.profile, ...patch },
+    profile: { ...data.profile, ...safePatch },
   };
 }
 
