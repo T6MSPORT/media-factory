@@ -8,6 +8,7 @@ import type {
   ScheduleDayName,
   ScheduleSessionType,
   GraphicElementId,
+  BackgroundGraphicLayout,
 } from './types';
 
 export const STORAGE_KEY = 'media-factory-individual-v1';
@@ -69,6 +70,34 @@ const graphicElementIds: GraphicElementId[] = [
   'wing',
 ];
 
+export const defaultBackgroundGraphicLayout: BackgroundGraphicLayout = {
+  graphicElement: 'none',
+  graphicElementX: 50,
+  graphicElementY: 55,
+  graphicElementSize: 45,
+};
+
+function normaliseBackgroundGraphicLayout(value: unknown): BackgroundGraphicLayout {
+  const layout = value && typeof value === 'object'
+    ? value as Partial<BackgroundGraphicLayout>
+    : {};
+
+  return {
+    graphicElement: graphicElementIds.includes(layout.graphicElement as GraphicElementId)
+      ? layout.graphicElement as GraphicElementId
+      : 'none',
+    graphicElementX: Number.isFinite(layout.graphicElementX)
+      ? Math.min(100, Math.max(0, layout.graphicElementX!))
+      : 50,
+    graphicElementY: Number.isFinite(layout.graphicElementY)
+      ? Math.min(100, Math.max(0, layout.graphicElementY!))
+      : 55,
+    graphicElementSize: Number.isFinite(layout.graphicElementSize)
+      ? Math.min(200, Math.max(10, layout.graphicElementSize!))
+      : 45,
+  };
+}
+
 function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] {
   const suppliedDays = Array.isArray(details.scheduleDays)
     ? details.scheduleDays.slice(0, 3)
@@ -121,6 +150,11 @@ export const starter: Data = {
   },
   sponsors: [],
   projects: [],
+  backgroundGraphic: {
+    locked: false,
+    feed: { ...defaultBackgroundGraphicLayout },
+    story: { ...defaultBackgroundGraphicLayout },
+  },
 };
 
 type StoredData = Omit<Partial<Data>, 'profile' | 'projects'> & {
@@ -222,7 +256,14 @@ export function normaliseData(value: unknown): Data {
     });
     }) as Project[];
 
-  return { ...starter, ...parsed, profile, branding, projects };
+  const suppliedBackgroundGraphic = parsed.backgroundGraphic;
+  const backgroundGraphic = {
+    locked: suppliedBackgroundGraphic?.locked === true,
+    feed: normaliseBackgroundGraphicLayout(suppliedBackgroundGraphic?.feed),
+    story: normaliseBackgroundGraphicLayout(suppliedBackgroundGraphic?.story),
+  };
+
+  return { ...starter, ...parsed, profile, branding, projects, backgroundGraphic };
 }
 
 export function loadResult(storage: Pick<Storage, 'getItem'> = localStorage): LoadResult {

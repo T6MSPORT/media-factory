@@ -26,10 +26,21 @@ type BuilderProps = {
   data: Data;
   project: Project;
   patch: (patch: Partial<Project>) => void;
+  backgroundGraphicLocked: boolean;
+  setBackgroundGraphicLocked: (locked: boolean) => void;
+  applyBackgroundGraphicToAll: () => void;
   back: () => void;
 };
 
-export function Builder({ data, project, patch, back }: BuilderProps) {
+export function Builder({
+  data,
+  project,
+  patch,
+  backgroundGraphicLocked,
+  setBackgroundGraphicLocked,
+  applyBackgroundGraphicToAll,
+  back,
+}: BuilderProps) {
   const svg = useRef<SVGSVGElement>(null);
   const backgroundDrag = useBackgroundDrag(svg, project, patch);
   const sponsors = data.sponsors.slice(0, 10);
@@ -88,6 +99,16 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
           />
 
           <h3>Background graphic</h3>
+          <ToggleField
+            label="Lock across templates"
+            checked={backgroundGraphicLocked}
+            onChange={setBackgroundGraphicLocked}
+          />
+          <p className="control-hint">
+            {backgroundGraphicLocked
+              ? `Changes apply to every ${project.format === 'feed' ? 'Feed' : 'Story'} template.`
+              : 'Unlocked changes apply to this template only.'}
+          </p>
           <SelectField
             label="Design"
             value={project.graphicElement || 'none'}
@@ -135,6 +156,11 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
                 Reset background graphic
               </button>
             </>
+          )}
+          {!backgroundGraphicLocked && (
+            <button onClick={applyBackgroundGraphicToAll}>
+              Apply to all {project.format === 'feed' ? 'Feed' : 'Story'} templates
+            </button>
           )}
 
           <h3>Background hero image</h3>

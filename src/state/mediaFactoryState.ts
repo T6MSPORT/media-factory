@@ -1,6 +1,12 @@
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { emptyDetails, id } from '../store';
-import type { Data, Project, TemplateId } from '../types';
+import type {
+  BackgroundGraphicLayout,
+  Data,
+  FormatId,
+  Project,
+  TemplateId,
+} from '../types';
 
 type ProjectDependencies = {
   createId?: (prefix: string) => string;
@@ -14,6 +20,14 @@ export function createProject(
 ): Project {
   const timestamp = (dependencies.now || (() => new Date().toISOString()))();
   const createId = dependencies.createId || id;
+  const backgroundGraphic = data.backgroundGraphic.locked
+    ? data.backgroundGraphic.feed
+    : {
+        graphicElement: 'none' as const,
+        graphicElementX: 50,
+        graphicElementY: 55,
+        graphicElementSize: 45,
+      };
 
   return {
     id: createId('graphic'),
@@ -34,10 +48,7 @@ export function createProject(
     driverY: 0,
     driverScale: 1,
     driverVisible: true,
-    graphicElement: 'none',
-    graphicElementX: 50,
-    graphicElementY: 55,
-    graphicElementSize: 45,
+    ...backgroundGraphic,
     details: {
       ...emptyDetails,
       ...(template === 'sponsor'
@@ -70,6 +81,138 @@ export function updateProject(
     ...data,
     projects: data.projects.map(project =>
       project.id === activeId ? { ...project, ...patch, updatedAt: now() } : project,
+    ),
+  };
+}
+
+const backgroundGraphicKeys = [
+  'graphicElement',
+  'graphicElementX',
+  'graphicElementY',
+  'graphicElementSize',
+] as const;
+
+function getProjectBackgroundGraphic(project: Project): BackgroundGraphicLayout {
+  return {
+    graphicElement: project.graphicElement || 'none',
+    graphicElementX: project.graphicElementX ?? 50,
+    graphicElementY: project.graphicElementY ?? 55,
+    graphicElementSize: project.graphicElementSize ?? 45,
+  };
+}
+
+function getBackgroundGraphicPatch(
+  patch: Partial<Project>,
+): Partial<BackgroundGraphicLayout> {
+  return Object.fromEntries(
+    backgroundGraphicKeys
+      .filter(key => patch[key] !== undefined)
+      .map(key => [key, patch[key]]),
+  ) as Partial<BackgroundGraphicLayout>;
+}
+
+function hasBackgroundGraphicPatch(patch: Partial<Project>) {
+  return backgroundGraphicKeys.some(key => patch[key] !== undefined);
+}
+
+export function updateProjectWithBackgroundGraphicLock(
+  data: Data,
+  activeId: string | undefined,
+  patch: Partial<Project>,
+  now: () => string = () => new Date().toISOString(),
+): Data {
+  const activeProject = data.projects.find(project => project.id === activeId);
+  if (!activeProject) return data;
+
+  const nextFormat = (patch.format || activeProject.format) as FormatId;
+  let resolvedPatch = patch;
+  let backgroundGraphic = data.backgroundGraphic;
+
+  if (backgroundGraphic.locked && patch.format && patch.format !== activeProject.format) {
+    resolvedPatch = { ...resolvedPatch, ...backgroundGraphic[nextFormat] };
+  }
+
+  if (backgroundGraphic.locked && hasBackgroundGraphicPatch(resolvedPatch)) {
+    const nextLayout = {
+      ...backgroundGraphic[nextFormat],
+      ...getBackgroundGraphicPatch(resolvedPatch),
+    };
+    backgroundGraphic = {
+      ...backgroundGraphic,
+      [nextFormat]: nextLayout,
+    };
+    const timestamp = now();
+
+    return {
+      ...data,
+      backgroundGraphic,
+      projects: data.projects.map(project => {
+        if (project.id === activeId) {
+          return { ...project, ...resolvedPatch, ...nextLayout, updatedAt: timestamp };
+        }
+        return project.format === nextFormat
+          ? { ...project, ...nextLayout, updatedAt: timestamp }
+          : project;
+      }),
+    };
+  }
+
+  return updateProject(data, activeId, resolvedPatch, now);
+}
+
+export function setBackgroundGraphicLocked(
+  data: Data,
+  activeId: string | undefined,
+  locked: boolean,
+  now: () => string = () => new Date().toISOString(),
+): Data {
+  if (!locked) {
+    return {
+      ...data,
+      backgroundGraphic: { ...data.backgroundGraphic, locked: false },
+    };
+  }
+
+  const activeProject = data.projects.find(project => project.id === activeId);
+  if (!activeProject) return data;
+  const layout = getProjectBackgroundGraphic(activeProject);
+  const timestamp = now();
+
+  return {
+    ...data,
+    backgroundGraphic: {
+      ...data.backgroundGraphic,
+      locked: true,
+      [activeProject.format]: layout,
+    },
+    projects: data.projects.map(project =>
+      project.format === activeProject.format
+        ? { ...project, ...layout, updatedAt: timestamp }
+        : project,
+    ),
+  };
+}
+
+export function applyBackgroundGraphicToAllTemplates(
+  data: Data,
+  activeId: string | undefined,
+  now: () => string = () => new Date().toISOString(),
+): Data {
+  const activeProject = data.projects.find(project => project.id === activeId);
+  if (!activeProject) return data;
+  const layout = getProjectBackgroundGraphic(activeProject);
+  const timestamp = now();
+
+  return {
+    ...data,
+    backgroundGraphic: {
+      ...data.backgroundGraphic,
+      [activeProject.format]: layout,
+    },
+    projects: data.projects.map(project =>
+      project.format === activeProject.format
+        ? { ...project, ...layout, updatedAt: timestamp }
+        : project,
     ),
   };
 }

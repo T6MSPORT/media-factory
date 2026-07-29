@@ -13,9 +13,12 @@ const server = await createServer({
 });
 const {
   addProject,
+  applyBackgroundGraphicToAllTemplates,
   completeOnboarding,
   createProject,
+  setBackgroundGraphicLocked,
   updateProject,
+  updateProjectWithBackgroundGraphicLock,
 } = await server.ssrLoadModule('/src/state/mediaFactoryState.ts');
 const {
   STORAGE_KEY,
@@ -137,6 +140,134 @@ test('project updates target only the open project and refresh its timestamp', (
     name: 'Updated',
     updatedAt: '2026-07-25T12:30:00.000Z',
   });
+});
+
+test('locking a background graphic applies the current layout to every template in its format', () => {
+  const first = {
+    ...createProject('event', data),
+    id: 'feed-event',
+    graphicElement: 'speed-lines',
+    graphicElementX: 32,
+    graphicElementY: 64,
+    graphicElementSize: 120,
+  } as Project;
+  const second = {
+    ...createProject('results', data),
+    id: 'feed-results',
+    graphicElement: 'none',
+  } as Project;
+  const story = {
+    ...createProject('sponsor', data),
+    id: 'story-sponsor',
+    format: 'story',
+    graphicElement: 'chevrons',
+  } as Project;
+
+  const next = setBackgroundGraphicLocked(
+    { ...data, projects: [first, second, story] },
+    first.id,
+    true,
+    () => '2026-07-25T12:45:00.000Z',
+  );
+
+  assert.equal(next.backgroundGraphic.locked, true);
+  assert.deepEqual(next.backgroundGraphic.feed, {
+    graphicElement: 'speed-lines',
+    graphicElementX: 32,
+    graphicElementY: 64,
+    graphicElementSize: 120,
+  });
+  assert.equal(next.projects[1].graphicElement, 'speed-lines');
+  assert.equal(next.projects[1].graphicElementX, 32);
+  assert.equal(next.projects[2], story);
+});
+
+test('editing a locked graphic updates matching templates but keeps Story independent', () => {
+  const feedOne = { ...createProject('event', data), id: 'feed-one' };
+  const feedTwo = { ...createProject('results', data), id: 'feed-two' };
+  const story = {
+    ...createProject('schedule', data),
+    id: 'story',
+    format: 'story' as const,
+  };
+  let locked = setBackgroundGraphicLocked(
+    { ...data, projects: [feedOne, feedTwo, story] },
+    feedOne.id,
+    true,
+  );
+
+  locked = updateProjectWithBackgroundGraphicLock(
+    locked,
+    feedOne.id,
+    {
+      graphicElement: 'apex-arc',
+      graphicElementX: 71,
+      graphicElementSize: 160,
+    },
+    () => '2026-07-25T13:00:00.000Z',
+  );
+
+  assert.equal(locked.backgroundGraphic.feed.graphicElement, 'apex-arc');
+  assert.equal(locked.projects[1].graphicElement, 'apex-arc');
+  assert.equal(locked.projects[1].graphicElementX, 71);
+  assert.equal(locked.projects[1].graphicElementSize, 160);
+  assert.equal(locked.projects[2].graphicElement, 'none');
+});
+
+test('switching format while locked restores that format shared layout', () => {
+  const project = createProject('event', data);
+  const configured: Data = {
+    ...data,
+    backgroundGraphic: {
+      locked: true,
+      feed: {
+        graphicElement: 'speed-lines',
+        graphicElementX: 20,
+        graphicElementY: 30,
+        graphicElementSize: 100,
+      },
+      story: {
+        graphicElement: 'apex-arc',
+        graphicElementX: 75,
+        graphicElementY: 60,
+        graphicElementSize: 150,
+      },
+    },
+    projects: [project],
+  };
+
+  const next = updateProjectWithBackgroundGraphicLock(
+    configured,
+    project.id,
+    { format: 'story' },
+  );
+
+  assert.equal(next.projects[0].format, 'story');
+  assert.equal(next.projects[0].graphicElement, 'apex-arc');
+  assert.equal(next.projects[0].graphicElementX, 75);
+  assert.equal(next.projects[0].graphicElementSize, 150);
+});
+
+test('unlocked overrides stay local and can be deliberately applied to all templates', () => {
+  const first = {
+    ...createProject('event', data),
+    id: 'first',
+    graphicElement: 'tech-bracket' as const,
+    graphicElementX: 12,
+  };
+  const second = { ...createProject('results', data), id: 'second' };
+  let current: Data = { ...data, projects: [first, second] };
+
+  current = updateProjectWithBackgroundGraphicLock(
+    current,
+    first.id,
+    { graphicElementX: 18 },
+  );
+  assert.equal(current.projects[1].graphicElementX, 50);
+
+  current = applyBackgroundGraphicToAllTemplates(current, first.id);
+  assert.equal(current.projects[1].graphicElement, 'tech-bracket');
+  assert.equal(current.projects[1].graphicElementX, 18);
 });
 
 test('finishing onboarding preserves the draft and marks it complete', () => {

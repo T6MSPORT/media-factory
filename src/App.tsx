@@ -17,6 +17,7 @@ import {
 export default function App() {
   const {
     activeProject,
+    applyBackgroundGraphicToAll,
     data,
     finishOnboarding,
     openProject,
@@ -24,6 +25,7 @@ export default function App() {
     page,
     patchProject,
     retryStorage,
+    setBackgroundGraphicLock,
     setData,
     setPage,
     storageIssue,
@@ -69,6 +71,9 @@ export default function App() {
               data={data}
               project={activeProject}
               patch={patchProject}
+              backgroundGraphicLocked={data.backgroundGraphic.locked}
+              setBackgroundGraphicLocked={setBackgroundGraphicLock}
+              applyBackgroundGraphicToAll={applyBackgroundGraphicToAll}
               back={() => setPage('templates')}
             />
           )}

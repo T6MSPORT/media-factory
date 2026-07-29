@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { PageId } from '../config/navigation';
 import {
   addProject,
+  applyBackgroundGraphicToAllTemplates,
   completeOnboarding,
   createProject,
-  updateProject,
+  setBackgroundGraphicLocked,
+  updateProjectWithBackgroundGraphicLock,
 } from '../state/mediaFactoryState';
 import { loadDurableData, saveDurableData } from '../durableStore';
 import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
@@ -118,7 +120,17 @@ export function useMediaFactory() {
   };
 
   const patchProject = (patch: Partial<Project>) => {
-    setData(current => updateProject(current, activeId, patch));
+    setData(current =>
+      updateProjectWithBackgroundGraphicLock(current, activeId, patch),
+    );
+  };
+
+  const setBackgroundGraphicLock = (locked: boolean) => {
+    setData(current => setBackgroundGraphicLocked(current, activeId, locked));
+  };
+
+  const applyBackgroundGraphicToAll = () => {
+    setData(current => applyBackgroundGraphicToAllTemplates(current, activeId));
   };
 
   return {
@@ -129,6 +141,8 @@ export function useMediaFactory() {
     openTemplate,
     page,
     patchProject,
+    setBackgroundGraphicLock,
+    applyBackgroundGraphicToAll,
     setData,
     setPage,
     storageIssue,

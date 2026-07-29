@@ -23,6 +23,17 @@ export type GraphicElementId =
   | 'starburst'
   | 'target'
   | 'wing';
+export type BackgroundGraphicLayout = {
+  graphicElement: GraphicElementId;
+  graphicElementX: number;
+  graphicElementY: number;
+  graphicElementSize: number;
+};
+export type BackgroundGraphicSettings = {
+  locked: boolean;
+  feed: BackgroundGraphicLayout;
+  story: BackgroundGraphicLayout;
+};
 export type DriverProfile = {
   name:string; number:string; team:string;
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
@@ -53,4 +64,5 @@ export type Project = {
 export type Data = {
   onboardingComplete:boolean; profile:DriverProfile; branding:Branding;
   sponsors:Sponsor[]; projects:Project[];
+  backgroundGraphic:BackgroundGraphicSettings;
 };
