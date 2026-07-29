@@ -106,9 +106,9 @@ const expectedHashes: Record<string, string> = {
   'schedule:feed':
     '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
   'results:story':
-    '9009e70e8b9920d44579aa7a597f21854a411f84fb4074a6176ba07076609245',
+    '82779f5f5242efa3c2972a975744908f1ed71cbc5dc3c8d1f84c031b1ebe9e04',
   'results:feed':
-    '990549b924dff6b0e052fd629158ce5672b1079124c2b45ce36b23da580222b4',
+    '86b19ba93d895fb27702704279e1d66b6d5d97c7c336c48c0c68f262330b4080',
   'sponsor:story':
     '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
   'sponsor:feed':
@@ -210,14 +210,16 @@ for (const template of templates) {
       if (template === 'results') {
         assert.match(markup, /RACE RESULT/);
         assert.match(markup, /ROUND 3/);
-        assert.match(markup, />P2</);
+        assert.match(markup, />P</);
+        assert.match(markup, />2</);
+        assert.match(markup, /skewX\(-12\)/);
         assert.match(markup, /fill="#c3c8cf"/);
       }
     });
   }
 }
 
-test('qualifying result uses the dedicated top-first pole composition', () => {
+test('qualifying result restores identity and uses the large split position composition', () => {
   const project = makeProject('results', 'story');
   project.details = {
     ...project.details,
@@ -237,11 +239,12 @@ test('qualifying result uses the dedicated top-first pole composition', () => {
 
   assert.match(markup, /QUALIFYING RESULT/);
   assert.match(markup, /SILVERSTONE NATIONAL/);
-  assert.match(markup, />P1</);
-  assert.match(markup, /id="pole-stopwatch"/);
-  assert.match(markup, /stroke="#a855f7"/);
-  assert.match(markup, />POLE</);
-  assert.doesNotMatch(markup, /RICH WEATHERILL/);
+  assert.match(markup, />P</);
+  assert.match(markup, />1</);
+  assert.match(markup, /skewX\(-12\)/);
+  assert.match(markup, /RICH WEATHERILL/);
+  assert.match(markup, /data:image\/png;base64,competition/);
   assert.doesNotMatch(markup, /ROUND 3/);
-  assert.doesNotMatch(markup, /data:image\/png;base64,competition/);
+  assert.doesNotMatch(markup, /pole-stopwatch/);
+  assert.doesNotMatch(markup, />POLE</);
 });

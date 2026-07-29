@@ -76,14 +76,7 @@ export function getResultsTemplateLayout(
   const contentWidth = w - margin * 2;
   const session = project.details.resultSession || 'race';
   const title = `${session === 'qualifying' ? 'QUALIFYING' : 'RACE'} RESULT`;
-  const titleY =
-    session === 'qualifying'
-      ? isStory
-        ? 82
-        : 64
-      : isStory
-        ? 350
-        : 300;
+  const titleY = isStory ? 350 : 300;
   const titleSize = fitTextSize(
     title,
     isStory ? 104 : 88,
@@ -110,12 +103,11 @@ export function getResultsTemplateLayout(
   const numericPosition = Number(
     String(project.details.position).replace(/\D/g, ''),
   );
-  const positionText = numericPosition > 0
-    ? `P${numericPosition}`
-    : 'P#';
+  const positionNumber = numericPosition > 0
+    ? String(numericPosition)
+    : '#';
   const positionY = h / 2;
-  const positionSize = isStory ? 350 : 290;
-  const isPole = session === 'qualifying' && numericPosition === 1;
+  const positionSize = isStory ? 440 : 360;
   const podiumPosition =
     session === 'race' && numericPosition >= 1 && numericPosition <= 3
       ? numericPosition
@@ -134,17 +126,12 @@ export function getResultsTemplateLayout(
     roundText,
     roundY,
     roundSize,
-    positionText,
+    positionNumber,
     positionX: w / 2,
     positionY,
     positionSize,
-    isPole,
+    positionGap: isStory ? 72 : 60,
     podiumPosition,
-    stopwatchX: w / 2,
-    stopwatchY: positionY + (isStory ? 350 : 275),
-    stopwatchSize: isStory ? 280 : 220,
-    poleTextY: positionY + (isStory ? 555 : 435),
-    poleTextSize: isStory ? 72 : 60,
     laurelScale: isStory ? 1.65 : 1.38,
   };
 }

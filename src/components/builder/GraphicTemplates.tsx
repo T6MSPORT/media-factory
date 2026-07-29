@@ -80,41 +80,6 @@ function PodiumLaurel({
   );
 }
 
-function PoleStopwatch({
-  x,
-  y,
-  size,
-  accent,
-}: {
-  x: number;
-  y: number;
-  size: number;
-  accent: string;
-}) {
-  const radius = size * 0.36;
-  return (
-    <g
-      id="pole-stopwatch"
-      transform={`translate(${x} ${y})`}
-      fill="none"
-      stroke={accent}
-      strokeWidth={Math.max(8, size * 0.055)}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      opacity=".82"
-    >
-      <circle r={radius} fill="#130c22" fillOpacity=".48" />
-      <path d={`M0 ${-radius} V${-radius - size * 0.19}`} />
-      <path d={`M${-size * 0.12} ${-radius - size * 0.19} H${size * 0.12}`} />
-      <path
-        d={`M${radius * 0.72} ${-radius * 0.72} L${radius * 1.08} ${-radius * 1.08}`}
-      />
-      <path d={`M0 0 V${-radius * 0.58} M0 0 L${radius * 0.48} ${radius * 0.18}`} />
-      <circle r={Math.max(5, size * 0.045)} fill={accent} stroke="none" />
-    </g>
-  );
-}
-
 function ResultsTemplate({
   w,
   h,
@@ -128,16 +93,14 @@ function ResultsTemplate({
 
   return (
     <g fill={branding.accent}>
-      {layout.session === 'race' && (
-        <ChampionshipDriverHeader
-          w={w}
-          project={project}
-          profile={profile}
-          branding={branding}
-          headingFont={headingFont}
-          bodyFont={bodyFont}
-        />
-      )}
+      <ChampionshipDriverHeader
+        w={w}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
       <text
         x={layout.margin}
         y={layout.titleY}
@@ -184,48 +147,32 @@ function ResultsTemplate({
         position={layout.podiumPosition}
         scale={layout.laurelScale}
       />
-      {layout.isPole && (
-        <PoleStopwatch
-          x={layout.stopwatchX}
-          y={layout.stopwatchY}
-          size={layout.stopwatchSize}
-          accent="#a855f7"
-        />
-      )}
-      <text
-        x={layout.positionX}
-        y={layout.positionY}
-        textAnchor="middle"
-        dominantBaseline="central"
+      <g
+        transform={`translate(${layout.positionX} ${layout.positionY}) skewX(-12)`}
         fontFamily={headingFont}
         fontSize={layout.positionSize}
         fontWeight="900"
-        letterSpacing="-12"
         fill={branding.accent}
         stroke="#08090a"
         strokeWidth="10"
         paintOrder="stroke fill"
+        dominantBaseline="central"
       >
-        {layout.positionText}
-      </text>
-      {layout.isPole && (
         <text
-          x={layout.stopwatchX}
-          y={layout.poleTextY}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontFamily={headingFont}
-          fontSize={layout.poleTextSize}
-          fontWeight="900"
-          letterSpacing="8"
-          fill="#a855f7"
-          stroke="#08090a"
-          strokeWidth="6"
-          paintOrder="stroke fill"
+          x={-layout.positionGap / 2}
+          y="0"
+          textAnchor="end"
         >
-          POLE
+          P
         </text>
-      )}
+        <text
+          x={layout.positionGap / 2}
+          y="0"
+          textAnchor="start"
+        >
+          {layout.positionNumber}
+        </text>
+      </g>
     </g>
   );
 }
