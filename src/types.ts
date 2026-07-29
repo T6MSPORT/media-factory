@@ -1,5 +1,6 @@
-export type TemplateId = 'event'|'announcement'|'schedule'|'qualifying'|'results'|'sponsor';
+export type TemplateId = 'event'|'announcement'|'schedule'|'results'|'sponsor';
 export type FormatId = 'feed'|'story';
+export type ResultSessionType = 'qualifying'|'race';
 export type DriverProfile = {
   name:string; number:string; team:string;
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
@@ -17,6 +18,7 @@ export type GraphicDetails = {
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
+  resultSession?:ResultSessionType;
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];

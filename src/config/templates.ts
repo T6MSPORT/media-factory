@@ -22,14 +22,9 @@ export const TEMPLATE_CATALOGUE: readonly TemplateDefinition[] = [
   },
   { id: 'schedule', name: 'Schedule', description: 'Publish session or race timings.' },
   {
-    id: 'qualifying',
-    name: 'Qualifying Result',
-    description: 'Share qualifying results; pole styling is added automatically for P1.',
-  },
-  {
     id: 'results',
-    name: 'Race Result',
-    description: 'Share race results; podium styling is added automatically for P1–P3.',
+    name: 'Results',
+    description: 'Share a qualifying or race result with automatic pole and podium styling.',
   },
   { id: 'sponsor', name: 'Sponsor Recognition', description: 'Thank and feature a partner.' },
 ] as const;
@@ -67,17 +62,9 @@ export const TEMPLATE_FIELDS: Record<
     { key: 'circuit', label: 'Track name' },
     { key: 'round', label: 'Round(s)' },
   ],
-  qualifying: [
-    ...timedRaceFields,
-    { key: 'position', label: 'Position' },
-    { key: 'result', label: 'Lap time' },
-    ...overrideFields,
-  ],
   results: [
-    ...timedRaceFields,
+    { key: 'circuit', label: 'Track name' },
     { key: 'position', label: 'Position' },
-    { key: 'result', label: 'Result or gap' },
-    ...overrideFields,
   ],
   sponsor: [
     ...timedRaceFields,

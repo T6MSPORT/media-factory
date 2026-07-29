@@ -24,6 +24,7 @@ export const emptyDetails: GraphicDetails = {
   scheduleLines: '',
   sponsorName: '',
   scheduleDayCount: 1,
+  resultSession: 'race',
   scheduleDays: [
     {
       day: '',
@@ -145,14 +146,21 @@ export function normaliseData(value: unknown): Data {
   const projects = (parsed.projects || [])
     .filter(project => project.template !== 'bio')
     .map(project => {
-    const details = {
+    const legacyQualifying = project.template === 'qualifying';
+    const details: GraphicDetails = {
       ...emptyDetails,
       ...project.details,
+      resultSession: legacyQualifying
+        ? 'qualifying'
+        : project.details?.resultSession === 'qualifying'
+          ? 'qualifying'
+          : 'race',
     };
     const scheduleDays = normaliseScheduleDays(details);
 
     return ({
     ...project,
+    template: legacyQualifying ? 'results' : project.template,
     details: {
       ...details,
       scheduleDayCount: scheduleDays.length,

@@ -7,6 +7,7 @@ import {
   getBrandLogoLayout,
   getEventTemplateLayout,
   getGraphicCopy,
+  getResultsTemplateLayout,
   getScheduleTemplateLayout,
   getSponsorLayout,
   getSponsorLayouts,
@@ -243,7 +244,7 @@ test('event track text remains inside the template for every selectable heading 
   }
 });
 
-test('derived headings and achievement labels remain template-specific', () => {
+test('derived headings leave results presentation to the combined results layout', () => {
   assert.deepEqual(
     getGraphicCopy(
       {
@@ -255,8 +256,8 @@ test('derived headings and achievement labels remain template-specific', () => {
       branding,
     ),
     {
-      achievement: 'PODIUM · P2',
-      title: 'RACE RESULT',
+      achievement: '',
+      title: 'RESULT',
       sub: 'T6 Msport',
       headingFont: 'Microgramma, Arial, sans-serif',
       bodyFont: 'Aldrich, Arial, sans-serif',
@@ -308,8 +309,7 @@ test('every template retains its default title and standard layout behaviour', (
     event: 'RACE WEEKEND',
     announcement: 'ANNOUNCEMENT',
     schedule: 'RACE SCHEDULE',
-    qualifying: 'QUALIFYING RESULT',
-    results: 'RACE RESULT',
+    results: 'RESULT',
     sponsor: 'PROUDLY SUPPORTED BY',
   };
 
@@ -338,17 +338,46 @@ test('every template retains its default title and standard layout behaviour', (
   assert.equal(
     getStandardTemplateLayout(1350, {
       format: 'portrait',
-      template: 'qualifying',
-    }).showResult,
-    true,
-  );
-  assert.equal(
-    getStandardTemplateLayout(1350, {
-      format: 'portrait',
       template: 'results',
     }).showResult,
     true,
   );
+});
+
+test('combined results layout switches qualifying and race presentation', () => {
+  const qualifying = getResultsTemplateLayout(1080, 1920, {
+    ...project,
+    template: 'results',
+    details: {
+      ...details,
+      circuit: 'Silverstone National',
+      round: '4',
+      position: 'P1',
+      resultSession: 'qualifying',
+    },
+  });
+  assert.equal(qualifying.title, 'QUALIFYING RESULT');
+  assert.equal(qualifying.trackText, 'SILVERSTONE NATIONAL');
+  assert.equal(qualifying.roundText, '');
+  assert.equal(qualifying.positionText, 'P1');
+  assert.equal(qualifying.isPole, true);
+  assert.equal(qualifying.podiumPosition, 0);
+
+  const race = getResultsTemplateLayout(1080, 1920, {
+    ...project,
+    template: 'results',
+    details: {
+      ...details,
+      round: '4',
+      position: '2',
+      resultSession: 'race',
+    },
+  });
+  assert.equal(race.title, 'RACE RESULT');
+  assert.equal(race.roundText, 'ROUND 4');
+  assert.equal(race.positionText, 'P2');
+  assert.equal(race.isPole, false);
+  assert.equal(race.podiumPosition, 2);
 });
 
 test('schedule layout keeps the title and track at the top with selected days underneath', () => {
@@ -438,7 +467,6 @@ test('brand logo positions remain shared across non-event templates', () => {
   for (const template of [
     'announcement',
     'schedule',
-    'qualifying',
     'results',
     'sponsor',
   ] as TemplateId[]) {

@@ -3,6 +3,7 @@ import { formatEventDate } from '../../utils/format';
 import {
   getAnnouncementTemplateLayout,
   getEventTemplateLayout,
+  getResultsTemplateLayout,
   getScheduleTemplateLayout,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
@@ -15,6 +16,203 @@ type TemplateSharedProps = {
   headingFont: string;
   bodyFont: string;
 };
+
+function PodiumLaurel({
+  x,
+  y,
+  position,
+  scale,
+}: {
+  x: number;
+  y: number;
+  position: number;
+  scale: number;
+}) {
+  if (!position) return null;
+
+  const colour =
+    position === 1 ? '#d9aa24' : position === 2 ? '#c3c8cf' : '#b8753f';
+  const leaves = Array.from({ length: 9 }, (_, index) => {
+    const offsetY = 138 - index * 34;
+    const offsetX = 124 + Math.sin(index / 8 * Math.PI) * 40;
+    const rotation = 48 - index * 8;
+    return { offsetX, offsetY, rotation };
+  });
+
+  return (
+    <g
+      transform={`translate(${x} ${y}) scale(${scale})`}
+      fill={colour}
+      stroke={colour}
+      opacity=".94"
+    >
+      <path
+        d="M-42 176 C-176 98 -214 -66 -126 -188"
+        fill="none"
+        strokeWidth="9"
+        strokeLinecap="round"
+      />
+      <path
+        d="M42 176 C176 98 214 -66 126 -188"
+        fill="none"
+        strokeWidth="9"
+        strokeLinecap="round"
+      />
+      {leaves.map((leaf, index) => (
+        <g key={index}>
+          <ellipse
+            cx={-leaf.offsetX}
+            cy={leaf.offsetY}
+            rx="18"
+            ry="42"
+            transform={`rotate(${-leaf.rotation} ${-leaf.offsetX} ${leaf.offsetY})`}
+          />
+          <ellipse
+            cx={leaf.offsetX}
+            cy={leaf.offsetY}
+            rx="18"
+            ry="42"
+            transform={`rotate(${leaf.rotation} ${leaf.offsetX} ${leaf.offsetY})`}
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
+
+function PoleStopwatch({
+  x,
+  y,
+  size,
+  accent,
+}: {
+  x: number;
+  y: number;
+  size: number;
+  accent: string;
+}) {
+  const radius = size * 0.36;
+  return (
+    <g
+      transform={`translate(${x} ${y})`}
+      fill="none"
+      stroke={accent}
+      strokeWidth={Math.max(8, size * 0.08)}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle r={radius} fill="#130c22" fillOpacity=".62" />
+      <path d={`M0 ${-radius} V${-radius - size * 0.19}`} />
+      <path d={`M${-size * 0.12} ${-radius - size * 0.19} H${size * 0.12}`} />
+      <path
+        d={`M${radius * 0.72} ${-radius * 0.72} L${radius * 1.08} ${-radius * 1.08}`}
+      />
+      <path d={`M0 0 V${-radius * 0.58} M0 0 L${radius * 0.48} ${radius * 0.18}`} />
+      <circle r={Math.max(5, size * 0.045)} fill={accent} stroke="none" />
+    </g>
+  );
+}
+
+function ResultsTemplate({
+  w,
+  h,
+  project,
+  profile,
+  branding,
+  headingFont,
+  bodyFont,
+}: TemplateSharedProps & { w: number; h: number }) {
+  const layout = getResultsTemplateLayout(w, h, project);
+  const podiumColour =
+    layout.podiumPosition === 1
+      ? '#d9aa24'
+      : layout.podiumPosition === 2
+        ? '#c3c8cf'
+        : '#b8753f';
+
+  return (
+    <g fill={branding.accent}>
+      <ChampionshipDriverHeader
+        w={w}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
+      <text
+        x={layout.margin}
+        y={layout.titleY}
+        dominantBaseline="hanging"
+        fontFamily={headingFont}
+        fontSize={layout.titleSize}
+        fontWeight="900"
+        letterSpacing="-3"
+      >
+        {layout.title}
+      </text>
+      <text
+        x={layout.margin}
+        y={layout.trackY}
+        dominantBaseline="hanging"
+        fontFamily={headingFont}
+        fontSize={layout.trackSize}
+        fontWeight="900"
+        fill={branding.primary}
+        textLength={Math.min(
+          layout.contentWidth,
+          layout.trackText.length * layout.trackSize * 0.6,
+        )}
+        lengthAdjust="spacingAndGlyphs"
+      >
+        {layout.trackText}
+      </text>
+      {layout.roundText && (
+        <text
+          x={layout.margin + 2}
+          y={layout.roundY}
+          dominantBaseline="hanging"
+          fontFamily={bodyFont}
+          fontSize={layout.roundSize}
+          fontWeight="700"
+          letterSpacing="4"
+        >
+          {layout.roundText}
+        </text>
+      )}
+      <PodiumLaurel
+        x={layout.positionX}
+        y={layout.positionY}
+        position={layout.podiumPosition}
+        scale={layout.laurelScale}
+      />
+      <text
+        x={layout.positionX}
+        y={layout.positionY}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily={headingFont}
+        fontSize={layout.positionSize}
+        fontWeight="900"
+        letterSpacing="-12"
+        fill={layout.podiumPosition ? podiumColour : branding.accent}
+        stroke="#08090a"
+        strokeWidth="10"
+        paintOrder="stroke fill"
+      >
+        {layout.positionText}
+      </text>
+      {layout.isPole && (
+        <PoleStopwatch
+          x={layout.stopwatchX}
+          y={layout.stopwatchY}
+          size={layout.stopwatchSize}
+          accent="#a855f7"
+        />
+      )}
+    </g>
+  );
+}
 
 function ChampionshipDriverHeader({
   w,
@@ -426,6 +624,20 @@ export function StandardTemplate({
           </g>
         ))}
       </g>
+    );
+  }
+
+  if (project.template === 'results') {
+    return (
+      <ResultsTemplate
+        w={w}
+        h={h}
+        project={project}
+        profile={profile}
+        branding={branding}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
     );
   }
 

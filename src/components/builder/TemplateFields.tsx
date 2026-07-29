@@ -1,6 +1,7 @@
 import { TEMPLATE_FIELDS } from '../../config/templates';
 import type {
   Project,
+  ResultSessionType,
   ScheduleDay,
   ScheduleDayName,
   ScheduleSessionType,
@@ -15,6 +16,10 @@ type TemplateFieldsProps = {
 export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
   if (project.template === 'schedule') {
     return <ScheduleFields project={project} setDetails={setDetails} />;
+  }
+
+  if (project.template === 'results') {
+    return <ResultsFields project={project} setDetails={setDetails} />;
   }
 
   return (
@@ -46,6 +51,46 @@ export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
           />
         ),
       )}
+    </>
+  );
+}
+
+function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
+  const resultSession = project.details.resultSession || 'race';
+
+  return (
+    <>
+      <label>
+        Session
+        <select
+          value={resultSession}
+          onChange={event =>
+            setDetails({
+              resultSession: event.target.value as ResultSessionType,
+            })
+          }
+        >
+          <option value="qualifying">Qualifying</option>
+          <option value="race">Race</option>
+        </select>
+      </label>
+      <TextField
+        label="Track name"
+        value={project.details.circuit}
+        onChange={circuit => setDetails({ circuit })}
+      />
+      {resultSession === 'race' && (
+        <TextField
+          label="Round(s)"
+          value={project.details.round}
+          onChange={round => setDetails({ round })}
+        />
+      )}
+      <TextField
+        label="Position"
+        value={project.details.position}
+        onChange={position => setDetails({ position })}
+      />
     </>
   );
 }

@@ -87,7 +87,6 @@ const templates: TemplateId[] = [
   'event',
   'announcement',
   'schedule',
-  'qualifying',
   'results',
   'sponsor',
 ];
@@ -106,14 +105,10 @@ const expectedHashes: Record<string, string> = {
     '3da9e59e75e51bfb68d943312e50852f21cc559b285d5eb09c73f0002a339ee1',
   'schedule:feed':
     '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
-  'qualifying:story':
-    '284d52ce498fe510511461aa8483aebb244d85fb8a58fd2f94dd847ef6c0c2d1',
-  'qualifying:feed':
-    '7c79f64970aac3aeb8069896277842496eee73f665d7b028185d48dc86cb133f',
   'results:story':
-    '8afd95324fa9513ba1f75e8c91098c9fd378d18627637be99cc5ce64e5a6a8fb',
+    '8f3159e9d6388bd96954ed86b785280ff7302f04017a558c52649139a545ff75',
   'results:feed':
-    '0319dd514dfc079ebe96d0e731506e384d92ba0e3ab28f8a7604f8a0c733ceaa',
+    'b39f3bbfb2fedb76481cc5ba65b495b90d50da761ccf53ff7375f76a55d3392d',
   'sponsor:story':
     '6bd1f81de475cafe824290d43d51889f2fd0df0fb02938f07a336496869c1135',
   'sponsor:feed':
@@ -211,6 +206,12 @@ for (const template of templates) {
           markup,
           /text-anchor="middle" dominant-baseline="central"/,
         );
+      }
+      if (template === 'results') {
+        assert.match(markup, /RACE RESULT/);
+        assert.match(markup, /ROUND 3/);
+        assert.match(markup, />P2</);
+        assert.match(markup, /fill="#c3c8cf"/);
       }
     });
   }

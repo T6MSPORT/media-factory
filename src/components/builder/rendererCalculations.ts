@@ -33,8 +33,7 @@ export const templateTitles = {
   event: 'RACE WEEKEND',
   announcement: 'ANNOUNCEMENT',
   schedule: 'RACE SCHEDULE',
-  qualifying: 'QUALIFYING RESULT',
-  results: 'RACE RESULT',
+  results: 'RESULT',
   sponsor: 'PROUDLY SUPPORTED BY',
 } satisfies Record<TemplateId, string>;
 
@@ -63,8 +62,81 @@ export function getStandardTemplateLayout(
     dateY: titleY + 174,
     resultY: titleY + 230,
     showRaceDetails: true,
-    showResult:
-      project.template === 'qualifying' || project.template === 'results',
+    showResult: project.template === 'results',
+  };
+}
+
+export function getResultsTemplateLayout(
+  w: number,
+  h: number,
+  project: Project,
+) {
+  const isStory = project.format === 'story';
+  const margin = 70;
+  const contentWidth = w - margin * 2;
+  const session = project.details.resultSession || 'race';
+  const title = `${session === 'qualifying' ? 'QUALIFYING' : 'RACE'} RESULT`;
+  const titleY = isStory ? 350 : 300;
+  const titleSize = fitTextSize(
+    title,
+    isStory ? 104 : 88,
+    contentWidth,
+    isStory ? 64 : 54,
+    0.7,
+    -2,
+  );
+  const trackText =
+    project.details.circuit.trim().toUpperCase() || 'TRACK NAME';
+  const trackY = titleY + titleSize + (isStory ? 24 : 18);
+  const trackSize = fitTextSize(
+    trackText,
+    isStory ? 54 : 46,
+    contentWidth,
+    isStory ? 32 : 28,
+    0.6,
+    1,
+  );
+  const roundText =
+    session === 'race' ? formatRoundLabel(project.details.round) : '';
+  const roundSize = isStory ? 30 : 26;
+  const roundY = trackY + trackSize + (isStory ? 18 : 14);
+  const numericPosition = Number(
+    String(project.details.position).replace(/\D/g, ''),
+  );
+  const positionText = numericPosition > 0
+    ? `P${numericPosition}`
+    : 'P#';
+  const positionY = isStory ? h * 0.57 : h * 0.6;
+  const positionSize = isStory ? 310 : 250;
+  const isPole = session === 'qualifying' && numericPosition === 1;
+  const podiumPosition =
+    session === 'race' && numericPosition >= 1 && numericPosition <= 3
+      ? numericPosition
+      : 0;
+
+  return {
+    margin,
+    contentWidth,
+    session,
+    title,
+    titleY,
+    titleSize,
+    trackText,
+    trackY,
+    trackSize,
+    roundText,
+    roundY,
+    roundSize,
+    positionText,
+    positionX: w / 2,
+    positionY,
+    positionSize,
+    isPole,
+    podiumPosition,
+    stopwatchX: w / 2 + (isStory ? 275 : 225),
+    stopwatchY: positionY + (isStory ? 28 : 22),
+    stopwatchSize: isStory ? 148 : 120,
+    laurelScale: isStory ? 1.12 : 0.9,
   };
 }
 
@@ -308,24 +380,8 @@ export function getGraphicCopy(
   profile: DriverProfile,
   branding: Branding,
 ) {
-  const numericPosition = Number(
-    String(project.details.position).replace(/\D/g, ''),
-  );
-  const isPole = project.template === 'qualifying' && numericPosition === 1;
-  const isPodium =
-    project.template === 'results' &&
-    numericPosition >= 1 &&
-    numericPosition <= 3;
-  const achievement = isPole
-    ? 'POLE POSITION'
-    : isPodium
-      ? numericPosition === 1
-        ? 'RACE WINNER'
-        : `PODIUM · P${numericPosition}`
-      : '';
-
   return {
-    achievement,
+    achievement: '',
     title: project.details.headline || templateTitles[project.template],
     sub:
       project.details.subheadline ||
