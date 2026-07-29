@@ -362,6 +362,11 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(qualifying.positionText, 'P1');
   assert.equal(qualifying.isPole, true);
   assert.equal(qualifying.podiumPosition, 0);
+  assert.equal(qualifying.titleY, 350);
+  assert.equal(qualifying.positionY, 960);
+  assert.equal(qualifying.stopwatchX, 540);
+  assert.equal(qualifying.stopwatchY, 960);
+  assert.equal(qualifying.poleTextY, 1205);
 
   const race = getResultsTemplateLayout(1080, 1920, {
     ...project,
@@ -378,6 +383,8 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(race.positionText, 'P2');
   assert.equal(race.isPole, false);
   assert.equal(race.podiumPosition, 2);
+  assert.equal(race.titleY, 350);
+  assert.equal(race.positionY, 960);
 });
 
 test('schedule layout keeps the title and track at the top with selected days underneath', () => {
