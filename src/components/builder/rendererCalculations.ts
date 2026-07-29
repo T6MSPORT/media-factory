@@ -98,9 +98,9 @@ export function getResultsTemplateLayout(
   const trackY = titleY + titleSize + (isStory ? 24 : 18);
   const trackSize = fitTextSize(
     trackText,
-    isStory ? 54 : 46,
+    isStory ? 68 : 58,
     contentWidth,
-    isStory ? 32 : 28,
+    isStory ? 38 : 34,
     0.6,
     1,
   );
@@ -119,7 +119,8 @@ export function getResultsTemplateLayout(
   const positionY = h * 0.59;
   const positionSize = isStory ? 520 : 420;
   const podiumPosition =
-    session === 'race' && numericPosition >= 1 && numericPosition <= 3
+    (session === 'race' && numericPosition >= 1 && numericPosition <= 3) ||
+    (session === 'qualifying' && numericPosition === 1)
       ? numericPosition
       : 0;
 
