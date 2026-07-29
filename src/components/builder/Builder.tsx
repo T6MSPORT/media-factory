@@ -83,9 +83,9 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
           </SelectField>
           <TemplateFields project={project} setDetails={setDetails} />
 
-          <h3>Graphical element</h3>
+          <h3>Background pattern</h3>
           <SelectField
-            label="Element"
+            label="Pattern"
             value={project.graphicElement || 'none'}
             onChange={graphicElement => patch({ graphicElement })}
           >
@@ -113,7 +113,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
                 onChange={graphicElementY => patch({ graphicElementY })}
               />
               <RangeField
-                label="Element size"
+                label="Pattern size"
                 min={10}
                 max={200}
                 value={project.graphicElementSize ?? 45}
@@ -128,7 +128,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
                   })
                 }
               >
-                Reset graphical element
+                Reset background pattern
               </button>
             </>
           )}
