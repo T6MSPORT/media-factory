@@ -65,4 +65,5 @@ test('save recovery confirms open work remains available', () => {
 
   assert.match(textContent(tree), /Changes are not being saved/);
   assert.match(textContent(tree), /latest changes are still open/);
+  assert.match(textContent(tree), /Keep this tab open/);
 });
