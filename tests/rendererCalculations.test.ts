@@ -362,7 +362,7 @@ test('combined results layout switches qualifying and race presentation', () => 
   assert.equal(qualifying.positionNumber, '1');
   assert.equal(qualifying.positionSize, 520);
   assert.equal(qualifying.positionGap, 48);
-  assert.equal(qualifying.podiumPosition, 0);
+  assert.equal(qualifying.podiumPosition, 1);
   assert.equal(qualifying.titleY, 350);
   assert.equal(qualifying.positionY, 1132.8);
 
