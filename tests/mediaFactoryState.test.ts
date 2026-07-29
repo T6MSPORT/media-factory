@@ -92,6 +92,27 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
   });
 });
 
+test('new sponsor graphics select the first available sponsor logo', () => {
+  const sponsorData: Data = {
+    ...data,
+    sponsors: [
+      { id: 'name-only', name: 'Name only' },
+      {
+        id: 'logo-ready',
+        name: 'Logo ready',
+        logo: 'data:image/png;base64,sponsor',
+      },
+    ],
+  };
+
+  const project = createProject('sponsor', sponsorData, {
+    createId: () => 'graphic-sponsor',
+    now: () => '2026-07-25T12:00:00.000Z',
+  });
+
+  assert.equal(project.details.sponsorId, 'logo-ready');
+});
+
 test('project creation prepends without changing existing projects', () => {
   const existing = { id: 'existing' } as Project;
   const created = { id: 'created' } as Project;

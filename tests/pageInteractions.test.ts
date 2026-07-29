@@ -291,6 +291,58 @@ test('schedule fields show only the selected days and five inline session rows p
   );
 });
 
+test('sponsor appreciation exposes a sponsor-logo selector', () => {
+  const updates: Array<Partial<Project['details']>> = [];
+  const sponsorProject: Project = {
+    id: 'sponsor-graphic',
+    name: 'Sponsor Appreciation',
+    template: 'sponsor',
+    format: 'feed',
+    sponsorIds: ['corbeau', 'edge'],
+    createdAt: '',
+    updatedAt: '',
+    heroX: 0,
+    heroY: 0,
+    heroScale: 1,
+    heroFlip: false,
+    driverX: 0,
+    driverY: 0,
+    driverScale: 1,
+    driverVisible: true,
+    details: {
+      eventName: '',
+      round: '',
+      circuit: '',
+      date: '',
+      time: '',
+      headline: '',
+      subheadline: '',
+      result: '',
+      position: '',
+      scheduleLines: '',
+      sponsorName: 'Corbeau',
+      sponsorId: 'corbeau',
+    },
+  };
+  const sponsorOptions = [
+    { id: 'corbeau', name: 'Corbeau', logo: 'data:image/png;base64,corbeau' },
+    { id: 'edge', name: 'Esports Edge', logo: 'data:image/png;base64,edge' },
+  ];
+  const tree = TemplateFields({
+    project: sponsorProject,
+    sponsors: sponsorOptions,
+    setDetails: details => updates.push(details),
+  });
+  const selector = findElements(tree, 'select')[0];
+
+  assert.ok(findLabel(tree, 'Sponsor logo'));
+  assert.equal(selector.props?.value, 'corbeau');
+  selector.props?.onChange({ target: { value: 'edge' } });
+  assert.deepEqual(updates, [
+    { sponsorId: 'edge', sponsorName: 'Esports Edge' },
+  ]);
+});
+
 test('saved graphics empty state remains visible without successful exports', () => {
   const tree = SavedGraphicsPage({
     data: completeData,

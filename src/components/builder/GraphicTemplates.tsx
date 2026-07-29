@@ -1,7 +1,8 @@
-import type { Branding, DriverProfile, Project } from '../../types';
+import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
 import { formatEventDate } from '../../utils/format';
 import podiumWreath from '../../assets/wreath.png';
 import {
+  fitTextSize,
   getAnnouncementTemplateLayout,
   getEventTemplateLayout,
   getResultsTemplateLayout,
@@ -245,7 +246,6 @@ export function EventTemplate({
 }: TemplateSharedProps & { w: number }) {
   const details = project.details;
   const {
-    isStory,
     eventBlockX,
     eventHeadingY,
     eventNextSize,
@@ -303,10 +303,6 @@ export function EventTemplate({
         fontWeight="900"
         fill={branding.primary}
         letterSpacing="-3"
-        stroke="#080808"
-        strokeWidth={isStory ? 3 : 2.5}
-        strokeLinejoin="round"
-        paintOrder="stroke fill"
       >
         {eventTrackText}
       </text>
@@ -335,7 +331,89 @@ export function StandardTemplate({
   sub,
   headingFont,
   bodyFont,
-}: TemplateSharedProps & { w: number; h: number; title: string; sub: string }) {
+  featuredSponsor,
+}: TemplateSharedProps & {
+  w: number;
+  h: number;
+  title: string;
+  sub: string;
+  featuredSponsor?: Sponsor;
+}) {
+  if (project.template === 'sponsor') {
+    const isStory = project.format === 'story';
+    const margin = 70;
+    const sponsorTitle = 'PROUDLY SUPPORTED BY';
+    const titleSize = fitTextSize(
+      sponsorTitle,
+      isStory ? 88 : 74,
+      w - margin * 2,
+      isStory ? 62 : 54,
+      0.62,
+      -3,
+    );
+    const titleY = isStory ? 350 : 300;
+    const logoWidth = w - margin * 2;
+    const logoHeight = isStory ? 520 : 390;
+    const logoY = titleY + titleSize + (isStory ? 90 : 70);
+
+    return (
+      <g fill={branding.accent}>
+        <ChampionshipDriverHeader
+          w={w}
+          project={project}
+          profile={profile}
+          branding={branding}
+          headingFont={headingFont}
+          bodyFont={bodyFont}
+        />
+        <text
+          x={w / 2}
+          y={titleY}
+          textAnchor="middle"
+          dominantBaseline="hanging"
+          fontFamily={headingFont}
+          fontSize={titleSize}
+          fontWeight="900"
+          letterSpacing="-3"
+        >
+          {sponsorTitle}
+        </text>
+        {featuredSponsor?.logo ? (
+          <image
+            data-featured-sponsor={featuredSponsor.id}
+            href={featuredSponsor.logo}
+            x={margin}
+            y={logoY}
+            width={logoWidth}
+            height={logoHeight}
+            preserveAspectRatio="xMidYMid meet"
+          />
+        ) : (
+          <text
+            data-featured-sponsor={featuredSponsor?.id || 'placeholder'}
+            x={w / 2}
+            y={logoY + logoHeight / 2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontFamily={headingFont}
+            fontSize={isStory ? 112 : 92}
+            fontWeight="900"
+            fill={branding.primary}
+            textLength={Math.min(
+              logoWidth,
+              (featuredSponsor?.name || 'SPONSOR LOGO').length *
+                (isStory ? 112 : 92) *
+                0.58,
+            )}
+            lengthAdjust="spacingAndGlyphs"
+          >
+            {(featuredSponsor?.name || 'SPONSOR LOGO').toUpperCase()}
+          </text>
+        )}
+      </g>
+    );
+  }
+
   if (project.template === 'announcement') {
     const layout = getAnnouncementTemplateLayout(w, h, project);
 

@@ -35,16 +35,6 @@ const raceFields: readonly TemplateFieldDefinition[] = [
   { key: 'date', label: 'Date', type: 'date' },
 ];
 
-const timedRaceFields: readonly TemplateFieldDefinition[] = [
-  ...raceFields,
-  { key: 'time', label: 'Time', type: 'time' },
-];
-
-const overrideFields: readonly TemplateFieldDefinition[] = [
-  { key: 'headline', label: 'Headline override' },
-  { key: 'subheadline', label: 'Subheadline override' },
-];
-
 export const TEMPLATE_FIELDS: Record<
   TemplateId,
   readonly TemplateFieldDefinition[]
@@ -66,11 +56,7 @@ export const TEMPLATE_FIELDS: Record<
     { key: 'circuit', label: 'Track name' },
     { key: 'position', label: 'Position' },
   ],
-  sponsor: [
-    ...timedRaceFields,
-    { key: 'sponsorName', label: 'Sponsor name' },
-    ...overrideFields,
-  ],
+  sponsor: [],
 };
 
 export const getTemplateDefinition = (templateId: TemplateId): TemplateDefinition => {

@@ -97,9 +97,9 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '74b1902e1d4ccfa4c00623d0b1d95b204c3f54ddfb11f3e04d71ab1120311f52',
+    '046398f686ebdbed974f40c7f4785067cc95205f758c267348dc0bd47b616933',
   'event:feed':
-    '3af204cc8a4c9b6ad3fe5128be5f294875e2b8a7c744a13f76d5872c7db092e9',
+    '39481971cca8a3b9bf92ccfe26ce51eaf3b017002f3ef0ef30abe915bc8bdcc7',
   'announcement:story':
     'f42516575356495c31561c3a5060c007bd248ff7f6527cf9d4a7700fa8eaf0a1',
   'announcement:feed':
@@ -113,9 +113,9 @@ const expectedHashes: Record<string, string> = {
   'results:feed':
     'a54de2711081edc973ca2feac41550dd85d36192577a6ac160dbc01dd07ed5fc',
   'sponsor:story':
-    '0c5435cb3f8dade5d190a68fcfccf341e6598da9fd9b2e44009b0974543e20d0',
+    'ebf7035dfbc7dffe89d2b9b7da8423f319e84a6da3f90cc929c743de5aefdbed',
   'sponsor:feed':
-    'c4323e24523f85982a6a602ee3e03c7ff3e218ebe61e13a9e963c882b8381ff0',
+    'ee99a500d881e22b5845929289a174850f45497f38580f2778c920255a763eee',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -197,8 +197,8 @@ for (const template of templates) {
       if (template === 'event') {
         assert.doesNotMatch(markup, /<rect[^>]*stroke=/);
         assert.doesNotMatch(markup, /next-race-event-contrast/);
-        assert.match(markup, /stroke="#080808"/);
-        assert.match(markup, /paint-order="stroke fill"/);
+        assert.doesNotMatch(markup, /stroke="#080808"/);
+        assert.doesNotMatch(markup, /paint-order="stroke fill"/);
         assert.match(markup, /lengthAdjust="spacingAndGlyphs"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
       }
@@ -226,6 +226,20 @@ for (const template of templates) {
         assert.match(markup, /<text x="0" y="0" text-anchor="middle">/);
         assert.match(markup, /<tspan dx="(?:40|48)">2<\/tspan>/);
         assert.doesNotMatch(markup, /stroke="#08090a"/);
+      }
+      if (template === 'sponsor') {
+        assert.match(markup, /PROUDLY SUPPORTED BY/);
+        assert.match(markup, /data-featured-sponsor="corbeau"/);
+        assert.match(
+          markup,
+          format === 'story'
+            ? /data-featured-sponsor="corbeau"[^>]*x="70"[^>]*width="940" height="520"/
+            : /data-featured-sponsor="corbeau"[^>]*x="70"[^>]*width="940" height="390"/,
+        );
+        assert.ok(
+          markup.indexOf('PROUDLY SUPPORTED BY') <
+            markup.indexOf('data-featured-sponsor="corbeau"'),
+        );
       }
     });
   }

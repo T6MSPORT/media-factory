@@ -5,21 +5,66 @@ import type {
   ScheduleDay,
   ScheduleDayName,
   ScheduleSessionType,
+  Sponsor,
 } from '../../types';
 import { TextField } from '../forms/PropertyEditor';
 
 type TemplateFieldsProps = {
   project: Project;
+  sponsors?: Sponsor[];
   setDetails: (details: Partial<Project['details']>) => void;
 };
 
-export function TemplateFields({ project, setDetails }: TemplateFieldsProps) {
+export function TemplateFields({
+  project,
+  sponsors = [],
+  setDetails,
+}: TemplateFieldsProps) {
   if (project.template === 'schedule') {
     return <ScheduleFields project={project} setDetails={setDetails} />;
   }
 
   if (project.template === 'results') {
     return <ResultsFields project={project} setDetails={setDetails} />;
+  }
+
+  if (project.template === 'sponsor') {
+    const selectedSponsor =
+      sponsors.find(sponsor => sponsor.id === project.details.sponsorId) ||
+      sponsors.find(
+        sponsor =>
+          sponsor.name.toLowerCase() ===
+          project.details.sponsorName.trim().toLowerCase(),
+      );
+    const selectedSponsorId =
+      selectedSponsor?.id ||
+      sponsors.find(sponsor => sponsor.logo)?.id ||
+      sponsors[0]?.id ||
+      '';
+
+    return (
+      <label>
+        Sponsor logo
+        <select
+          value={selectedSponsorId}
+          disabled={!sponsors.length}
+          onChange={event => {
+            const sponsor = sponsors.find(item => item.id === event.target.value);
+            setDetails({
+              sponsorId: event.target.value,
+              sponsorName: sponsor?.name || '',
+            });
+          }}
+        >
+          {!sponsors.length && <option value="">No sponsors available</option>}
+          {sponsors.map(sponsor => (
+            <option value={sponsor.id} key={sponsor.id}>
+              {sponsor.name}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
   }
 
   return (

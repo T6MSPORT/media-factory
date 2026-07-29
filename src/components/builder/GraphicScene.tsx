@@ -43,6 +43,15 @@ export function GraphicScene({
   const profile = data.profile;
   const branding = data.branding;
   const copy = getGraphicCopy(project, profile, branding);
+  const featuredSponsor =
+    sponsors.find(sponsor => sponsor.id === project.details.sponsorId) ||
+    sponsors.find(
+      sponsor =>
+        sponsor.name.toLowerCase() ===
+        project.details.sponsorName.trim().toLowerCase(),
+    ) ||
+    sponsors.find(sponsor => sponsor.logo) ||
+    sponsors[0];
   const templateProps = {
     project,
     profile,
@@ -82,6 +91,7 @@ export function GraphicScene({
           h={h}
           title={copy.title}
           sub={copy.sub}
+          featuredSponsor={featuredSponsor}
           {...templateProps}
         />
       )}
@@ -93,7 +103,9 @@ export function GraphicScene({
         headingFont={copy.headingFont}
         bodyFont={copy.bodyFont}
       />
-      <TemplateExtras h={h} {...templateProps} />
+      {project.template !== 'sponsor' && (
+        <TemplateExtras h={h} {...templateProps} />
+      )}
       <SponsorBar
         w={w}
         h={h}

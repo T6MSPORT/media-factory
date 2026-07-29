@@ -38,7 +38,17 @@ export function createProject(
     graphicElementX: 50,
     graphicElementY: 55,
     graphicElementSize: 45,
-    details: { ...emptyDetails },
+    details: {
+      ...emptyDetails,
+      ...(template === 'sponsor'
+        ? {
+            sponsorId:
+              data.sponsors.find(sponsor => sponsor.logo)?.id ||
+              data.sponsors[0]?.id ||
+              '',
+          }
+        : {}),
+    },
   };
 }
 

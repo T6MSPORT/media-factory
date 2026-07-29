@@ -39,6 +39,7 @@ export type GraphicDetails = {
   eventName:string; round:string; circuit:string; date:string; time:string;
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
+  sponsorId?:string;
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
   resultSession?:ResultSessionType; raceNumber?:string;
 };

@@ -81,7 +81,11 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
             <option value="feed">Feed · 1080×1350</option>
             <option value="story">Story · 1080×1920</option>
           </SelectField>
-          <TemplateFields project={project} setDetails={setDetails} />
+          <TemplateFields
+            project={project}
+            sponsors={data.sponsors}
+            setDetails={setDetails}
+          />
 
           <h3>Background graphic</h3>
           <SelectField
