@@ -97,25 +97,25 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '9f04a26920adb96f5d4a64344721c89a0ed0ce3069ebbee734a3613c24c10957',
+    '74b1902e1d4ccfa4c00623d0b1d95b204c3f54ddfb11f3e04d71ab1120311f52',
   'event:feed':
-    'd930f6b2f60f028f3cb932fa8a4600332cee9af974231a5ad2945e1372ffb05f',
+    '3af204cc8a4c9b6ad3fe5128be5f294875e2b8a7c744a13f76d5872c7db092e9',
   'announcement:story':
-    'd3ea7d6941212ef14ed4c73bccde9a9d63a28b10e5badeca4c26b50bd7c41d87',
+    'f42516575356495c31561c3a5060c007bd248ff7f6527cf9d4a7700fa8eaf0a1',
   'announcement:feed':
-    '43221ad040562ccfd1b0505eae866c688dfa40fe4687f093d3de1aed942729ba',
+    '143bd8544b1dd554bed97c3099a4805608522ac0d4ab64ad4428085b1df3d5c5',
   'schedule:story':
-    '3da9e59e75e51bfb68d943312e50852f21cc559b285d5eb09c73f0002a339ee1',
+    '4693d67e3cd14f433bad3875261a3e9c9315e27f5e181774bc5ee7f48e13bfb6',
   'schedule:feed':
-    '45c342509e60270fe00039847d77757db3357dae43d08c5c3d5268ce91fbc106',
+    '0e33f21369d0acaa1626ffc36a699e2d3d493b56d37c5caf93e1d93bead57f08',
   'results:story':
-    'f2775a1f722dbd03ecb6aaba93473e3c0a31bf48dad488c6ddfc3c79cdcdaf8c',
+    '179f169fd7e29c7fbd92f13b62caad053d47d7cce4ee0fe401fca69d6f96a0bf',
   'results:feed':
-    '8a91ff6d718b9a4d1a9cb2badda2d5c65042dc865390c7f3c0e429917bc6eb57',
+    'a54de2711081edc973ca2feac41550dd85d36192577a6ac160dbc01dd07ed5fc',
   'sponsor:story':
-    '8680fca25fd5599a4b1050adb476b0594fa5ffd20952dbe887feeb1e57e6a90e',
+    '0c5435cb3f8dade5d190a68fcfccf341e6598da9fd9b2e44009b0974543e20d0',
   'sponsor:feed':
-    'bb1bff5f74e41e905d4ba0c3b67d691eecb886bc4d7a664b5b849f1ef7dbe1d2',
+    'c4323e24523f85982a6a602ee3e03c7ff3e218ebe61e13a9e963c882b8381ff0',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {
@@ -293,10 +293,33 @@ test('selected graphical element uses percentage placement and size controls', (
   );
 
   assert.match(markup, /data-graphic-element="chevrons"/);
+  assert.match(markup, /data-graphic-role="background"/);
   assert.match(
     markup,
-    /transform="translate\(270 945\) scale\(6\.48\) translate\(-50 -50\)"/,
+    /transform="translate\(270 945\) scale\(11\.664 6\.48\) translate\(-50 -50\)"/,
   );
+});
+
+test('graphical element is a wide backdrop behind the driver image', () => {
+  const project = makeProject('driver', 'feed');
+  project.graphicElement = 'racing-stripes';
+
+  const markup = renderToStaticMarkup(
+    createElement(Graphic, {
+      project,
+      data,
+      sponsors,
+      ref: null,
+    }),
+  );
+
+  const elementIndex = markup.indexOf('data-graphic-role="background"');
+  const driverIndex = markup.indexOf('data-driver-layer="foreground"');
+  assert.ok(elementIndex > -1);
+  assert.ok(driverIndex > elementIndex);
+  assert.match(markup, /scale\(8\.748 4\.86\)/);
+  assert.match(markup, /opacity="\.52"/);
+  assert.match(markup, /mask="url\(#graphicBackdropMask\)"/);
 });
 
 test('chequered panel uses transparent gaps rather than white squares', () => {

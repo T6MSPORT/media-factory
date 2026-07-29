@@ -2,7 +2,9 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { Data, Project, Sponsor } from '../../types';
 import {
   BackgroundLayers,
+  BottomFadeLayer,
   DragSurface,
+  DriverLayer,
   SponsorBar,
 } from './GraphicLayers';
 import {
@@ -57,7 +59,6 @@ export function GraphicScene({
         project={project}
         branding={branding}
         loadedHeroSize={loadedHeroSize}
-        driverImage={profile.driverImage}
       />
       <GraphicElementLayer
         w={w}
@@ -65,6 +66,14 @@ export function GraphicScene({
         project={project}
         branding={branding}
       />
+      <DriverLayer
+        w={w}
+        h={h}
+        project={project}
+        driverImage={profile.driverImage}
+        loadedHeroSize={loadedHeroSize}
+      />
+      <BottomFadeLayer w={w} h={h} />
       {project.template === 'event' ? (
         <EventTemplate w={w} {...templateProps} />
       ) : (

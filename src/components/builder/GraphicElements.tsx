@@ -272,20 +272,61 @@ export function GraphicElementLayer({
   const x = Number((w * ((project.graphicElementX ?? 50) / 100)).toFixed(3));
   const y = Number((h * ((project.graphicElementY ?? 55) / 100)).toFixed(3));
   const size = Math.min(w, h) * ((project.graphicElementSize ?? 45) / 100);
-  const scale = Number((size / 100).toFixed(3));
+  const scaleX = Number((size / 100 * 1.8).toFixed(3));
+  const scaleY = Number((size / 100).toFixed(3));
 
   return (
-    <g
-      data-graphic-element={id}
-      transform={`translate(${x} ${y}) scale(${scale}) translate(-50 -50)`}
-      opacity=".82"
-      pointerEvents="none"
-    >
-      <ElementArtwork
-        id={id}
-        primary={branding.primary}
-        accent={branding.accent}
-      />
-    </g>
+    <>
+      <defs>
+        <linearGradient id="graphicBackdropFade" x1="0" y1="0" x2="1" y2="0">
+          <stop stopColor="white" stopOpacity="0" />
+          <stop offset=".18" stopColor="white" stopOpacity=".72" />
+          <stop offset=".5" stopColor="white" />
+          <stop offset=".82" stopColor="white" stopOpacity=".72" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+        <mask id="graphicBackdropMask">
+          <rect x="-35" y="-25" width="170" height="150" fill="url(#graphicBackdropFade)" />
+        </mask>
+      </defs>
+      <g
+        data-graphic-element={id}
+        data-graphic-role="background"
+        transform={`translate(${x} ${y}) scale(${scaleX} ${scaleY}) translate(-50 -50)`}
+        opacity=".52"
+        mask="url(#graphicBackdropMask)"
+        pointerEvents="none"
+      >
+        <g opacity=".14" transform="translate(-42 14) scale(1.28)">
+          <ElementArtwork
+            id={id}
+            primary={branding.primary}
+            accent={branding.accent}
+          />
+        </g>
+        <g opacity=".78">
+          <ElementArtwork
+            id={id}
+            primary={branding.primary}
+            accent={branding.accent}
+          />
+        </g>
+        <g opacity=".2" transform="translate(58 -12) scale(.82)">
+          <ElementArtwork
+            id={id}
+            primary={branding.primary}
+            accent={branding.accent}
+          />
+        </g>
+        <path
+          d="M-24 91 H31 L39 83 H124"
+          fill="none"
+          stroke={branding.primary}
+          strokeWidth="1.5"
+          opacity=".42"
+          vectorEffect="non-scaling-stroke"
+        />
+      </g>
+    </>
   );
 }

@@ -14,21 +14,18 @@ export function BackgroundLayers({
   project,
   branding,
   loadedHeroSize,
-  driverImage,
 }: {
   w: number;
   h: number;
   project: Project;
   branding: Branding;
   loadedHeroSize: Size | null;
-  driverImage?: string;
 }) {
   const {
     renderedHeroWidth,
     renderedHeroHeight,
     renderedHeroX,
     renderedHeroY,
-    driverTransform,
   } = getBackgroundLayout(w, h, project, loadedHeroSize);
 
   return (
@@ -83,22 +80,51 @@ export function BackgroundLayers({
         fill="url(#topFade)"
         pointerEvents="none"
       />
-      {driverImage && project.driverVisible !== false && (
-        <g transform={driverTransform}>
-          <image
-            href={driverImage}
-            x={w * 0.3}
-            y={h * 0.05}
-            width={w * 0.72}
-            height={h * 0.82}
-            preserveAspectRatio="xMidYMax meet"
-            clipPath="url(#driverZone)"
-            mask="url(#driverMask)"
-          />
-        </g>
-      )}
-      <rect width={w} height={h} fill="url(#bottomFade)" pointerEvents="none" />
     </>
+  );
+}
+
+export function DriverLayer({
+  w,
+  h,
+  project,
+  driverImage,
+  loadedHeroSize,
+}: {
+  w: number;
+  h: number;
+  project: Project;
+  driverImage?: string;
+  loadedHeroSize: Size | null;
+}) {
+  if (!driverImage || project.driverVisible === false) return null;
+  const { driverTransform } = getBackgroundLayout(w, h, project, loadedHeroSize);
+
+  return (
+    <g data-driver-layer="foreground" transform={driverTransform}>
+      <image
+        href={driverImage}
+        x={w * 0.3}
+        y={h * 0.05}
+        width={w * 0.72}
+        height={h * 0.82}
+        preserveAspectRatio="xMidYMax meet"
+        clipPath="url(#driverZone)"
+        mask="url(#driverMask)"
+      />
+    </g>
+  );
+}
+
+export function BottomFadeLayer({ w, h }: { w: number; h: number }) {
+  return (
+    <rect
+      data-bottom-fade="foreground"
+      width={w}
+      height={h}
+      fill="url(#bottomFade)"
+      pointerEvents="none"
+    />
   );
 }
 
