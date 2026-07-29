@@ -268,13 +268,12 @@ test('qualifying result restores identity and centres the combined position comp
   assert.doesNotMatch(markup, />POLE</);
 });
 
-test('catalogue exposes 20 optional background patterns', () => {
+test('catalogue exposes 20 original background graphics', () => {
   assert.equal(GRAPHIC_ELEMENTS.length, 20);
   assert.equal(new Set(GRAPHIC_ELEMENTS.map((item: { id: string }) => item.id)).size, 20);
-  assert.ok(GRAPHIC_ELEMENTS.every(item => item.name.toLowerCase().includes('pattern') || item.name.toLowerCase().includes('mesh')));
-  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Racing line pattern'));
-  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Aero flow pattern'));
-  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Telemetry trace pattern'));
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Racing Line'));
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Airflow'));
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Live Trace'));
 });
 
 test('selected graphical element uses percentage placement and size controls', () => {
@@ -294,14 +293,14 @@ test('selected graphical element uses percentage placement and size controls', (
   );
 
   assert.match(markup, /data-graphic-element="chevrons"/);
-  assert.match(markup, /data-graphic-role="background-pattern"/);
+  assert.match(markup, /data-graphic-role="background-graphic"/);
   assert.match(
     markup,
     /transform="translate\(270 945\) scale\(11\.664 6\.48\) translate\(-50 -50\)"/,
   );
 });
 
-test('graphical element is a repeated background pattern behind the driver image', () => {
+test('graphical element is an original background composition behind the driver image', () => {
   const project = makeProject('driver', 'feed');
   project.graphicElement = 'racing-stripes';
 
@@ -314,15 +313,16 @@ test('graphical element is a repeated background pattern behind the driver image
     }),
   );
 
-  const elementIndex = markup.indexOf('data-graphic-role="background-pattern"');
+  const elementIndex = markup.indexOf('data-graphic-role="background-graphic"');
   const driverIndex = markup.indexOf('data-driver-layer="foreground"');
   assert.ok(elementIndex > -1);
   assert.ok(driverIndex > elementIndex);
   assert.match(markup, /scale\(8\.748 4\.86\)/);
-  assert.match(markup, /opacity="\.5"/);
+  assert.match(markup, /opacity="\.55"/);
   assert.match(markup, /mask="url\(#graphicBackdropMask\)"/);
-  assert.match(markup, /patternUnits="userSpaceOnUse"/);
-  assert.match(markup, /fill="url\(#graphic-pattern-racing-stripes\)"/);
+  assert.doesNotMatch(markup, /patternUnits=/);
+  assert.doesNotMatch(markup, /graphic-pattern-/);
+  assert.match(markup, /C-12 83 4 58 28 31/);
 });
 
 test('chequered panel uses transparent gaps rather than white squares', () => {
