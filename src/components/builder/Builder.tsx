@@ -115,7 +115,7 @@ export function Builder({ data, project, patch, back }: BuilderProps) {
               <RangeField
                 label="Element size"
                 min={10}
-                max={100}
+                max={200}
                 value={project.graphicElementSize ?? 45}
                 onChange={graphicElementSize => patch({ graphicElementSize })}
               />

@@ -208,7 +208,7 @@ export function normaliseData(value: unknown): Data {
       ? Math.min(100, Math.max(0, project.graphicElementY!))
       : 55,
     graphicElementSize: Number.isFinite(project.graphicElementSize)
-      ? Math.min(100, Math.max(10, project.graphicElementSize!))
+      ? Math.min(200, Math.max(10, project.graphicElementSize!))
       : 45,
     exportedAt: typeof project.exportedAt === 'string' ? project.exportedAt : undefined,
     heroScale:

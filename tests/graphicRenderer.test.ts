@@ -271,6 +271,9 @@ test('qualifying result restores identity and centres the combined position comp
 test('catalogue exposes 20 optional graphical elements', () => {
   assert.equal(GRAPHIC_ELEMENTS.length, 20);
   assert.equal(new Set(GRAPHIC_ELEMENTS.map((item: { id: string }) => item.id)).size, 20);
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Racing line'));
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Aero flow'));
+  assert.ok(GRAPHIC_ELEMENTS.some(item => item.name === 'Turbine burst'));
 });
 
 test('selected graphical element uses percentage placement and size controls', () => {
@@ -294,4 +297,25 @@ test('selected graphical element uses percentage placement and size controls', (
     markup,
     /transform="translate\(270 945\) scale\(6\.48\) translate\(-50 -50\)"/,
   );
+});
+
+test('chequered panel uses transparent gaps rather than white squares', () => {
+  const project = makeProject('event', 'feed');
+  project.graphicElement = 'checkered-panel';
+
+  const markup = renderToStaticMarkup(
+    createElement(Graphic, {
+      project,
+      data,
+      sponsors,
+      ref: null,
+    }),
+  );
+
+  assert.match(markup, /data-graphic-element="checkered-panel"/);
+  const elementMarkup = markup.match(
+    /<g data-graphic-element="checkered-panel"[\s\S]*?<\/g><g fill=/,
+  )?.[0] || '';
+  assert.doesNotMatch(elementMarkup, /#ffffff/);
+  assert.doesNotMatch(elementMarkup, /white/);
 });

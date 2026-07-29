@@ -4,26 +4,26 @@ export const GRAPHIC_ELEMENTS: Array<{
   id: Exclude<GraphicElementId, 'none'>;
   name: string;
 }> = [
-  { id: 'chevrons', name: 'Chevrons' },
-  { id: 'speed-lines', name: 'Speed lines' },
-  { id: 'corner-frame', name: 'Corner frame' },
-  { id: 'grid', name: 'Grid' },
-  { id: 'dot-matrix', name: 'Dot matrix' },
-  { id: 'crosshair', name: 'Crosshair' },
-  { id: 'racing-stripes', name: 'Racing stripes' },
-  { id: 'apex-arc', name: 'Apex arc' },
-  { id: 'split-blocks', name: 'Split blocks' },
-  { id: 'slash-stack', name: 'Slash stack' },
-  { id: 'diamond', name: 'Diamond' },
-  { id: 'hexagon', name: 'Hexagon' },
-  { id: 'circle-ring', name: 'Circle ring' },
-  { id: 'triangle', name: 'Triangle' },
-  { id: 'checkered-panel', name: 'Checkered panel' },
-  { id: 'tech-bracket', name: 'Tech bracket' },
-  { id: 'wave', name: 'Wave' },
-  { id: 'starburst', name: 'Starburst' },
-  { id: 'target', name: 'Target' },
-  { id: 'wing', name: 'Wing' },
+  { id: 'chevrons', name: 'Apex chevrons' },
+  { id: 'speed-lines', name: 'Velocity bars' },
+  { id: 'corner-frame', name: 'Techwear corners' },
+  { id: 'grid', name: 'Perspective grid' },
+  { id: 'dot-matrix', name: 'Telemetry matrix' },
+  { id: 'crosshair', name: 'Driver target' },
+  { id: 'racing-stripes', name: 'Racing line' },
+  { id: 'apex-arc', name: 'Apex sweep' },
+  { id: 'split-blocks', name: 'Aero panels' },
+  { id: 'slash-stack', name: 'Velocity slashes' },
+  { id: 'diamond', name: 'Circuit marker' },
+  { id: 'hexagon', name: 'Hex tech' },
+  { id: 'circle-ring', name: 'Rev ring' },
+  { id: 'triangle', name: 'Delta frame' },
+  { id: 'checkered-panel', name: 'Chequered panel' },
+  { id: 'tech-bracket', name: 'HUD brackets' },
+  { id: 'wave', name: 'Aero flow' },
+  { id: 'starburst', name: 'Turbine burst' },
+  { id: 'target', name: 'Telemetry dial' },
+  { id: 'wing', name: 'Aero blades' },
 ];
 
 function ElementArtwork({
@@ -62,29 +62,45 @@ function ElementArtwork({
     case 'corner-frame':
       return (
         <g {...strokeProps} strokeLinecap="square">
-          <path d="M8 38 V8 H38 M62 8 H92 V38" />
-          <path d="M92 62 V92 H62 M38 92 H8 V62" />
+          <path d="M5 40 V14 L14 5 H42 M58 5 H86 L95 14 V40" />
+          <path d="M95 60 V86 L86 95 H58 M42 95 H14 L5 86 V60" />
+          <path d="M14 32 V20 L20 14 H34 M66 14 H80 L86 20 V32" stroke={accent} strokeWidth="2" />
+          <path d="M86 68 V80 L80 86 H66 M34 86 H20 L14 80 V68" stroke={accent} strokeWidth="2" />
         </g>
       );
     case 'grid':
       return (
-        <g stroke={primary} strokeWidth="2" opacity=".85">
-          {[10, 30, 50, 70, 90].map(value => (
-            <g key={value}>
-              <line x1={value} y1="5" x2={value} y2="95" />
-              <line x1="5" y1={value} x2="95" y2={value} />
-            </g>
+        <g stroke={primary} fill="none" opacity=".85">
+          {[8, 26, 50, 74, 92].map(x => (
+            <path key={x} d={`M50 8 L${x} 94`} strokeWidth="1.8" />
           ))}
+          {[30, 48, 65, 80, 94].map((y, index) => (
+            <path
+              key={y}
+              d={`M${18 - index * 3} ${y} H${82 + index * 3}`}
+              strokeWidth={index === 4 ? 3 : 1.8}
+            />
+          ))}
+          <path d="M44 8 H56" stroke={accent} strokeWidth="4" />
         </g>
       );
     case 'dot-matrix':
       return (
         <g fill={primary}>
-          {[14, 32, 50, 68, 86].flatMap(y =>
-            [14, 32, 50, 68, 86].map(x => (
-              <circle key={`${x}-${y}`} cx={x} cy={y} r="4" />
+          {[16, 33, 50, 67, 84].flatMap((y, row) =>
+            [16, 33, 50, 67, 84].map((x, column) => (
+              <rect
+                key={`${x}-${y}`}
+                x={x - (row + column) % 3 - 2}
+                y={y - (row + column) % 3 - 2}
+                width={(row + column) % 3 + 4}
+                height={(row + column) % 3 + 4}
+                transform={`rotate(45 ${x} ${y})`}
+                opacity={0.45 + ((row + column) % 3) * 0.25}
+              />
             )),
           )}
+          <path d="M8 91 H54 L64 81 H92" fill="none" stroke={accent} strokeWidth="2" />
         </g>
       );
     case 'crosshair':
@@ -97,10 +113,11 @@ function ElementArtwork({
       );
     case 'racing-stripes':
       return (
-        <g transform="rotate(-16 50 50)">
-          <rect x="12" y="4" width="22" height="92" fill={primary} />
-          <rect x="39" y="4" width="8" height="92" fill={accent} />
-          <rect x="52" y="4" width="36" height="92" fill={primary} />
+        <g fill="none" strokeLinecap="round">
+          <path d="M8 92 C12 58 28 22 59 16 C75 13 86 20 92 31" stroke={primary} strokeWidth="12" />
+          <path d="M8 92 C12 58 28 22 59 16 C75 13 86 20 92 31" stroke={accent} strokeWidth="3" strokeDasharray="9 8" />
+          <path d="M22 94 C26 67 38 38 62 32 C74 29 82 33 89 42" stroke={primary} strokeWidth="3" opacity=".7" />
+          <path d="M2 78 L13 90 L27 87" stroke={accent} strokeWidth="3" />
         </g>
       );
     case 'apex-arc':
@@ -113,9 +130,12 @@ function ElementArtwork({
     case 'split-blocks':
       return (
         <g fill={primary}>
-          <path d="M5 12 H62 L48 42 H5 Z" />
-          <path d="M38 58 H95 V88 H24 Z" opacity=".75" />
-          <path d="M68 12 H95 V42 H54 Z" fill={accent} />
+          <path d="M4 17 H58 L47 42 H4 Z" />
+          <path d="M42 17 H96 L85 42 H53 Z" opacity=".55" />
+          <path d="M4 51 H38 L27 76 H4 Z" opacity=".55" />
+          <path d="M31 51 H88 L77 76 H20 Z" />
+          <path d="M81 51 H96 V76 H70 Z" fill={accent} />
+          <path d="M4 84 H68" stroke={accent} strokeWidth="4" />
         </g>
       );
     case 'slash-stack':
@@ -129,46 +149,55 @@ function ElementArtwork({
     case 'diamond':
       return (
         <g {...strokeProps}>
-          <path d="M50 5 L95 50 L50 95 L5 50 Z" strokeWidth="7" />
+          <path d="M50 4 L96 50 L50 96 L4 50 Z" strokeWidth="6" strokeDasharray="48 8 16 8" />
           <path d="M50 20 L80 50 L50 80 L20 50 Z" stroke={accent} strokeWidth="2" />
+          <path d="M4 50 H25 M75 50 H96 M50 4 V25 M50 75 V96" strokeWidth="2" />
+          <circle cx="50" cy="50" r="5" fill={primary} stroke="none" />
         </g>
       );
     case 'hexagon':
       return (
         <g {...strokeProps}>
-          <path d="M27 7 H73 L96 50 L73 93 H27 L4 50 Z" strokeWidth="7" />
-          <circle cx="50" cy="50" r="5" fill={accent} stroke="none" />
+          <path d="M26 6 H74 L96 50 L74 94 H26 L4 50 Z" strokeWidth="5" strokeDasharray="50 7" />
+          <path d="M34 20 H66 L81 50 L66 80 H34 L19 50 Z" stroke={accent} strokeWidth="2" />
+          <path d="M27 35 H43 L50 50 L43 65 H27 L20 50 Z" fill={primary} stroke="none" opacity=".7" />
+          <path d="M57 35 H73 L80 50 L73 65 H57 L50 50 Z" fill={primary} stroke="none" opacity=".35" />
         </g>
       );
     case 'circle-ring':
       return (
         <g {...strokeProps}>
-          <circle cx="50" cy="50" r="39" strokeWidth="11" />
-          <path d="M50 4 V22 M50 78 V96" stroke={accent} strokeWidth="3" />
+          <circle cx="50" cy="50" r="40" strokeWidth="8" strokeDasharray="64 10 18 10" />
+          <circle cx="50" cy="50" r="29" stroke={accent} strokeWidth="2" strokeDasharray="4 7" />
+          {[18, 34, 50, 66, 82].map((x, index) => (
+            <rect key={x} x={x - 4} y={72 - index * 7} width="8" height={index * 7 + 10} fill={primary} stroke="none" opacity={0.4 + index * 0.13} />
+          ))}
         </g>
       );
     case 'triangle':
       return (
         <g {...strokeProps}>
-          <path d="M50 7 L94 88 H6 Z" strokeWidth="8" />
-          <path d="M50 28 L74 74 H26 Z" stroke={accent} strokeWidth="2" />
+          <path d="M50 5 L96 89 H4 Z" strokeWidth="6" strokeDasharray="62 9 24 9" />
+          <path d="M50 24 L79 77 H21 Z" stroke={accent} strokeWidth="2" />
+          <path d="M50 5 V31 M4 89 L27 75 M96 89 L73 75" strokeWidth="2" />
+          <path d="M43 55 H57 L64 68 H36 Z" fill={primary} stroke="none" />
         </g>
       );
     case 'checkered-panel':
       return (
         <g>
           {Array.from({ length: 6 }, (_, row) =>
-            Array.from({ length: 6 }, (_, column) => (
-              <rect
-                key={`${row}-${column}`}
-                x={column * 16 + 2}
-                y={row * 16 + 2}
-                width="16"
-                height="16"
-                fill={(row + column) % 2 ? primary : accent}
-              />
-            )),
+            Array.from({ length: 6 }, (_, column) =>
+              (row + column) % 2 ? (
+                <path
+                  key={`${row}-${column}`}
+                  d={`M${column * 16 + 2} ${row * 16 + 2} h16 l-4 16 h-16 Z`}
+                  fill={primary}
+                />
+              ) : null,
+            ),
           )}
+          <path d="M2 2 H98 M-22 98 H74" stroke={primary} strokeWidth="3" opacity=".65" />
         </g>
       );
     case 'tech-bracket':
@@ -181,31 +210,38 @@ function ElementArtwork({
       );
     case 'wave':
       return (
-        <g {...strokeProps} strokeLinecap="round">
-          <path d="M4 35 C20 10 34 60 50 35 S80 10 96 35" strokeWidth="7" />
-          <path d="M4 62 C20 37 34 87 50 62 S80 37 96 62" stroke={accent} strokeWidth="3" />
+        <g fill="none" strokeLinecap="round">
+          <path d="M3 78 C27 80 21 26 55 24 C73 23 82 37 97 31" stroke={primary} strokeWidth="9" />
+          <path d="M3 89 C36 91 29 39 58 36 C76 34 85 46 97 42" stroke={primary} strokeWidth="4" opacity=".7" />
+          <path d="M3 66 C19 68 19 17 52 12 C73 9 85 23 97 18" stroke={accent} strokeWidth="3" strokeDasharray="13 7" />
+          <path d="M68 57 H92 L97 52" stroke={primary} strokeWidth="2" />
         </g>
       );
     case 'starburst':
       return (
         <g transform="translate(50 50)">
-          {Array.from({ length: 16 }, (_, index) => (
+          {Array.from({ length: 12 }, (_, index) => (
             <path
               key={index}
-              d="M-2 -12 L0 -47 L2 -12 Z"
-              fill={index % 2 ? accent : primary}
-              transform={`rotate(${index * 22.5})`}
+              d="M-5 -18 L-2 -46 L6 -39 L4 -17 Z"
+              fill={index % 3 === 0 ? accent : primary}
+              opacity={index % 2 ? '.55' : '1'}
+              transform={`rotate(${index * 30})`}
             />
           ))}
-          <circle r="9" fill={primary} />
+          <circle r="22" fill="none" stroke={primary} strokeWidth="6" strokeDasharray="18 5" />
+          <circle r="11" fill={accent} />
+          <path d="M-4 -5 L8 0 L-4 5 Z" fill={primary} />
         </g>
       );
     case 'target':
       return (
         <g {...strokeProps}>
-          <circle cx="50" cy="50" r="42" strokeWidth="3" />
-          <circle cx="50" cy="50" r="27" strokeWidth="7" />
-          <circle cx="50" cy="50" r="9" fill={accent} stroke="none" />
+          <path d="M50 7 A43 43 0 0 1 91 38 M93 56 A43 43 0 0 1 61 91 M41 92 A43 43 0 0 1 8 61 M8 41 A43 43 0 0 1 39 8" strokeWidth="5" />
+          <circle cx="50" cy="50" r="27" stroke={accent} strokeWidth="2" strokeDasharray="5 5" />
+          <path d="M50 20 V50 L70 64" strokeWidth="5" />
+          <circle cx="50" cy="50" r="7" fill={primary} stroke="none" />
+          <path d="M17 74 H38" stroke={accent} strokeWidth="4" />
         </g>
       );
     case 'wing':
