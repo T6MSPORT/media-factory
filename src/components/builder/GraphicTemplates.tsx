@@ -153,9 +153,13 @@ function ResultsTemplate({
         fontSize={layout.positionSize}
         fontWeight="900"
         fill={branding.accent}
-        stroke="#08090a"
-        strokeWidth="10"
-        paintOrder="stroke fill"
+        {...(layout.session === 'race'
+          ? {
+              stroke: '#08090a',
+              strokeWidth: 10,
+              paintOrder: 'stroke fill',
+            }
+          : {})}
         dominantBaseline="central"
       >
         <text

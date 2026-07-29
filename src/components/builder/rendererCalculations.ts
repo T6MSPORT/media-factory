@@ -107,7 +107,14 @@ export function getResultsTemplateLayout(
     ? String(numericPosition)
     : '#';
   const positionY = h / 2;
-  const positionSize = isStory ? 440 : 360;
+  const positionSize =
+    session === 'qualifying'
+      ? isStory
+        ? 520
+        : 420
+      : isStory
+        ? 440
+        : 360;
   const podiumPosition =
     session === 'race' && numericPosition >= 1 && numericPosition <= 3
       ? numericPosition
@@ -130,7 +137,14 @@ export function getResultsTemplateLayout(
     positionX: w / 2,
     positionY,
     positionSize,
-    positionGap: isStory ? 72 : 60,
+    positionGap:
+      session === 'qualifying'
+        ? isStory
+          ? 48
+          : 40
+        : isStory
+          ? 72
+          : 60,
     podiumPosition,
     laurelScale: isStory ? 1.65 : 1.38,
   };

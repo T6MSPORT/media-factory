@@ -242,6 +242,8 @@ test('qualifying result restores identity and uses the large split position comp
   assert.match(markup, />P</);
   assert.match(markup, />1</);
   assert.match(markup, /skewX\(-12\)/);
+  assert.doesNotMatch(markup, /stroke="#08090a"/);
+  assert.doesNotMatch(markup, /paint-order="stroke fill"/);
   assert.match(markup, /RICH WEATHERILL/);
   assert.match(markup, /data:image\/png;base64,competition/);
   assert.doesNotMatch(markup, /ROUND 3/);
