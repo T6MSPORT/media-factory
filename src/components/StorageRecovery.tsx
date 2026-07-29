@@ -21,7 +21,7 @@ export function StorageRecovery({ issue, retry }: StorageRecoveryProps) {
         <span>
           {isLoadFailure
             ? 'Your existing browser data has not been overwritten.'
-            : 'Your latest changes are still open. Free some browser storage, then retry.'}
+            : 'Your latest changes are still open. Keep this tab open and retry.'}
         </span>
       </div>
       <button type="button" onClick={retry}>
