@@ -74,7 +74,6 @@ export async function registerAccount(
   const cryptoProvider = dependencies.crypto || globalThis.crypto;
   const email = normaliseEmail(input.email);
   const name = input.profile.name.trim();
-  const number = input.profile.number.trim();
 
   if (data.authentication.account) {
     throw new Error('An account already exists on this browser.');
@@ -85,8 +84,8 @@ export async function registerAccount(
   if (input.password.length < MINIMUM_PASSWORD_LENGTH) {
     throw new Error('Your password must be at least 8 characters.');
   }
-  if (!name || !number) {
-    throw new Error('Driver name and car number are required.');
+  if (!name) {
+    throw new Error('Driver name is required.');
   }
 
   const salt = cryptoProvider.getRandomValues(new Uint8Array(new ArrayBuffer(16)));
@@ -98,7 +97,7 @@ export async function registerAccount(
     profile: {
       ...input.profile,
       name,
-      number,
+      number: input.profile.number.trim(),
       team: input.profile.team.trim(),
       nameLocked: true,
     },

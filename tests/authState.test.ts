@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -13,6 +15,7 @@ const server = await createServer({
 const { registerAccount, signIn, signOut } = await server.ssrLoadModule(
   '/src/state/authState.ts',
 );
+const { RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -85,8 +88,43 @@ test('registration rejects incomplete identity and weak account details', async 
         ...registration,
         profile: { ...registration.profile, name: '' },
       }),
-    /name and car number are required/,
+    /Driver name is required/,
   );
+});
+
+test('registration does not require driver number, team or images', async () => {
+  const registered = await registerAccount(starter, {
+    email: registration.email,
+    password: registration.password,
+    profile: {
+      ...starter.profile,
+      name: 'Rich Weatherill',
+      number: '',
+      team: '',
+    },
+  });
+
+  assert.equal(registered.authentication.account.driverName, 'Rich Weatherill');
+  assert.equal(registered.profile.number, '');
+  assert.equal(registered.profile.team, '');
+  assert.equal(registered.profile.driverImage, undefined);
+  assert.equal(registered.profile.teamLogo, undefined);
+});
+
+test('registration only asks for the driver name beyond login credentials', () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(RegistrationForm, {
+      data: starter,
+      register: async () => {},
+    }),
+  );
+
+  assert.match(markup, /Driver name/);
+  assert.match(markup, /Email address/);
+  assert.doesNotMatch(markup, /Car number/);
+  assert.doesNotMatch(markup, /Team name/);
+  assert.doesNotMatch(markup, /Upload driver image/);
+  assert.doesNotMatch(markup, /Upload team logo/);
 });
 
 test('saved accounts normalise safely and keep the identity lock', async () => {

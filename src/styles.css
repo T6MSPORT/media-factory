@@ -343,12 +343,7 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .auth-step small{margin-top:2px;color:#7f8896;font-size:11px}
 .auth-fields{display:grid;gap:14px;margin:24px 0 8px}
 .auth-account-grid{grid-template-columns:1.2fr 1fr 1fr}
-.auth-profile-grid{display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:start}
-.auth-portrait{min-height:220px}
-.auth-portrait img{width:100%;height:170px;object-fit:contain;object-position:center}
-.auth-profile-fields{min-width:0}
-.auth-profile-fields .form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.auth-logo-uploads{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.auth-name-field{max-width:520px}
 .name-confirmation{
   display:flex;
   grid-template-columns:none;
@@ -392,8 +387,6 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
   .auth-shell{grid-template-columns:320px minmax(0,1fr)}
   .auth-brand-copy h2{font-size:40px}
   .auth-account-grid{grid-template-columns:1fr}
-  .auth-profile-grid{grid-template-columns:140px 1fr}
-  .auth-profile-fields .form-grid{grid-template-columns:1fr}
 }
 @media(max-width:760px){
   .auth-shell{display:block}
@@ -404,7 +397,4 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
   .auth-form-panel{display:block;padding:18px}
   .auth-heading{display:block}
   .auth-heading .auth-icon{margin-bottom:16px}
-  .auth-profile-grid{grid-template-columns:1fr}
-  .auth-portrait{min-height:0}
-  .auth-logo-uploads{grid-template-columns:1fr}
 }

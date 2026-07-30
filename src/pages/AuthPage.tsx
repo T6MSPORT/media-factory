@@ -1,8 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { LockKeyhole, ShieldCheck, UserRound } from 'lucide-react';
-import { ProfileAssetUpload } from '../components/forms/ProfileAsset';
+import { LockKeyhole, ShieldCheck } from 'lucide-react';
 import { TextField } from '../components/forms/PropertyEditor';
-import { DRIVER_FIELDS, labelForDriverField } from '../config/profile';
 import type { Data, DriverProfile } from '../types';
 
 type AuthPageProps = {
@@ -100,7 +98,6 @@ export function RegistrationForm({ data, register }: RegistrationFormProps) {
     password.length >= 8 &&
     password === confirmPassword &&
     Boolean(profile.name.trim()) &&
-    Boolean(profile.number.trim()) &&
     confirmedName;
 
   const submit = async (event: FormEvent) => {
@@ -126,7 +123,7 @@ export function RegistrationForm({ data, register }: RegistrationFormProps) {
             <span className="eyebrow">CREATE YOUR ACCOUNT</span>
             <h1>Set up Media Factory</h1>
             <p>
-              Create your login, then confirm the driver identity used across every template.
+              Create your login, then confirm the driver name used across every template.
               {data.onboardingComplete && ' Your existing graphics and settings will be kept.'}
             </p>
           </div>
@@ -165,37 +162,14 @@ export function RegistrationForm({ data, register }: RegistrationFormProps) {
         </div>
 
         <div className="auth-section">
-          <div className="auth-step"><span>2</span><div><b>Driver profile</b><small>Used automatically in your graphics</small></div></div>
-          <div className="auth-profile-grid">
-            <div className="portrait-upload auth-portrait">
-              {profile.driverImage ? <img src={profile.driverImage} /> : <UserRound size={54} />}
-              <ProfileAssetUpload
-                asset="driverImage"
-                onChange={driverImage => setProfile({ ...profile, driverImage })}
-              />
-            </div>
-            <div className="auth-profile-fields">
-              <div className="form-grid single">
-                {DRIVER_FIELDS.map(field => (
-                  <TextField
-                    key={field}
-                    label={labelForDriverField(field)}
-                    value={profile[field]}
-                    onChange={value => setProfile({ ...profile, [field]: value })}
-                  />
-                ))}
-              </div>
-              <div className="auth-logo-uploads">
-                <ProfileAssetUpload
-                  asset="teamLogo"
-                  onChange={teamLogo => setProfile({ ...profile, teamLogo })}
-                />
-                <ProfileAssetUpload
-                  asset="competitionLogo"
-                  onChange={competitionLogo => setProfile({ ...profile, competitionLogo })}
-                />
-              </div>
-            </div>
+          <div className="auth-step"><span>2</span><div><b>Driver name</b><small>Used automatically in your graphics</small></div></div>
+          <div className="auth-name-field">
+            <TextField
+              label="Driver name"
+              value={profile.name}
+              autoComplete="name"
+              onChange={name => setProfile({ ...profile, name })}
+            />
           </div>
           <label className="name-confirmation">
             <input
