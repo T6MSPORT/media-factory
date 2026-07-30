@@ -51,8 +51,25 @@ export function isEmailConfirmationError(error: unknown): boolean {
     error.message === 'Confirm your email before signing in.';
 }
 
-function readableAuthError(message: string, code?: string): Error {
+export function readableAuthError(message: string, code?: string): Error {
   const lower = message.toLowerCase();
+  if (
+    lower.includes('error sending confirmation email') ||
+    lower.includes('error sending recovery email') ||
+    lower.includes('confirmation email could not be sent') ||
+    lower.includes('smtp')
+  ) {
+    return new Error(
+      'The account email could not be sent. Check the Media Factory email service and try again.',
+    );
+  }
+  if (
+    code === 'over_email_send_rate_limit' ||
+    lower.includes('email rate limit') ||
+    lower.includes('rate limit exceeded')
+  ) {
+    return new Error('Too many account emails have been requested. Wait a few minutes and try again.');
+  }
   if (lower.includes('invalid login credentials')) {
     return new Error('Email or password is incorrect.');
   }
@@ -64,6 +81,13 @@ function readableAuthError(message: string, code?: string): Error {
   }
   if (lower.includes('password')) {
     return new Error(message);
+  }
+  if (
+    lower.includes('failed to fetch') ||
+    lower.includes('network') ||
+    lower.includes('connection')
+  ) {
+    return new Error('Media Factory could not reach cloud login. Check your connection and try again.');
   }
   return new Error('Cloud login is temporarily unavailable. Please try again.');
 }

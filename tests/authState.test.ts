@@ -19,6 +19,7 @@ const {
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
 const { ConfirmationForm, RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
+const { readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -79,6 +80,17 @@ test('pending registration clearly blocks login and supports resending confirmat
   assert.match(markup, /won’t be able to sign in until the email is confirmed/);
   assert.match(markup, /Resend confirmation email/);
   assert.match(markup, /I’ve confirmed my email/);
+});
+
+test('cloud auth reports email delivery and rate-limit failures clearly', () => {
+  assert.equal(
+    readableAuthError('Error sending confirmation email').message,
+    'The account email could not be sent. Check the Media Factory email service and try again.',
+  );
+  assert.equal(
+    readableAuthError('Email rate limit exceeded', 'over_email_send_rate_limit').message,
+    'Too many account emails have been requested. Wait a few minutes and try again.',
+  );
 });
 
 test('registration rejects incomplete identity and weak account details', () => {
