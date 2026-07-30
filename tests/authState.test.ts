@@ -91,6 +91,10 @@ test('cloud auth reports email delivery and rate-limit failures clearly', () => 
     readableAuthError('Email rate limit exceeded', 'over_email_send_rate_limit').message,
     'Too many account emails have been requested. Wait a few minutes and try again.',
   );
+  assert.equal(
+    readableAuthError('Database error saving new user', 'unexpected_failure').message,
+    'Account service error: Database error saving new user (unexpected_failure)',
+  );
 });
 
 test('registration rejects incomplete identity and weak account details', () => {

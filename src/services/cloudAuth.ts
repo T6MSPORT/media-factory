@@ -89,7 +89,8 @@ export function readableAuthError(message: string, code?: string): Error {
   ) {
     return new Error('Media Factory could not reach cloud login. Check your connection and try again.');
   }
-  return new Error('Cloud login is temporarily unavailable. Please try again.');
+  const providerCode = code ? ` (${code})` : '';
+  return new Error(`Account service error: ${message}${providerCode}`);
 }
 
 async function profileForUser(authClient: SupabaseClient, user: User): Promise<ProfileRow> {
@@ -118,7 +119,7 @@ function accountFrom(user: User, profile: ProfileRow): Account {
 export async function currentCloudAccount(): Promise<Account | null> {
   const authClient = getClient();
   const { data, error } = await authClient.auth.getSession();
-  if (error) throw readableAuthError(error.message);
+  if (error) throw readableAuthError(error.message, error.code);
   if (!data.session?.user) return null;
   return accountFrom(
     data.session.user,
@@ -143,7 +144,7 @@ export async function registerCloudAccount(
     },
   });
 
-  if (error) throw readableAuthError(error.message);
+  if (error) throw readableAuthError(error.message, error.code);
   if (!data.user) throw new Error('Cloud account creation did not complete.');
   if (data.user.identities?.length === 0) {
     throw new Error('An account already exists for this email.');
@@ -190,7 +191,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
     email.trim().toLowerCase(),
     { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
   );
-  if (error) throw readableAuthError(error.message);
+  if (error) throw readableAuthError(error.message, error.code);
 }
 
 export async function resendSignupConfirmation(email: string): Promise<void> {
@@ -206,7 +207,7 @@ export async function resendSignupConfirmation(email: string): Promise<void> {
 
 export async function updateCloudPassword(password: string): Promise<void> {
   const { error } = await getClient().auth.updateUser({ password });
-  if (error) throw readableAuthError(error.message);
+  if (error) throw readableAuthError(error.message, error.code);
 }
 
 export function listenForCloudAuth(listener: AuthListener): () => void {
