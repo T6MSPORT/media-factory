@@ -18,7 +18,7 @@ const {
   markEmailConfirmationPending,
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
-const { RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
+const { ConfirmationForm, RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -65,6 +65,20 @@ test('email confirmation keeps the new cloud account signed out', () => {
   assert.equal(pending.authentication.signedIn, false);
   assert.equal(pending.authentication.pendingEmailConfirmation, true);
   assert.equal(pending.authentication.lastEmail, 'rich@example.com');
+});
+
+test('pending registration clearly blocks login and supports resending confirmation', () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(ConfirmationForm, {
+      email: 'rich@example.com',
+      resendConfirmation: async () => {},
+      showLogin: () => {},
+    }),
+  );
+
+  assert.match(markup, /won’t be able to sign in until the email is confirmed/);
+  assert.match(markup, /Resend confirmation email/);
+  assert.match(markup, /I’ve confirmed my email/);
 });
 
 test('registration rejects incomplete identity and weak account details', () => {

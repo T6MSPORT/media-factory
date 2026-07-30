@@ -32,6 +32,7 @@ export default function App() {
     passwordRecovery,
     retryStorage,
     register,
+    resendConfirmation,
     resetPassword,
     saveRecoveredPassword,
     setBackgroundGraphicLock,
@@ -54,6 +55,7 @@ export default function App() {
           passwordRecovery={passwordRecovery}
           register={register}
           login={login}
+          resendConfirmation={resendConfirmation}
           resetPassword={resetPassword}
           saveRecoveredPassword={saveRecoveredPassword}
         />

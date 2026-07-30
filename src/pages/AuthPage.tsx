@@ -9,6 +9,7 @@ type AuthPageProps = {
   passwordRecovery?: boolean;
   register: (email: string, password: string, profile: DriverProfile) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  resendConfirmation: (email: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   saveRecoveredPassword: (password: string) => Promise<void>;
 };
@@ -19,6 +20,7 @@ export function AuthPage({
   passwordRecovery,
   register,
   login,
+  resendConfirmation,
   resetPassword,
   saveRecoveredPassword,
 }: AuthPageProps) {
@@ -35,6 +37,7 @@ export function AuthPage({
     return (
       <ConfirmationForm
         email={data.authentication.account?.email || data.authentication.lastEmail || ''}
+        resendConfirmation={resendConfirmation}
         showLogin={() => {
           setConfirmationDismissed(true);
           setMode('login');
@@ -284,7 +287,33 @@ export function RegistrationForm({
   );
 }
 
-function ConfirmationForm({ email, showLogin }: { email: string; showLogin: () => void }) {
+export function ConfirmationForm({
+  email,
+  resendConfirmation,
+  showLogin,
+}: {
+  email: string;
+  resendConfirmation: (email: string) => Promise<void>;
+  showLogin: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [error, setError] = useState('');
+
+  const resend = async () => {
+    setBusy(true);
+    setNotice('');
+    setError('');
+    try {
+      await resendConfirmation(email);
+      setNotice('Confirmation email resent. Check your inbox and spam folder.');
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Confirmation email could not be sent.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <AuthShell>
       <div className="auth-card auth-card-compact">
@@ -293,10 +322,20 @@ function ConfirmationForm({ email, showLogin }: { email: string; showLogin: () =
         <h1>Confirm your email</h1>
         <p>
           We’ve sent a confirmation link to <b>{email}</b>. Open it to activate your cloud
-          account, then sign in.
+          account. You won’t be able to sign in until the email is confirmed.
         </p>
-        <button type="button" className="primary wide auth-submit" onClick={showLogin}>
-          Return to sign in
+        {notice && <p className="form-notice" role="status">{notice}</p>}
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button
+          type="button"
+          className="primary wide auth-submit"
+          onClick={resend}
+          disabled={busy}
+        >
+          {busy ? 'Sending…' : 'Resend confirmation email'}
+        </button>
+        <button type="button" className="auth-text-button" onClick={showLogin}>
+          I’ve confirmed my email — sign in
         </button>
       </div>
     </AuthShell>

@@ -46,12 +46,17 @@ function getClient(): SupabaseClient {
   return client;
 }
 
-function readableAuthError(message: string): Error {
+export function isEmailConfirmationError(error: unknown): boolean {
+  return error instanceof Error &&
+    error.message === 'Confirm your email before signing in.';
+}
+
+function readableAuthError(message: string, code?: string): Error {
   const lower = message.toLowerCase();
   if (lower.includes('invalid login credentials')) {
     return new Error('Email or password is incorrect.');
   }
-  if (lower.includes('email not confirmed')) {
+  if (code === 'email_not_confirmed' || lower.includes('email not confirmed')) {
     return new Error('Confirm your email before signing in.');
   }
   if (lower.includes('user already registered')) {
@@ -116,6 +121,9 @@ export async function registerCloudAccount(
 
   if (error) throw readableAuthError(error.message);
   if (!data.user) throw new Error('Cloud account creation did not complete.');
+  if (data.user.identities?.length === 0) {
+    throw new Error('An account already exists for this email.');
+  }
 
   const profile = data.session
     ? await profileForUser(authClient, data.user)
@@ -141,7 +149,7 @@ export async function signInCloud(
     email: email.trim().toLowerCase(),
     password,
   });
-  if (error) throw readableAuthError(error.message);
+  if (error) throw readableAuthError(error.message, error.code);
   return accountFrom(
     data.user,
     await profileForUser(authClient, data.user),
@@ -159,6 +167,17 @@ export async function requestPasswordReset(email: string): Promise<void> {
     { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
   );
   if (error) throw readableAuthError(error.message);
+}
+
+export async function resendSignupConfirmation(email: string): Promise<void> {
+  const { error } = await getClient().auth.resend({
+    type: 'signup',
+    email: email.trim().toLowerCase(),
+    options: {
+      emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
+    },
+  });
+  if (error) throw readableAuthError(error.message, error.code);
 }
 
 export async function updateCloudPassword(password: string): Promise<void> {

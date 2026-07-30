@@ -17,9 +17,11 @@ import {
 import {
   currentCloudAccount,
   isCloudAuthConfigured,
+  isEmailConfirmationError,
   listenForCloudAuth,
   registerCloudAccount,
   requestPasswordReset,
+  resendSignupConfirmation,
   signInCloud,
   signOutCloud,
   updateCloudPassword,
@@ -185,9 +187,18 @@ export function useMediaFactory() {
   };
 
   const login = async (email: string, password: string) => {
-    const account = await signInCloud(email, password);
-    setData(applyCloudAccount(dataRef.current, account));
-    setPage('home');
+    try {
+      const account = await signInCloud(email, password);
+      setData(applyCloudAccount(dataRef.current, account));
+      setPage('home');
+    } catch (error) {
+      if (isEmailConfirmationError(error) && dataRef.current.authentication.account) {
+        setData(current =>
+          markEmailConfirmationPending(current, current.authentication.account!),
+        );
+      }
+      throw error;
+    }
   };
 
   const logout = async () => {
@@ -199,6 +210,10 @@ export function useMediaFactory() {
 
   const resetPassword = async (email: string) => {
     await requestPasswordReset(email);
+  };
+
+  const resendConfirmation = async (email: string) => {
+    await resendSignupConfirmation(email);
   };
 
   const saveRecoveredPassword = async (password: string) => {
@@ -256,6 +271,7 @@ export function useMediaFactory() {
     storageIssue,
     retryStorage,
     register,
+    resendConfirmation,
     resetPassword,
     saveRecoveredPassword,
   };
