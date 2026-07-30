@@ -23,7 +23,7 @@ const {
 } = await server.ssrLoadModule(
   '/src/components/builder/builderInteractions.ts',
 );
-const { getPngExportPlan } = await server.ssrLoadModule(
+const { EXPORT_FONT_FILES, getExportFontFiles, getPngExportPlan } = await server.ssrLoadModule(
   '/src/utils/export.ts',
 );
 
@@ -149,6 +149,26 @@ test('PNG plans retain full resolution and safe filenames', () => {
     fileName: 'bathurst-race-weekend.png',
     mimeType: 'image/png',
   });
+});
+
+test('PNG export resolves only the fonts used by the SVG for embedding', () => {
+  const files = getExportFontFiles(
+    '<svg><text font-family="Orbitron, Arial, sans-serif">RACE</text>' +
+      '<text font-family="Rajdhani, Arial, sans-serif">ROUND 1</text></svg>',
+  );
+
+  assert.deepEqual(
+    files.map((font: { family: string; weight: string }) => [
+      font.family,
+      font.weight,
+    ]),
+    [
+      ['Orbitron', '400 900'],
+      ['Rajdhani', '400'],
+      ['Rajdhani', '700 900'],
+    ],
+  );
+  assert.equal(EXPORT_FONT_FILES.length, 6);
 });
 
 test('a graphic is marked saved only after PNG export succeeds', async () => {
