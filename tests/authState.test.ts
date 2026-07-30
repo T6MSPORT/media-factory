@@ -12,103 +12,74 @@ const server = await createServer({
   logLevel: 'silent',
   server: { middlewareMode: true },
 });
-const { registerAccount, signIn, signOut } = await server.ssrLoadModule(
-  '/src/state/authState.ts',
-);
+const {
+  applyCloudAccount,
+  clearCloudSession,
+  markEmailConfirmationPending,
+  validateRegistration,
+} = await server.ssrLoadModule('/src/state/authState.ts');
 const { RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
 
-const registration = {
-  email: ' Rich@Example.com ',
-  password: 'correct-horse',
-  profile: {
-    ...starter.profile,
-    name: ' Rich Weatherill ',
-    number: ' 46 ',
-    team: ' T6 Msport ',
-    driverImage: 'data:image/webp;base64,driver',
-  },
+const account = {
+  id: 'driver-account-46',
+  email: 'rich@example.com',
+  driverName: 'Rich Weatherill',
+  createdAt: '2026-07-30T12:00:00.000Z',
 };
 
-test('registration creates a signed-in account and locks the confirmed driver name', async () => {
-  const registered = await registerAccount(starter, registration, {
-    now: () => '2026-07-29T12:00:00.000Z',
-  });
+test('a cloud account locks the canonical driver name', () => {
+  const authenticated = applyCloudAccount(
+    {
+      ...starter,
+      profile: { ...starter.profile, name: 'Tampered Driver', number: '46' },
+    },
+    account,
+  );
 
-  assert.equal(registered.authentication.signedIn, true);
-  assert.equal(registered.authentication.account.email, 'rich@example.com');
-  assert.equal(registered.authentication.account.driverName, 'Rich Weatherill');
-  assert.equal(registered.authentication.account.createdAt, '2026-07-29T12:00:00.000Z');
-  assert.notEqual(registered.authentication.account.passwordHash, registration.password);
-  assert.equal(registered.profile.name, 'Rich Weatherill');
-  assert.equal(registered.profile.number, '46');
-  assert.equal(registered.profile.team, 'T6 Msport');
-  assert.equal(registered.profile.nameLocked, true);
-  assert.equal(registered.onboardingComplete, true);
+  assert.equal(authenticated.authentication.signedIn, true);
+  assert.equal(authenticated.authentication.account.id, 'driver-account-46');
+  assert.equal(authenticated.authentication.account.email, 'rich@example.com');
+  assert.equal(authenticated.profile.name, 'Rich Weatherill');
+  assert.equal(authenticated.profile.number, '46');
+  assert.equal(authenticated.profile.nameLocked, true);
+  assert.equal(authenticated.onboardingComplete, true);
 });
 
-test('a returning driver can sign out and sign back in with normalised email', async () => {
-  const registered = await registerAccount(starter, registration);
-  const signedOut = signOut(registered);
-  const signedIn = await signIn(
-    signedOut,
-    'RICH@example.com',
-    registration.password,
-  );
+test('sign out clears only the cloud session and retains local work', () => {
+  const authenticated = applyCloudAccount(starter, account);
+  const signedOut = clearCloudSession({
+    ...authenticated,
+    projects: [{ id: 'saved-graphic' }],
+  });
 
   assert.equal(signedOut.authentication.signedIn, false);
-  assert.equal(signedIn.authentication.signedIn, true);
-  assert.equal(signedIn.profile.name, 'Rich Weatherill');
+  assert.equal(signedOut.authentication.account.id, account.id);
+  assert.equal(signedOut.projects[0].id, 'saved-graphic');
 });
 
-test('incorrect login details never create a session', async () => {
-  const registered = signOut(await registerAccount(starter, registration));
-
-  await assert.rejects(
-    () => signIn(registered, registration.email, 'wrong-password'),
-    /Email or password is incorrect/,
-  );
-  assert.equal(registered.authentication.signedIn, false);
+test('email confirmation keeps the new cloud account signed out', () => {
+  const pending = markEmailConfirmationPending(starter, account);
+  assert.equal(pending.authentication.signedIn, false);
+  assert.equal(pending.authentication.pendingEmailConfirmation, true);
+  assert.equal(pending.authentication.lastEmail, 'rich@example.com');
 });
 
-test('registration rejects incomplete identity and weak account details', async () => {
-  await assert.rejects(
-    () => registerAccount(starter, { ...registration, email: 'not-an-email' }),
+test('registration rejects incomplete identity and weak account details', () => {
+  assert.throws(
+    () => validateRegistration('not-an-email', 'correct-horse', 'Rich Weatherill'),
     /valid email/,
   );
-  await assert.rejects(
-    () => registerAccount(starter, { ...registration, password: 'short' }),
+  assert.throws(
+    () => validateRegistration('rich@example.com', 'short', 'Rich Weatherill'),
     /at least 8 characters/,
   );
-  await assert.rejects(
-    () =>
-      registerAccount(starter, {
-        ...registration,
-        profile: { ...registration.profile, name: '' },
-      }),
+  assert.throws(
+    () => validateRegistration('rich@example.com', 'correct-horse', ''),
     /Driver name is required/,
   );
-});
-
-test('registration does not require driver number, team or images', async () => {
-  const registered = await registerAccount(starter, {
-    email: registration.email,
-    password: registration.password,
-    profile: {
-      ...starter.profile,
-      name: 'Rich Weatherill',
-      number: '',
-      team: '',
-    },
-  });
-
-  assert.equal(registered.authentication.account.driverName, 'Rich Weatherill');
-  assert.equal(registered.profile.number, '');
-  assert.equal(registered.profile.team, '');
-  assert.equal(registered.profile.driverImage, undefined);
-  assert.equal(registered.profile.teamLogo, undefined);
 });
 
 test('registration only asks for the driver name beyond login credentials', () => {
@@ -127,15 +98,40 @@ test('registration only asks for the driver name beyond login credentials', () =
   assert.doesNotMatch(markup, /Upload team logo/);
 });
 
-test('saved accounts normalise safely and keep the identity lock', async () => {
-  const registered = await registerAccount(starter, registration);
+test('saved cloud accounts normalise safely and never restore a local session', () => {
   const restored = normaliseData({
-    ...registered,
-    profile: { ...registered.profile, name: 'Tampered Driver' },
+    ...starter,
+    profile: { ...starter.profile, name: 'Tampered Driver' },
+    authentication: {
+      account,
+      signedIn: true,
+    },
   });
 
   assert.equal(restored.authentication.account.email, 'rich@example.com');
-  assert.equal(restored.authentication.signedIn, true);
+  assert.equal(restored.authentication.signedIn, false);
   assert.equal(restored.profile.name, 'Rich Weatherill');
   assert.equal(restored.profile.nameLocked, true);
+});
+
+test('legacy browser credentials are discarded but pre-fill migration details', () => {
+  const restored = normaliseData({
+    ...starter,
+    profile: { ...starter.profile, name: 'Rich Weatherill' },
+    authentication: {
+      account: {
+        email: 'RICH@example.com',
+        driverName: 'Rich Weatherill',
+        passwordHash: 'browser-hash',
+        passwordSalt: 'browser-salt',
+        createdAt: '2026-07-29T12:00:00.000Z',
+      },
+      signedIn: true,
+    },
+  });
+
+  assert.equal(restored.authentication.account, undefined);
+  assert.equal(restored.authentication.lastEmail, 'rich@example.com');
+  assert.equal(restored.authentication.signedIn, false);
+  assert.equal(restored.profile.name, 'Rich Weatherill');
 });

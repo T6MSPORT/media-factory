@@ -19,6 +19,8 @@ export default function App() {
   const {
     activeProject,
     applyBackgroundGraphicToAll,
+    authError,
+    authReady,
     data,
     finishOnboarding,
     openProject,
@@ -27,19 +29,34 @@ export default function App() {
     logout,
     page,
     patchProject,
+    passwordRecovery,
     retryStorage,
     register,
+    resetPassword,
+    saveRecoveredPassword,
     setBackgroundGraphicLock,
     setData,
     setPage,
     storageIssue,
   } = useMediaFactory();
 
-  if (!data.authentication.signedIn) {
+  if (!authReady) {
+    return <div className="auth-loading">Connecting to Media Factory…</div>;
+  }
+
+  if (passwordRecovery || !data.authentication.signedIn) {
     return (
       <>
         <StorageRecovery issue={storageIssue} retry={retryStorage} />
-        <AuthPage data={data} register={register} login={login} />
+        <AuthPage
+          data={data}
+          authError={authError}
+          passwordRecovery={passwordRecovery}
+          register={register}
+          login={login}
+          resetPassword={resetPassword}
+          saveRecoveredPassword={saveRecoveredPassword}
+        />
       </>
     );
   }

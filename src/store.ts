@@ -273,27 +273,41 @@ export function normaliseData(value: unknown): Data {
   const suppliedAccount = parsed.authentication?.account;
   const account =
     suppliedAccount &&
+    typeof suppliedAccount.id === 'string' &&
     typeof suppliedAccount.email === 'string' &&
-    typeof suppliedAccount.driverName === 'string' &&
-    typeof suppliedAccount.passwordHash === 'string' &&
-    typeof suppliedAccount.passwordSalt === 'string'
+    typeof suppliedAccount.driverName === 'string'
       ? {
+          id: suppliedAccount.id,
           email: suppliedAccount.email.trim().toLowerCase(),
           driverName: suppliedAccount.driverName.trim(),
-          passwordHash: suppliedAccount.passwordHash,
-          passwordSalt: suppliedAccount.passwordSalt,
           createdAt:
             typeof suppliedAccount.createdAt === 'string'
               ? suppliedAccount.createdAt
               : '',
         }
       : undefined;
+  const legacyEmail =
+    suppliedAccount &&
+    typeof suppliedAccount.email === 'string'
+      ? suppliedAccount.email.trim().toLowerCase()
+      : undefined;
+  const savedLastEmail =
+    typeof parsed.authentication?.lastEmail === 'string'
+      ? parsed.authentication.lastEmail.trim().toLowerCase()
+      : legacyEmail;
   const authentication = account
     ? {
         account,
-        signedIn: Boolean(parsed.authentication?.signedIn),
+        signedIn: false,
+        lastEmail: account.email,
+        ...(parsed.authentication?.pendingEmailConfirmation === true
+          ? { pendingEmailConfirmation: true }
+          : {}),
       }
-    : { signedIn: false };
+    : {
+        signedIn: false,
+        ...(savedLastEmail ? { lastEmail: savedLastEmail } : {}),
+      };
 
   return {
     ...starter,

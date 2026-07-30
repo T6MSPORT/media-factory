@@ -369,6 +369,14 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .auth-submit:disabled{cursor:not-allowed;opacity:.42}
 .form-error{color:#ff8e98!important;margin:10px 0!important;font-size:13px}
 .auth-browser-note{text-align:center;font-size:11px;margin:15px 0 0!important;color:#68717f!important}
+.auth-loading{min-height:100dvh;display:grid;place-items:center;background:#0b0d10;color:#aeb6c1;font-weight:700}
+.auth-text-button{display:block;margin:14px auto 0;border:0;background:transparent;color:#c8ced7;cursor:pointer;font-size:12px}
+.auth-text-button:hover,.auth-switch button:hover{color:#fff}
+.auth-switch{text-align:center;font-size:12px;margin:20px 0 0!important;color:#7f8896!important}
+.auth-switch button{border:0;background:transparent;color:#ef6a6a;padding:0;cursor:pointer;font-weight:800}
+.form-notice{color:#8fe1a8!important;margin:10px 0!important;font-size:13px}
+.auth-icon-success{background:#258653}
+.auth-brand-copy>svg{display:block;margin-bottom:18px}
 .locked-profile-field{min-width:0}
 .locked-profile-field input{background:#171a1f;color:#aab1bc;cursor:not-allowed;padding-right:32px}
 .field-lock-note{display:flex;align-items:center;gap:5px;margin-top:7px;color:#7f8896;font-size:10px}

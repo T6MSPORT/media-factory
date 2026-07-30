@@ -40,15 +40,16 @@ export type DriverProfile = {
   driverImage?:string; teamLogo?:string; competitionLogo?:string;
 };
 export type Account = {
+  id:string;
   email:string;
   driverName:string;
-  passwordHash:string;
-  passwordSalt:string;
   createdAt:string;
 };
 export type Authentication = {
   account?:Account;
   signedIn:boolean;
+  lastEmail?:string;
+  pendingEmailConfirmation?:boolean;
 };
 export type Branding = {
   primary:string; secondary:string; accent:string; headingFont:string; bodyFont:string; sponsorLogoScale:number;

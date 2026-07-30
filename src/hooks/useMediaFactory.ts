@@ -8,7 +8,22 @@ import {
   setBackgroundGraphicLocked,
   updateProjectWithBackgroundGraphicLock,
 } from '../state/mediaFactoryState';
-import { registerAccount, signIn, signOut } from '../state/authState';
+import {
+  applyCloudAccount,
+  clearCloudSession,
+  markEmailConfirmationPending,
+  validateRegistration,
+} from '../state/authState';
+import {
+  currentCloudAccount,
+  isCloudAuthConfigured,
+  listenForCloudAuth,
+  registerCloudAccount,
+  requestPasswordReset,
+  signInCloud,
+  signOutCloud,
+  updateCloudPassword,
+} from '../services/cloudAuth';
 import { loadDurableData, saveDurableData } from '../durableStore';
 import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
 import type { Data, Project, TemplateId } from '../types';
@@ -18,6 +33,11 @@ export function useMediaFactory() {
   const [data, setData] = useState<Data>(initial.data);
   const [storageIssue, setStorageIssue] = useState<StorageIssue | undefined>(initial.issue);
   const [storageReady, setStorageReady] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [passwordRecovery, setPasswordRecovery] = useState(
+    () => window.location.hash.includes('type=recovery'),
+  );
   const [page, setPage] = useState<PageId>('home');
   const [activeId, setActiveId] = useState<string>();
   const dataRef = useRef(data);
@@ -63,6 +83,48 @@ export function useMediaFactory() {
       cancelled = true;
     };
   }, [initial]);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    if (!isCloudAuthConfigured()) {
+      setAuthError('Cloud login has not been configured yet.');
+      setAuthReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    const stopListening = listenForCloudAuth((event, account) => {
+      if (cancelled) return;
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+      if (account) {
+        setData(current => applyCloudAccount(current, account));
+      } else if (event === 'SIGNED_OUT') {
+        setData(current => clearCloudSession(current));
+      }
+    });
+
+    void currentCloudAccount()
+      .then(account => {
+        if (cancelled) return;
+        setData(current =>
+          account ? applyCloudAccount(current, account) : clearCloudSession(current),
+        );
+        setAuthError('');
+      })
+      .catch(error => {
+        if (!cancelled) {
+          setAuthError(error instanceof Error ? error.message : 'Cloud login is unavailable.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setAuthReady(true);
+      });
+
+    return () => {
+      cancelled = true;
+      stopListening();
+    };
+  }, [storageReady]);
 
   useEffect(() => {
     if (!storageReady) return;
@@ -113,25 +175,39 @@ export function useMediaFactory() {
     password: string,
     profile: Data['profile'],
   ) => {
-    const registered = await registerAccount(dataRef.current, {
-      email,
-      password,
-      profile,
-    });
+    validateRegistration(email, password, profile.name);
+    const result = await registerCloudAccount(email, password, profile.name);
+    const registered = result.signedIn
+      ? applyCloudAccount(dataRef.current, result.account)
+      : markEmailConfirmationPending(dataRef.current, result.account);
     setData(registered);
-    setPage('templates');
+    if (result.signedIn) setPage('templates');
   };
 
   const login = async (email: string, password: string) => {
-    const authenticated = await signIn(dataRef.current, email, password);
-    setData(authenticated);
+    const account = await signInCloud(email, password);
+    setData(applyCloudAccount(dataRef.current, account));
     setPage('home');
   };
 
-  const logout = () => {
-    setData(current => signOut(current));
+  const logout = async () => {
+    await signOutCloud();
+    setData(current => clearCloudSession(current));
     setActiveId(undefined);
     setPage('home');
+  };
+
+  const resetPassword = async (email: string) => {
+    await requestPasswordReset(email);
+  };
+
+  const saveRecoveredPassword = async (password: string) => {
+    if (password.length < 8) {
+      throw new Error('Your password must be at least 8 characters.');
+    }
+    await updateCloudPassword(password);
+    setPasswordRecovery(false);
+    window.history.replaceState({}, document.title, window.location.pathname);
   };
 
   const openTemplate = (template: TemplateId) => {
@@ -162,6 +238,8 @@ export function useMediaFactory() {
 
   return {
     activeProject: data.projects.find(project => project.id === activeId),
+    authError,
+    authReady,
     data,
     finishOnboarding,
     login,
@@ -170,6 +248,7 @@ export function useMediaFactory() {
     openTemplate,
     page,
     patchProject,
+    passwordRecovery,
     setBackgroundGraphicLock,
     applyBackgroundGraphicToAll,
     setData,
@@ -177,5 +256,7 @@ export function useMediaFactory() {
     storageIssue,
     retryStorage,
     register,
+    resetPassword,
+    saveRecoveredPassword,
   };
 }
