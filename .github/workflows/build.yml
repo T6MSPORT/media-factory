@@ -25,6 +25,6 @@ jobs:
 
       - name: Build application
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: https://eqyybdqnwcqetlaqgjzi.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_rA8Mc164SPGI0Yd4l_a3Jg_RLi_8zlx
         run: npm run build

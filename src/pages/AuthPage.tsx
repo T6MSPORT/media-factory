@@ -64,6 +64,62 @@ export function AuthPage({
   );
 }
 
+export function WorkspaceMigration({
+  email,
+  importExisting,
+  startFresh,
+}: {
+  email: string;
+  importExisting: () => Promise<void>;
+  startFresh: () => Promise<void>;
+}) {
+  const [busy, setBusy] = useState<'import' | 'fresh'>();
+  const [error, setError] = useState('');
+
+  const choose = async (choice: 'import' | 'fresh') => {
+    setBusy(choice);
+    setError('');
+    try {
+      await (choice === 'import' ? importExisting() : startFresh());
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Your workspace could not be prepared.');
+      setBusy(undefined);
+    }
+  };
+
+  return (
+    <AuthShell>
+      <div className="auth-card auth-card-compact">
+        <div className="auth-icon"><Cloud size={28} /></div>
+        <span className="eyebrow">EXISTING WORK FOUND</span>
+        <h1>Choose this account’s workspace</h1>
+        <p>
+          This browser contains Media Factory work created before cloud accounts were added.
+          Choose whether to move it into <b>{email}</b> or begin with a clean workspace.
+        </p>
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button
+          type="button"
+          className="primary wide auth-submit"
+          disabled={Boolean(busy)}
+          onClick={() => void choose('import')}
+        >
+          {busy === 'import' ? 'Moving existing work…' : 'Move existing work to this account'}
+        </button>
+        <button
+          type="button"
+          className="auth-text-button"
+          disabled={Boolean(busy)}
+          onClick={() => void choose('fresh')}
+        >
+          {busy === 'fresh' ? 'Creating workspace…' : 'Start with a clean workspace'}
+        </button>
+        <p className="auth-switch">Work is never shared automatically between different accounts.</p>
+      </div>
+    </AuthShell>
+  );
+}
+
 type LoginFormProps = {
   email: string;
   authError?: string;
@@ -274,7 +330,7 @@ export function RegistrationForm({
         </div>
 
         {(error || authError) && <p className="form-error" role="alert">{error || authError}</p>}
-        <button className="primary wide auth-submit" disabled={!valid || busy || Boolean(authError)}>
+        <button className="primary wide auth-submit" disabled={!valid || busy}>
           {busy ? 'Creating account…' : 'Create account and continue'}
         </button>
         {showLogin && (

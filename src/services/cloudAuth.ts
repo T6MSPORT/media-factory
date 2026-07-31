@@ -1,12 +1,8 @@
 import { createClient, type AuthChangeEvent, type Session, type SupabaseClient, type User } from '@supabase/supabase-js';
 import type { Account } from '../types';
 
-const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL?.trim() ||
-  'https://eqyybdqnwcqetlaqgjzi.supabase.co';
-const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ||
-  'sb_publishable_rA8Mc164SPGI0Yd4l_a3Jg_RLi_8zlx';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
 type ProfileRow = {
   user_id: string;
@@ -23,6 +19,7 @@ export type RegistrationResult = {
 export type AuthListener = (
   event: AuthChangeEvent,
   account: Account | null,
+  error?: Error,
 ) => void;
 
 let client: SupabaseClient | undefined;
@@ -98,12 +95,26 @@ async function profileForUser(authClient: SupabaseClient, user: User): Promise<P
     .from('profiles')
     .select('user_id, driver_name, created_at')
     .eq('user_id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
     throw new Error('Your cloud driver profile could not be loaded.');
   }
-  return data as ProfileRow;
+  if (data) return data as ProfileRow;
+
+  // New deployments expose this repair RPC. It recreates a missing profile
+  // from the immutable name captured when the auth user was registered.
+  const { data: repaired, error: repairError } = await authClient.rpc('ensure_driver_profile');
+  const repairedRow = Array.isArray(repaired) ? repaired[0] : repaired;
+  if (repairedRow?.user_id && repairedRow?.driver_name) {
+    return repairedRow as ProfileRow;
+  }
+
+  throw new Error(
+    repairError
+      ? 'Your driver profile is missing and automatic repair is not available.'
+      : 'Your driver profile is missing and could not be repaired.',
+  );
 }
 
 function accountFrom(user: User, profile: ProfileRow): Account {
@@ -221,7 +232,11 @@ export function listenForCloudAuth(listener: AuthListener): () => void {
       window.setTimeout(() => {
         void profileForUser(authClient, session.user)
           .then(profile => listener(event, accountFrom(session.user, profile)))
-          .catch(() => listener(event, null));
+          .catch(reason => listener(
+            event,
+            null,
+            reason instanceof Error ? reason : new Error('Your cloud profile could not be loaded.'),
+          ));
       }, 0);
     },
   );

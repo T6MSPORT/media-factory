@@ -6,13 +6,13 @@ Media Factory uses Supabase Auth for email/password accounts and a protected `pr
 table for the driver's permanent name.
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/202607300001_cloud_auth.sql` in the Supabase SQL editor.
+2. Run the SQL files in `supabase/migrations` in filename order in the Supabase SQL editor.
 3. Add `https://t6msport.github.io/media-factory/` as the Site URL and an allowed redirect URL
    under Authentication URL Configuration.
 4. Copy `.env.example` to `.env.local` for local development and add the project URL and
    publishable anon key.
-5. Add the same values to the GitHub repository as Actions secrets named
-   `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+5. The production workflow contains the project URL and browser-safe publishable key explicitly.
+   Supabase security is enforced by row-level security, not by hiding the publishable key.
 
 Passwords and sessions are handled by Supabase. The browser stores only the cloud account
 identity and the user's Media Factory work. The database trigger prevents a driver name from

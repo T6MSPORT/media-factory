@@ -14,11 +14,12 @@ const server = await createServer({
 });
 const {
   applyCloudAccount,
-  clearCloudSession,
+  hasWorkspaceContent,
   markEmailConfirmationPending,
+  signedOutData,
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
-const { ConfirmationForm, RegistrationForm } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
+const { ConfirmationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
 const { readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
@@ -49,16 +50,34 @@ test('a cloud account locks the canonical driver name', () => {
   assert.equal(authenticated.onboardingComplete, true);
 });
 
-test('sign out clears only the cloud session and retains local work', () => {
-  const authenticated = applyCloudAccount(starter, account);
-  const signedOut = clearCloudSession({
-    ...authenticated,
-    projects: [{ id: 'saved-graphic' }],
-  });
-
+test('sign out removes the previous account workspace from application memory', () => {
+  const signedOut = signedOutData('rich@example.com');
   assert.equal(signedOut.authentication.signedIn, false);
-  assert.equal(signedOut.authentication.account.id, account.id);
-  assert.equal(signedOut.projects[0].id, 'saved-graphic');
+  assert.equal(signedOut.authentication.account, undefined);
+  assert.equal(signedOut.authentication.lastEmail, 'rich@example.com');
+  assert.deepEqual(signedOut.projects, []);
+  assert.equal(signedOut.profile.driverImage, undefined);
+});
+
+test('workspace migration is offered explicitly instead of sharing legacy work', () => {
+  const legacy = {
+    ...starter,
+    onboardingComplete: true,
+    projects: [{ id: 'saved-graphic' }],
+  };
+  assert.equal(hasWorkspaceContent(legacy), true);
+  assert.equal(hasWorkspaceContent(starter), false);
+
+  const markup = renderToStaticMarkup(
+    React.createElement(WorkspaceMigration, {
+      email: 'new-driver@example.com',
+      importExisting: async () => {},
+      startFresh: async () => {},
+    }),
+  );
+  assert.match(markup, /Move existing work to this account/);
+  assert.match(markup, /Start with a clean workspace/);
+  assert.match(markup, /never shared automatically/);
 });
 
 test('email confirmation keeps the new cloud account signed out', () => {

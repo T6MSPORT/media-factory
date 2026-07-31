@@ -14,6 +14,7 @@ import {
   SponsorsPage,
   TemplateLibraryPage,
 } from './pages';
+import { WorkspaceMigration } from './pages/AuthPage';
 
 export default function App() {
   const {
@@ -27,6 +28,9 @@ export default function App() {
     openTemplate,
     login,
     logout,
+    migrationRequired,
+    importLegacyWorkspace,
+    startFreshWorkspace,
     page,
     patchProject,
     passwordRecovery,
@@ -60,6 +64,16 @@ export default function App() {
           saveRecoveredPassword={saveRecoveredPassword}
         />
       </>
+    );
+  }
+
+  if (migrationRequired) {
+    return (
+      <WorkspaceMigration
+        email={data.authentication.account?.email || ''}
+        importExisting={importLegacyWorkspace}
+        startFresh={startFreshWorkspace}
+      />
     );
   }
 

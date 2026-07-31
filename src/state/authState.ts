@@ -1,4 +1,5 @@
 import type { Account, Data } from '../types';
+import { starter } from '../store';
 
 export const MINIMUM_PASSWORD_LENGTH = 8;
 
@@ -40,20 +41,33 @@ export function applyCloudAccount(
   };
 }
 
-export function clearCloudSession(data: Data): Data {
-  return {
-    ...data,
-    authentication: {
-      ...data.authentication,
-      signedIn: false,
-      pendingEmailConfirmation: false,
-    },
-  };
-}
-
 export function markEmailConfirmationPending(
   data: Data,
   account: Account,
 ): Data {
   return applyCloudAccount(data, account, false);
+}
+
+export function signedOutData(lastEmail?: string): Data {
+  return {
+    ...structuredClone(starter),
+    authentication: {
+      signedIn: false,
+      ...(lastEmail ? { lastEmail: lastEmail.trim().toLowerCase() } : {}),
+    },
+  };
+}
+
+export function hasWorkspaceContent(data: Data): boolean {
+  return Boolean(
+    data.onboardingComplete ||
+    data.profile.name ||
+    data.profile.number ||
+    data.profile.team ||
+    data.profile.driverImage ||
+    data.profile.teamLogo ||
+    data.profile.competitionLogo ||
+    data.sponsors.length ||
+    data.projects.length,
+  );
 }

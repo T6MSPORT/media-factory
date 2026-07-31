@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PageId } from '../config/navigation';
 import {
   addProject,
@@ -10,8 +10,9 @@ import {
 } from '../state/mediaFactoryState';
 import {
   applyCloudAccount,
-  clearCloudSession,
+  hasWorkspaceContent,
   markEmailConfirmationPending,
+  signedOutData,
   validateRegistration,
 } from '../state/authState';
 import {
@@ -26,23 +27,33 @@ import {
   signOutCloud,
   updateCloudPassword,
 } from '../services/cloudAuth';
-import { loadDurableData, saveDurableData } from '../durableStore';
+import {
+  deleteLegacyData,
+  loadAccountData,
+  loadDurableData,
+  saveAccountData,
+} from '../durableStore';
 import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
-import type { Data, Project, TemplateId } from '../types';
+import { starter } from '../store';
+import type { Account, Data, Project, TemplateId } from '../types';
 
 export function useMediaFactory() {
   const initial = useRef(loadResult()).current;
-  const [data, setData] = useState<Data>(initial.data);
+  const [data, setData] = useState<Data>(() =>
+    signedOutData(initial.data.authentication.lastEmail),
+  );
   const [storageIssue, setStorageIssue] = useState<StorageIssue | undefined>(initial.issue);
-  const [storageReady, setStorageReady] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>();
+  const [migrationCandidate, setMigrationCandidate] = useState<Data>();
   const [passwordRecovery, setPasswordRecovery] = useState(
     () => window.location.hash.includes('type=recovery'),
   );
   const [page, setPage] = useState<PageId>('home');
   const [activeId, setActiveId] = useState<string>();
   const dataRef = useRef(data);
+  const legacyRef = useRef<Data | undefined>(undefined);
   dataRef.current = data;
 
   const clearLegacyStorage = () => {
@@ -53,41 +64,62 @@ export function useMediaFactory() {
     }
   };
 
-  useEffect(() => {
-    let cancelled = false;
+  const activateAccount = useCallback(async (
+    account: Account,
+    suppliedLegacy?: Data,
+  ) => {
+    let saved: Data | undefined;
+    try {
+      saved = await loadAccountData(account.id);
+      setStorageIssue(undefined);
+    } catch (error) {
+      setStorageIssue({ operation: 'load', error });
+    }
 
-    const initialiseStorage = async () => {
-      try {
-        const savedData = await loadDurableData();
-        if (cancelled) return;
+    if (saved) {
+      setMigrationCandidate(undefined);
+      setActiveWorkspaceId(account.id);
+      setData(applyCloudAccount(saved, account));
+      return;
+    }
 
-        if (savedData) {
-          setData(savedData);
-        } else {
-          if (initial.issue?.operation === 'load') {
-            setStorageIssue(initial.issue);
-            return;
-          }
-          await saveDurableData(dataRef.current);
+    const legacy = suppliedLegacy || legacyRef.current;
+    if (legacy && hasWorkspaceContent(legacy)) {
+      const legacyEmail = legacy.authentication.lastEmail || legacy.authentication.account?.email;
+      if (legacyEmail?.toLowerCase() === account.email.toLowerCase()) {
+        const migrated = applyCloudAccount(legacy, account);
+        setMigrationCandidate(undefined);
+        setActiveWorkspaceId(account.id);
+        setData(migrated);
+        try {
+          await saveAccountData(account.id, migrated);
+          await deleteLegacyData();
+          clearLegacyStorage();
+          legacyRef.current = undefined;
+        } catch (error) {
+          setStorageIssue({ operation: 'save', error });
         }
-
-        if (cancelled) return;
-        clearLegacyStorage();
-        setStorageIssue(undefined);
-        setStorageReady(true);
-      } catch (error) {
-        if (!cancelled) setStorageIssue({ operation: 'load', error });
+        return;
       }
-    };
 
-    void initialiseStorage();
-    return () => {
-      cancelled = true;
-    };
-  }, [initial]);
+      setActiveWorkspaceId(undefined);
+      setMigrationCandidate(legacy);
+      setData(applyCloudAccount(starter, account));
+      return;
+    }
+
+    const fresh = applyCloudAccount(starter, account);
+    setMigrationCandidate(undefined);
+    setActiveWorkspaceId(account.id);
+    setData(fresh);
+    try {
+      await saveAccountData(account.id, fresh);
+    } catch (error) {
+      setStorageIssue({ operation: 'save', error });
+    }
+  }, []);
 
   useEffect(() => {
-    if (!storageReady) return;
     if (!isCloudAuthConfigured()) {
       setAuthError('Cloud login has not been configured yet.');
       setAuthReady(true);
@@ -95,22 +127,40 @@ export function useMediaFactory() {
     }
 
     let cancelled = false;
-    const stopListening = listenForCloudAuth((event, account) => {
+    const legacyPromise = loadDurableData()
+      .then(saved => {
+        if (cancelled) return undefined;
+        const legacy = saved || (hasWorkspaceContent(initial.data) ? initial.data : undefined);
+        legacyRef.current = legacy;
+        return legacy;
+      })
+      .catch(error => {
+        if (!cancelled) setStorageIssue({ operation: 'load', error });
+        const fallback = hasWorkspaceContent(initial.data) ? initial.data : undefined;
+        legacyRef.current = fallback;
+        return fallback;
+      });
+
+    const stopListening = listenForCloudAuth((event, account, error) => {
       if (cancelled) return;
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
-      if (account) {
-        setData(current => applyCloudAccount(current, account));
-      } else if (event === 'SIGNED_OUT') {
-        setData(current => clearCloudSession(current));
+      if (error) setAuthError(error.message);
+      if (event === 'SIGNED_OUT') {
+        const lastEmail = dataRef.current.authentication.account?.email;
+        setActiveWorkspaceId(undefined);
+        setMigrationCandidate(undefined);
+        setData(signedOutData(lastEmail));
       }
     });
 
     void currentCloudAccount()
-      .then(account => {
+      .then(async account => {
         if (cancelled) return;
-        setData(current =>
-          account ? applyCloudAccount(current, account) : clearCloudSession(current),
-        );
+        if (account) {
+          await activateAccount(account, await legacyPromise);
+        } else {
+          setData(current => signedOutData(current.authentication.lastEmail));
+        }
         setAuthError('');
       })
       .catch(error => {
@@ -126,15 +176,15 @@ export function useMediaFactory() {
       cancelled = true;
       stopListening();
     };
-  }, [storageReady]);
+  }, [activateAccount, initial]);
 
   useEffect(() => {
-    if (!storageReady) return;
+    if (!activeWorkspaceId || !data.authentication.signedIn || migrationCandidate) return;
 
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       try {
-        await saveDurableData(data);
+        await saveAccountData(activeWorkspaceId, data);
         if (!cancelled) setStorageIssue(undefined);
       } catch (error) {
         if (!cancelled) setStorageIssue({ operation: 'save', error });
@@ -145,19 +195,12 @@ export function useMediaFactory() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [data, storageReady]);
+  }, [activeWorkspaceId, data, migrationCandidate]);
 
   const retryStorage = async () => {
     try {
-      if (storageIssue?.operation === 'load') {
-        const savedData = await loadDurableData();
-        if (savedData) setData(savedData);
-        else await saveDurableData(dataRef.current);
-        clearLegacyStorage();
-        setStorageReady(true);
-      } else {
-        await saveDurableData(dataRef.current);
-      }
+      if (!activeWorkspaceId) throw new Error('Sign in before retrying browser storage.');
+      await saveAccountData(activeWorkspaceId, dataRef.current);
       setStorageIssue(undefined);
     } catch (error) {
       setStorageIssue({
@@ -177,19 +220,22 @@ export function useMediaFactory() {
     password: string,
     profile: Data['profile'],
   ) => {
+    setAuthError('');
     validateRegistration(email, password, profile.name);
     const result = await registerCloudAccount(email, password, profile.name);
-    const registered = result.signedIn
-      ? applyCloudAccount(dataRef.current, result.account)
-      : markEmailConfirmationPending(dataRef.current, result.account);
-    setData(registered);
-    if (result.signedIn) setPage('templates');
+    if (result.signedIn) {
+      await activateAccount(result.account);
+      setPage('templates');
+    } else {
+      setData(markEmailConfirmationPending(signedOutData(email), result.account));
+    }
   };
 
   const login = async (email: string, password: string) => {
     try {
+      setAuthError('');
       const account = await signInCloud(email, password);
-      setData(applyCloudAccount(dataRef.current, account));
+      await activateAccount(account);
       setPage('home');
     } catch (error) {
       if (isEmailConfirmationError(error) && dataRef.current.authentication.account) {
@@ -202,13 +248,17 @@ export function useMediaFactory() {
   };
 
   const logout = async () => {
+    const lastEmail = dataRef.current.authentication.account?.email;
     await signOutCloud();
-    setData(current => clearCloudSession(current));
+    setActiveWorkspaceId(undefined);
+    setMigrationCandidate(undefined);
+    setData(signedOutData(lastEmail));
     setActiveId(undefined);
     setPage('home');
   };
 
   const resetPassword = async (email: string) => {
+    setAuthError('');
     await requestPasswordReset(email);
   };
 
@@ -222,7 +272,45 @@ export function useMediaFactory() {
     }
     await updateCloudPassword(password);
     setPasswordRecovery(false);
-    window.history.replaceState({}, document.title, window.location.pathname);
+    window.history.replaceState(
+      {},
+      document.title,
+      `${window.location.pathname}${window.location.search}`,
+    );
+  };
+
+  const importLegacyWorkspace = async () => {
+    const account = dataRef.current.authentication.account;
+    if (!account || !migrationCandidate) return;
+    const migrated = applyCloudAccount(migrationCandidate, account);
+    setActiveWorkspaceId(account.id);
+    setMigrationCandidate(undefined);
+    setData(migrated);
+    try {
+      await saveAccountData(account.id, migrated);
+      await deleteLegacyData();
+      clearLegacyStorage();
+      legacyRef.current = undefined;
+    } catch (error) {
+      setStorageIssue({ operation: 'save', error });
+    }
+  };
+
+  const startFreshWorkspace = async () => {
+    const account = dataRef.current.authentication.account;
+    if (!account) return;
+    const fresh = applyCloudAccount(starter, account);
+    setActiveWorkspaceId(account.id);
+    setMigrationCandidate(undefined);
+    setData(fresh);
+    try {
+      await saveAccountData(account.id, fresh);
+      await deleteLegacyData();
+      clearLegacyStorage();
+      legacyRef.current = undefined;
+    } catch (error) {
+      setStorageIssue({ operation: 'save', error });
+    }
   };
 
   const openTemplate = (template: TemplateId) => {
@@ -259,6 +347,9 @@ export function useMediaFactory() {
     finishOnboarding,
     login,
     logout,
+    migrationRequired: Boolean(migrationCandidate),
+    importLegacyWorkspace,
+    startFreshWorkspace,
     openProject,
     openTemplate,
     page,
