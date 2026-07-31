@@ -48,8 +48,23 @@ export function isEmailConfirmationError(error: unknown): boolean {
     error.message === 'Confirm your email before signing in.';
 }
 
-export function readableAuthError(message: string, code?: string): Error {
+type AuthOperation = 'general' | 'recovery';
+
+export function readableAuthError(
+  message: string,
+  code?: string,
+  operation: AuthOperation = 'general',
+): Error {
+  const trimmed = message.trim();
   const lower = message.toLowerCase();
+  // Some Supabase SMTP failures currently arrive at the browser with an empty
+  // JSON object as their message. Keep recovery failures actionable instead of
+  // exposing the provider's unhelpful `Account service error: {}` response.
+  if (operation === 'recovery' && (trimmed === '{}' || !trimmed)) {
+    return new Error(
+      'The password reset email could not be sent. Check the Media Factory email service and try again.',
+    );
+  }
   if (
     lower.includes('error sending confirmation email') ||
     lower.includes('error sending recovery email') ||
@@ -202,7 +217,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
     email.trim().toLowerCase(),
     { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
   );
-  if (error) throw readableAuthError(error.message, error.code);
+  if (error) throw readableAuthError(error.message, error.code, 'recovery');
 }
 
 export async function resendSignupConfirmation(email: string): Promise<void> {
