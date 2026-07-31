@@ -114,6 +114,10 @@ test('cloud auth reports email delivery and rate-limit failures clearly', () => 
     readableAuthError('Database error saving new user', 'unexpected_failure').message,
     'Account service error: Database error saving new user (unexpected_failure)',
   );
+  assert.equal(
+    readableAuthError('{}', 'unexpected_failure', 'recovery').message,
+    'The password reset email could not be sent. Check the Media Factory email service and try again.',
+  );
 });
 
 test('registration rejects incomplete identity and weak account details', () => {
