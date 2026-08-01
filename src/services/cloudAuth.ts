@@ -238,17 +238,25 @@ export async function updateCloudPassword(password: string): Promise<void> {
 
 export type AuthLinkResult = 'invite' | 'recovery' | null;
 
-export function authLinkFromSearch(search: string): Exclude<AuthLinkResult, null> | null {
-  const params = new URLSearchParams(search);
+function authLinkParams(value: string): URLSearchParams {
+  return new URLSearchParams(value.replace(/^[?#]/, ''));
+}
+
+export function authLinkFromSearch(value: string): Exclude<AuthLinkResult, null> | null {
+  const params = authLinkParams(value);
+  if (params.get('invite')) return 'invite';
   const tokenHash = params.get('token_hash');
   const type = params.get('type');
   return tokenHash && (type === 'invite' || type === 'recovery') ? type : null;
 }
 
 export async function consumeAuthLink(): Promise<AuthLinkResult> {
-  const params = new URLSearchParams(window.location.search);
-  const tokenHash = params.get('token_hash');
-  const type = authLinkFromSearch(window.location.search);
+  const source = authLinkFromSearch(window.location.search)
+    ? window.location.search
+    : window.location.hash;
+  const params = authLinkParams(source);
+  const tokenHash = params.get('invite') ?? params.get('token_hash');
+  const type = authLinkFromSearch(source);
 
   if (!tokenHash || !type) return null;
 
