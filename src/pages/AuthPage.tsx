@@ -7,7 +7,6 @@ type AuthPageProps = {
   data: Data;
   authError?: string;
   passwordRecovery?: boolean;
-  register: (email: string, password: string, profile: DriverProfile) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -18,15 +17,11 @@ export function AuthPage({
   data,
   authError,
   passwordRecovery,
-  register,
   login,
   resendConfirmation,
   resetPassword,
   saveRecoveredPassword,
 }: AuthPageProps) {
-  const [mode, setMode] = useState<'login' | 'register'>(
-    data.authentication.account || data.authentication.lastEmail ? 'login' : 'register',
-  );
   const [confirmationDismissed, setConfirmationDismissed] = useState(false);
 
   if (passwordRecovery) {
@@ -40,26 +35,17 @@ export function AuthPage({
         resendConfirmation={resendConfirmation}
         showLogin={() => {
           setConfirmationDismissed(true);
-          setMode('login');
         }}
       />
     );
   }
 
-  return mode === 'login' ? (
+  return (
     <LoginForm
       email={data.authentication.account?.email || data.authentication.lastEmail || ''}
       authError={authError}
       login={login}
       resetPassword={resetPassword}
-      showRegistration={() => setMode('register')}
-    />
-  ) : (
-    <RegistrationForm
-      data={data}
-      authError={authError}
-      register={register}
-      showLogin={() => setMode('login')}
     />
   );
 }
@@ -125,7 +111,6 @@ type LoginFormProps = {
   authError?: string;
   login: (email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  showRegistration: () => void;
 };
 
 export function LoginForm({
@@ -133,7 +118,6 @@ export function LoginForm({
   authError,
   login,
   resetPassword,
-  showRegistration,
 }: LoginFormProps) {
   const [email, setEmail] = useState(accountEmail);
   const [password, setPassword] = useState('');
@@ -176,9 +160,9 @@ export function LoginForm({
     <AuthShell>
       <form className="auth-card auth-card-compact" onSubmit={submit}>
         <div className="auth-icon"><LockKeyhole size={28} /></div>
-        <span className="eyebrow">WELCOME BACK</span>
+        <span className="auth-beta-badge">CLOSED BETA</span>
         <h1>Sign in to Media Factory</h1>
-        <p>Your account works on any device.</p>
+        <p>Media Factory is currently available to invited beta testers only.</p>
         <div className="auth-fields">
           <TextField
             label="Email address"
@@ -203,10 +187,13 @@ export function LoginForm({
         <button type="button" className="auth-text-button" onClick={forgotPassword} disabled={busy}>
           Forgot password?
         </button>
-        <p className="auth-switch">
-          New to Media Factory?{' '}
-          <button type="button" onClick={showRegistration}>Create an account</button>
-        </p>
+        <div className="auth-beta-access">
+          <b>Interested in testing Media Factory?</b>
+          <span>Places are limited while we finish the beta.</span>
+          <a href="mailto:rich@t6msport.co.uk?subject=Media%20Factory%20beta%20access">
+            Request beta access
+          </a>
+        </div>
       </form>
     </AuthShell>
   );
