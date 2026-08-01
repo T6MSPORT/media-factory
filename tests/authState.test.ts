@@ -184,6 +184,7 @@ test('invited profiles replace the email fallback once and then lock the driver 
   assert.match(migration, /length\(clean_name\) > 80/);
   assert.match(migration, /jsonb_build_object\('driver_name', clean_name\)/);
   assert.match(migration, /Driver profile has already been completed/);
+  assert.match(migration, /from anon/);
 });
 
 test('invited users are prompted to create their password', () => {

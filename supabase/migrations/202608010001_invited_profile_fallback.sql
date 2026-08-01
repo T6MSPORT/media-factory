@@ -67,4 +67,5 @@ end;
 $$;
 
 revoke all on function public.ensure_driver_profile() from public;
+revoke all on function public.ensure_driver_profile() from anon;
 grant execute on function public.ensure_driver_profile() to authenticated;

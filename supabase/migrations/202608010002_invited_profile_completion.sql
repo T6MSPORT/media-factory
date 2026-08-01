@@ -80,4 +80,5 @@ end;
 $$;
 
 revoke all on function public.complete_invited_driver_profile(text) from public;
+revoke all on function public.complete_invited_driver_profile(text) from anon;
 grant execute on function public.complete_invited_driver_profile(text) to authenticated;
