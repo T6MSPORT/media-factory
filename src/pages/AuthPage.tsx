@@ -9,7 +9,12 @@ type AuthPageProps = {
   passwordSetupMode?: 'invite' | 'recovery' | null;
   inviteActivationMode?: boolean;
   login: (email: string, password: string) => Promise<void>;
-  activateInvitation: (email: string, code: string, password: string) => Promise<void>;
+  activateInvitation: (
+    email: string,
+    code: string,
+    password: string,
+    driverName: string,
+  ) => Promise<void>;
   showInviteActivation: () => void;
   hideInviteActivation: () => void;
   resendConfirmation: (email: string) => Promise<void>;
@@ -229,10 +234,16 @@ export function InviteActivationForm({
   showLogin,
 }: {
   email: string;
-  activateInvitation: (email: string, code: string, password: string) => Promise<void>;
+  activateInvitation: (
+    email: string,
+    code: string,
+    password: string,
+    driverName: string,
+  ) => Promise<void>;
   showLogin: () => void;
 }) {
   const [email, setEmail] = useState(accountEmail);
+  const [driverName, setDriverName] = useState('');
   const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -241,6 +252,8 @@ export function InviteActivationForm({
   const cleanCode = code.replace(/[\s-]/g, '');
   const valid =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
+    driverName.trim().length >= 1 &&
+    driverName.trim().length <= 80 &&
     /^\d{6,8}$/.test(cleanCode) &&
     password.length >= 8 &&
     password === confirmPassword;
@@ -251,7 +264,7 @@ export function InviteActivationForm({
     setBusy(true);
     setError('');
     try {
-      await activateInvitation(email, cleanCode, password);
+      await activateInvitation(email, cleanCode, password, driverName);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Invitation could not be activated.');
       setBusy(false);
@@ -264,8 +277,15 @@ export function InviteActivationForm({
         <div className="auth-icon"><KeyRound size={28} /></div>
         <span className="eyebrow">CLOSED BETA INVITE</span>
         <h1>Activate your account</h1>
-        <p>Enter the email address and invitation code from your email, then create your password.</p>
+        <p>Enter your driver name, email address and invitation code, then create your password.</p>
         <div className="auth-fields">
+          <TextField
+            label="Driver name"
+            value={driverName}
+            autoComplete="name"
+            placeholder="Your full or racing name"
+            onChange={setDriverName}
+          />
           <TextField
             label="Email address"
             type="email"

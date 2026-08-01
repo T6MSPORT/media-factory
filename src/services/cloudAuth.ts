@@ -258,10 +258,15 @@ export async function activateInvitedCloudAccount(
   email: string,
   code: string,
   password: string,
+  driverName: string,
 ): Promise<Account> {
   const authClient = getClient();
   const normalisedEmail = email.trim().toLowerCase();
   const token = normaliseInvitationCode(code);
+  const name = driverName.trim();
+  if (!name || name.length > 80) {
+    throw new Error('Driver name is required and must be 80 characters or fewer.');
+  }
   const { data, error } = await authClient.auth.verifyOtp({
     email: normalisedEmail,
     token,
@@ -273,10 +278,23 @@ export async function activateInvitedCloudAccount(
     throw new Error('The invitation could not be activated. Ask for a new invitation and try again.');
   }
 
+  const { data: completedProfile, error: profileError } = await authClient.rpc(
+    'complete_invited_driver_profile',
+    { requested_driver_name: name },
+  );
+  if (profileError) {
+    throw new Error('Your driver name could not be saved. Please try again.');
+  }
+
   const { error: passwordError } = await authClient.auth.updateUser({ password });
   if (passwordError) throw readableAuthError(passwordError.message, passwordError.code, 'invite');
 
-  return accountFrom(data.user, await profileForUser(authClient, data.user));
+  const profile = Array.isArray(completedProfile) ? completedProfile[0] : completedProfile;
+  if (!profile?.user_id || !profile?.driver_name) {
+    throw new Error('Your driver name could not be saved. Please try again.');
+  }
+
+  return accountFrom(data.user, profile as ProfileRow);
 }
 
 export type AuthLinkResult = 'invite' | 'recovery' | null;

@@ -290,9 +290,14 @@ export function useMediaFactory() {
     );
   };
 
-  const activateInvitation = async (email: string, code: string, password: string) => {
+  const activateInvitation = async (
+    email: string,
+    code: string,
+    password: string,
+    driverName: string,
+  ) => {
     setAuthError('');
-    const account = await activateInvitedCloudAccount(email, code, password);
+    const account = await activateInvitedCloudAccount(email, code, password, driverName);
     await activateAccount(account);
     setInviteActivationMode(false);
     window.history.replaceState({}, document.title, window.location.pathname);

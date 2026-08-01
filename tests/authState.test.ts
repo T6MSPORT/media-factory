@@ -164,10 +164,26 @@ test('invitation activation accepts the delivered code without putting it in the
   );
 
   assert.match(markup, /Activate your account/);
+  assert.match(markup, /Driver name/);
   assert.match(markup, /Invitation code/);
   assert.match(markup, /Create password/);
   assert.match(markup, /Confirm password/);
   assert.doesNotMatch(markup, /token_hash/);
+});
+
+test('invited profiles replace the email fallback once and then lock the driver name', () => {
+  const migration = readFileSync(
+    fileURLToPath(new URL(
+      '../supabase/migrations/202608010002_invited_profile_completion.sql',
+      import.meta.url,
+    )),
+    'utf8',
+  );
+
+  assert.match(migration, /complete_invited_driver_profile/);
+  assert.match(migration, /length\(clean_name\) > 80/);
+  assert.match(migration, /jsonb_build_object\('driver_name', clean_name\)/);
+  assert.match(migration, /Driver profile has already been completed/);
 });
 
 test('invited users are prompted to create their password', () => {
