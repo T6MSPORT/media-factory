@@ -374,6 +374,12 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .auth-text-button:hover,.auth-switch button:hover{color:#fff}
 .auth-switch{text-align:center;font-size:12px;margin:20px 0 0!important;color:#7f8896!important}
 .auth-switch button{border:0;background:transparent;color:#ef6a6a;padding:0;cursor:pointer;font-weight:800}
+.auth-beta-badge{display:inline-flex;align-items:center;width:max-content;border:1px solid #ef444466;background:#ef444414;color:#ff7777;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;letter-spacing:1.8px}
+.auth-beta-access{margin-top:20px;border-top:1px solid #2a2f37;padding-top:18px;display:grid;gap:5px;text-align:center}
+.auth-beta-access b{font-size:13px;color:#e8ebef}
+.auth-beta-access span{font-size:12px;color:#7f8896}
+.auth-beta-access a{width:max-content;margin:5px auto 0;color:#ef6a6a;font-size:12px;font-weight:800;text-decoration:none}
+.auth-beta-access a:hover{color:#fff}
 .form-notice{color:#8fe1a8!important;margin:10px 0!important;font-size:13px}
 .auth-icon-success{background:#258653}
 .auth-brand-copy>svg{display:block;margin-bottom:18px}
