@@ -123,17 +123,20 @@ test('cloud auth reports email delivery and rate-limit failures clearly', () => 
 test('auth callbacks accept invite and recovery token hashes only', () => {
   assert.equal(authLinkFromSearch('?token_hash=invite-token&type=invite'), 'invite');
   assert.equal(authLinkFromSearch('?token_hash=recovery-token&type=recovery'), 'recovery');
+  assert.equal(authLinkFromSearch('?invite=invite-token'), 'invite');
+  assert.equal(authLinkFromSearch('#type=invite&token_hash=invite-token'), 'invite');
   assert.equal(authLinkFromSearch('?type=invite'), null);
   assert.equal(authLinkFromSearch('?token_hash=token&type=signup'), null);
 });
 
-test('invitation email routes token verification through Media Factory', () => {
+test('invitation email uses one scanner-safe query parameter', () => {
   const invitationTemplate =
-    '<a href="{{ .SiteURL }}?token_hash={{ .TokenHash }}&type=invite">Join Media Factory</a>';
+    '<a href="{{ .SiteURL }}?invite={{ .TokenHash }}">Join Media Factory</a>';
 
   assert.match(invitationTemplate, /\.SiteURL/);
-  assert.match(invitationTemplate, /token_hash=\{\{ \.TokenHash \}\}/);
-  assert.match(invitationTemplate, /type=invite/);
+  assert.match(invitationTemplate, /invite=\{\{ \.TokenHash \}\}/);
+  assert.match(invitationTemplate, /\?invite=\{\{ \.TokenHash \}\}/);
+  assert.doesNotMatch(invitationTemplate, /&/);
   assert.doesNotMatch(invitationTemplate, /\.ConfirmationURL/);
 });
 
