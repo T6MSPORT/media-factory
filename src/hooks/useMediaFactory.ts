@@ -17,6 +17,7 @@ import {
 } from '../state/authState';
 import {
   currentCloudAccount,
+  consumeAuthLink,
   isCloudAuthConfigured,
   isEmailConfirmationError,
   listenForCloudAuth,
@@ -47,8 +48,8 @@ export function useMediaFactory() {
   const [authError, setAuthError] = useState('');
   const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>();
   const [migrationCandidate, setMigrationCandidate] = useState<Data>();
-  const [passwordRecovery, setPasswordRecovery] = useState(
-    () => window.location.hash.includes('type=recovery'),
+  const [passwordSetupMode, setPasswordSetupMode] = useState<'invite' | 'recovery' | null>(
+    () => window.location.hash.includes('type=recovery') ? 'recovery' : null,
   );
   const [page, setPage] = useState<PageId>('home');
   const [activeId, setActiveId] = useState<string>();
@@ -143,7 +144,7 @@ export function useMediaFactory() {
 
     const stopListening = listenForCloudAuth((event, account, error) => {
       if (cancelled) return;
-      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+      if (event === 'PASSWORD_RECOVERY') setPasswordSetupMode('recovery');
       if (error) setAuthError(error.message);
       if (event === 'SIGNED_OUT') {
         const lastEmail = dataRef.current.authentication.account?.email;
@@ -153,7 +154,13 @@ export function useMediaFactory() {
       }
     });
 
-    void currentCloudAccount()
+    void consumeAuthLink()
+      .then(linkType => {
+        if (!cancelled && linkType) {
+          setPasswordSetupMode(linkType);
+        }
+        return currentCloudAccount();
+      })
       .then(async account => {
         if (cancelled) return;
         if (account) {
@@ -271,7 +278,7 @@ export function useMediaFactory() {
       throw new Error('Your password must be at least 8 characters.');
     }
     await updateCloudPassword(password);
-    setPasswordRecovery(false);
+    setPasswordSetupMode(null);
     window.history.replaceState(
       {},
       document.title,
@@ -354,7 +361,7 @@ export function useMediaFactory() {
     openTemplate,
     page,
     patchProject,
-    passwordRecovery,
+    passwordSetupMode,
     setBackgroundGraphicLock,
     applyBackgroundGraphicToAll,
     setData,

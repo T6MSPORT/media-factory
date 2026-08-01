@@ -20,7 +20,7 @@ const {
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
 const { AuthPage, ConfirmationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
-const { readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
+const { authLinkFromSearch, readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -118,6 +118,40 @@ test('cloud auth reports email delivery and rate-limit failures clearly', () => 
     readableAuthError('{}', 'unexpected_failure', 'recovery').message,
     'The password reset email could not be sent. Check the Media Factory email service and try again.',
   );
+});
+
+test('auth callbacks accept invite and recovery token hashes only', () => {
+  assert.equal(authLinkFromSearch('?token_hash=invite-token&type=invite'), 'invite');
+  assert.equal(authLinkFromSearch('?token_hash=recovery-token&type=recovery'), 'recovery');
+  assert.equal(authLinkFromSearch('?type=invite'), null);
+  assert.equal(authLinkFromSearch('?token_hash=token&type=signup'), null);
+});
+
+test('invitation email routes token verification through Media Factory', () => {
+  const invitationTemplate =
+    '<a href="{{ .SiteURL }}?token_hash={{ .TokenHash }}&type=invite">Join Media Factory</a>';
+
+  assert.match(invitationTemplate, /\.SiteURL/);
+  assert.match(invitationTemplate, /token_hash=\{\{ \.TokenHash \}\}/);
+  assert.match(invitationTemplate, /type=invite/);
+  assert.doesNotMatch(invitationTemplate, /\.ConfirmationURL/);
+});
+
+test('invited users are prompted to create their password', () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(AuthPage, {
+      data: starter,
+      passwordSetupMode: 'invite',
+      login: async () => {},
+      resendConfirmation: async () => {},
+      resetPassword: async () => {},
+      saveRecoveredPassword: async () => {},
+    }),
+  );
+
+  assert.match(markup, /CLOSED BETA INVITE/);
+  assert.match(markup, /Create your password/);
+  assert.match(markup, /Activate account/);
 });
 
 test('registration rejects incomplete identity and weak account details', () => {

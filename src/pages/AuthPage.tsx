@@ -6,7 +6,7 @@ import type { Data, DriverProfile } from '../types';
 type AuthPageProps = {
   data: Data;
   authError?: string;
-  passwordRecovery?: boolean;
+  passwordSetupMode?: 'invite' | 'recovery' | null;
   login: (email: string, password: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -16,7 +16,7 @@ type AuthPageProps = {
 export function AuthPage({
   data,
   authError,
-  passwordRecovery,
+  passwordSetupMode,
   login,
   resendConfirmation,
   resetPassword,
@@ -24,8 +24,8 @@ export function AuthPage({
 }: AuthPageProps) {
   const [confirmationDismissed, setConfirmationDismissed] = useState(false);
 
-  if (passwordRecovery) {
-    return <ResetPasswordForm savePassword={saveRecoveredPassword} />;
+  if (passwordSetupMode) {
+    return <ResetPasswordForm mode={passwordSetupMode} savePassword={saveRecoveredPassword} />;
   }
 
   if (data.authentication.pendingEmailConfirmation && !confirmationDismissed) {
@@ -386,8 +386,10 @@ export function ConfirmationForm({
 }
 
 function ResetPasswordForm({
+  mode,
   savePassword,
 }: {
+  mode: 'invite' | 'recovery';
   savePassword: (password: string) => Promise<void>;
 }) {
   const [password, setPassword] = useState('');
@@ -413,8 +415,8 @@ function ResetPasswordForm({
     <AuthShell>
       <form className="auth-card auth-card-compact" onSubmit={submit}>
         <div className="auth-icon"><KeyRound size={28} /></div>
-        <span className="eyebrow">ACCOUNT RECOVERY</span>
-        <h1>Choose a new password</h1>
+        <span className="eyebrow">{mode === 'invite' ? 'CLOSED BETA INVITE' : 'ACCOUNT RECOVERY'}</span>
+        <h1>{mode === 'invite' ? 'Create your password' : 'Choose a new password'}</h1>
         <div className="auth-fields">
           <TextField
             label="New password"
@@ -439,7 +441,7 @@ function ResetPasswordForm({
           className="primary wide auth-submit"
           disabled={busy || password.length < 8 || password !== confirmPassword}
         >
-          {busy ? 'Saving…' : 'Save new password'}
+          {busy ? 'Saving…' : mode === 'invite' ? 'Activate account' : 'Save new password'}
         </button>
       </form>
     </AuthShell>

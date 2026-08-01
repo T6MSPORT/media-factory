@@ -236,6 +236,32 @@ export async function updateCloudPassword(password: string): Promise<void> {
   if (error) throw readableAuthError(error.message, error.code);
 }
 
+export type AuthLinkResult = 'invite' | 'recovery' | null;
+
+export function authLinkFromSearch(search: string): Exclude<AuthLinkResult, null> | null {
+  const params = new URLSearchParams(search);
+  const tokenHash = params.get('token_hash');
+  const type = params.get('type');
+  return tokenHash && (type === 'invite' || type === 'recovery') ? type : null;
+}
+
+export async function consumeAuthLink(): Promise<AuthLinkResult> {
+  const params = new URLSearchParams(window.location.search);
+  const tokenHash = params.get('token_hash');
+  const type = authLinkFromSearch(window.location.search);
+
+  if (!tokenHash || !type) return null;
+
+  const { error } = await getClient().auth.verifyOtp({
+    token_hash: tokenHash,
+    type,
+  });
+  if (error) throw readableAuthError(error.message, error.code);
+
+  window.history.replaceState({}, document.title, window.location.pathname);
+  return type;
+}
+
 export function listenForCloudAuth(listener: AuthListener): () => void {
   const authClient = getClient();
   const { data } = authClient.auth.onAuthStateChange(

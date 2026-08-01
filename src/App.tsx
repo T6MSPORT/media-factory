@@ -33,7 +33,7 @@ export default function App() {
     startFreshWorkspace,
     page,
     patchProject,
-    passwordRecovery,
+    passwordSetupMode,
     retryStorage,
     resendConfirmation,
     resetPassword,
@@ -48,14 +48,14 @@ export default function App() {
     return <div className="auth-loading">Connecting to Media Factory…</div>;
   }
 
-  if (passwordRecovery || !data.authentication.signedIn) {
+  if (passwordSetupMode || !data.authentication.signedIn) {
     return (
       <>
         <StorageRecovery issue={storageIssue} retry={retryStorage} />
         <AuthPage
           data={data}
           authError={authError}
-          passwordRecovery={passwordRecovery}
+          passwordSetupMode={passwordSetupMode}
           login={login}
           resendConfirmation={resendConfirmation}
           resetPassword={resetPassword}
