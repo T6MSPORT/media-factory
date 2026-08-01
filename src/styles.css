@@ -168,7 +168,10 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
     grid-auto-flow: row;
     gap: 9px 14px;
     padding: 14px 18px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 
   .controls > h3,
