@@ -35,7 +35,6 @@ export default function App() {
     patchProject,
     passwordRecovery,
     retryStorage,
-    register,
     resendConfirmation,
     resetPassword,
     saveRecoveredPassword,
@@ -57,7 +56,6 @@ export default function App() {
           data={data}
           authError={authError}
           passwordRecovery={passwordRecovery}
-          register={register}
           login={login}
           resendConfirmation={resendConfirmation}
           resetPassword={resetPassword}
