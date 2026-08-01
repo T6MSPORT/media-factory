@@ -7,7 +7,11 @@ type AuthPageProps = {
   data: Data;
   authError?: string;
   passwordSetupMode?: 'invite' | 'recovery' | null;
+  inviteActivationMode?: boolean;
   login: (email: string, password: string) => Promise<void>;
+  activateInvitation: (email: string, code: string, password: string) => Promise<void>;
+  showInviteActivation: () => void;
+  hideInviteActivation: () => void;
   resendConfirmation: (email: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   saveRecoveredPassword: (password: string) => Promise<void>;
@@ -17,7 +21,11 @@ export function AuthPage({
   data,
   authError,
   passwordSetupMode,
+  inviteActivationMode,
   login,
+  activateInvitation,
+  showInviteActivation,
+  hideInviteActivation,
   resendConfirmation,
   resetPassword,
   saveRecoveredPassword,
@@ -26,6 +34,16 @@ export function AuthPage({
 
   if (passwordSetupMode) {
     return <ResetPasswordForm mode={passwordSetupMode} savePassword={saveRecoveredPassword} />;
+  }
+
+  if (inviteActivationMode) {
+    return (
+      <InviteActivationForm
+        email={data.authentication.lastEmail || ''}
+        activateInvitation={activateInvitation}
+        showLogin={hideInviteActivation}
+      />
+    );
   }
 
   if (data.authentication.pendingEmailConfirmation && !confirmationDismissed) {
@@ -46,6 +64,7 @@ export function AuthPage({
       authError={authError}
       login={login}
       resetPassword={resetPassword}
+      showInviteActivation={showInviteActivation}
     />
   );
 }
@@ -111,6 +130,7 @@ type LoginFormProps = {
   authError?: string;
   login: (email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  showInviteActivation: () => void;
 };
 
 export function LoginForm({
@@ -118,6 +138,7 @@ export function LoginForm({
   authError,
   login,
   resetPassword,
+  showInviteActivation,
 }: LoginFormProps) {
   const [email, setEmail] = useState(accountEmail);
   const [password, setPassword] = useState('');
@@ -187,6 +208,9 @@ export function LoginForm({
         <button type="button" className="auth-text-button" onClick={forgotPassword} disabled={busy}>
           Forgot password?
         </button>
+        <button type="button" className="auth-text-button" onClick={showInviteActivation} disabled={busy}>
+          Activate an invitation
+        </button>
         <div className="auth-beta-access">
           <b>Interested in testing Media Factory?</b>
           <span>Places are limited while we finish the beta.</span>
@@ -194,6 +218,94 @@ export function LoginForm({
             Request beta access
           </a>
         </div>
+      </form>
+    </AuthShell>
+  );
+}
+
+export function InviteActivationForm({
+  email: accountEmail,
+  activateInvitation,
+  showLogin,
+}: {
+  email: string;
+  activateInvitation: (email: string, code: string, password: string) => Promise<void>;
+  showLogin: () => void;
+}) {
+  const [email, setEmail] = useState(accountEmail);
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const cleanCode = code.replace(/[\s-]/g, '');
+  const valid =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
+    /^\d{6,8}$/.test(cleanCode) &&
+    password.length >= 8 &&
+    password === confirmPassword;
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!valid) return;
+    setBusy(true);
+    setError('');
+    try {
+      await activateInvitation(email, cleanCode, password);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Invitation could not be activated.');
+      setBusy(false);
+    }
+  };
+
+  return (
+    <AuthShell>
+      <form className="auth-card auth-card-compact" onSubmit={submit}>
+        <div className="auth-icon"><KeyRound size={28} /></div>
+        <span className="eyebrow">CLOSED BETA INVITE</span>
+        <h1>Activate your account</h1>
+        <p>Enter the email address and invitation code from your email, then create your password.</p>
+        <div className="auth-fields">
+          <TextField
+            label="Email address"
+            type="email"
+            value={email}
+            autoComplete="email"
+            onChange={setEmail}
+          />
+          <TextField
+            label="Invitation code"
+            value={code}
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            placeholder="Enter the code from your email"
+            onChange={setCode}
+          />
+          <TextField
+            label="Create password"
+            type="password"
+            value={password}
+            autoComplete="new-password"
+            onChange={setPassword}
+          />
+          <TextField
+            label="Confirm password"
+            type="password"
+            value={confirmPassword}
+            autoComplete="new-password"
+            onChange={setConfirmPassword}
+          />
+        </div>
+        {confirmPassword && password !== confirmPassword && (
+          <p className="form-error">Passwords do not match.</p>
+        )}
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button className="primary wide auth-submit" disabled={!valid || busy}>
+          {busy ? 'Activating…' : 'Activate account'}
+        </button>
+        <button type="button" className="auth-text-button" onClick={showLogin} disabled={busy}>
+          Back to sign in
+        </button>
       </form>
     </AuthShell>
   );

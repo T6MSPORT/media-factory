@@ -16,6 +16,7 @@ import {
   validateRegistration,
 } from '../state/authState';
 import {
+  activateInvitedCloudAccount,
   currentCloudAccount,
   consumeAuthLink,
   isCloudAuthConfigured,
@@ -50,6 +51,9 @@ export function useMediaFactory() {
   const [migrationCandidate, setMigrationCandidate] = useState<Data>();
   const [passwordSetupMode, setPasswordSetupMode] = useState<'invite' | 'recovery' | null>(
     () => window.location.hash.includes('type=recovery') ? 'recovery' : null,
+  );
+  const [inviteActivationMode, setInviteActivationMode] = useState(
+    () => new URLSearchParams(window.location.search).get('activate') === 'invite',
   );
   const [page, setPage] = useState<PageId>('home');
   const [activeId, setActiveId] = useState<string>();
@@ -286,6 +290,27 @@ export function useMediaFactory() {
     );
   };
 
+  const activateInvitation = async (email: string, code: string, password: string) => {
+    setAuthError('');
+    const account = await activateInvitedCloudAccount(email, code, password);
+    await activateAccount(account);
+    setInviteActivationMode(false);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setPage('home');
+  };
+
+  const showInviteActivation = () => {
+    setAuthError('');
+    setInviteActivationMode(true);
+    window.history.replaceState({}, document.title, `${window.location.pathname}?activate=invite`);
+  };
+
+  const hideInviteActivation = () => {
+    setAuthError('');
+    setInviteActivationMode(false);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  };
+
   const importLegacyWorkspace = async () => {
     const account = dataRef.current.authentication.account;
     if (!account || !migrationCandidate) return;
@@ -356,6 +381,10 @@ export function useMediaFactory() {
     logout,
     migrationRequired: Boolean(migrationCandidate),
     importLegacyWorkspace,
+    inviteActivationMode,
+    activateInvitation,
+    showInviteActivation,
+    hideInviteActivation,
     startFreshWorkspace,
     openProject,
     openTemplate,

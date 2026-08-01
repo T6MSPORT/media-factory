@@ -30,6 +30,10 @@ export default function App() {
     logout,
     migrationRequired,
     importLegacyWorkspace,
+    inviteActivationMode,
+    activateInvitation,
+    showInviteActivation,
+    hideInviteActivation,
     startFreshWorkspace,
     page,
     patchProject,
@@ -56,7 +60,11 @@ export default function App() {
           data={data}
           authError={authError}
           passwordSetupMode={passwordSetupMode}
+          inviteActivationMode={inviteActivationMode}
           login={login}
+          activateInvitation={activateInvitation}
+          showInviteActivation={showInviteActivation}
+          hideInviteActivation={hideInviteActivation}
           resendConfirmation={resendConfirmation}
           resetPassword={resetPassword}
           saveRecoveredPassword={saveRecoveredPassword}

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test, { after } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import React from 'react';
@@ -19,8 +20,8 @@ const {
   signedOutData,
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
-const { AuthPage, ConfirmationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
-const { authLinkFromSearch, readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
+const { AuthPage, ConfirmationForm, InviteActivationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
+const { authLinkFromSearch, normaliseInvitationCode, readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
@@ -130,14 +131,37 @@ test('auth callbacks accept invite and recovery token hashes only', () => {
 });
 
 test('invitation email uses one scanner-safe query parameter', () => {
-  const invitationTemplate =
-    '<a href="{{ .SiteURL }}?invite={{ .TokenHash }}">Join Media Factory</a>';
+  const invitationTemplate = readFileSync(
+    fileURLToPath(new URL('../supabase/templates/invite.html', import.meta.url)),
+    'utf8',
+  );
 
   assert.match(invitationTemplate, /\.SiteURL/);
-  assert.match(invitationTemplate, /invite=\{\{ \.TokenHash \}\}/);
-  assert.match(invitationTemplate, /\?invite=\{\{ \.TokenHash \}\}/);
+  assert.match(invitationTemplate, /\?activate=invite/);
+  assert.match(invitationTemplate, /\{\{ \.Token \}\}/);
+  assert.match(invitationTemplate, /\{\{ \.Email \}\}/);
   assert.doesNotMatch(invitationTemplate, /&/);
+  assert.doesNotMatch(invitationTemplate, /\.TokenHash/);
   assert.doesNotMatch(invitationTemplate, /\.ConfirmationURL/);
+});
+
+test('invitation activation accepts the delivered code without putting it in the URL', () => {
+  assert.equal(normaliseInvitationCode('123 456'), '123456');
+  assert.equal(normaliseInvitationCode('123-456'), '123456');
+
+  const markup = renderToStaticMarkup(
+    React.createElement(InviteActivationForm, {
+      email: 'rich@example.com',
+      activateInvitation: async () => {},
+      showLogin: () => {},
+    }),
+  );
+
+  assert.match(markup, /Activate your account/);
+  assert.match(markup, /Invitation code/);
+  assert.match(markup, /Create password/);
+  assert.match(markup, /Confirm password/);
+  assert.doesNotMatch(markup, /token_hash/);
 });
 
 test('invited users are prompted to create their password', () => {
@@ -146,6 +170,9 @@ test('invited users are prompted to create their password', () => {
       data: starter,
       passwordSetupMode: 'invite',
       login: async () => {},
+      activateInvitation: async () => {},
+      showInviteActivation: () => {},
+      hideInviteActivation: () => {},
       resendConfirmation: async () => {},
       resetPassword: async () => {},
       saveRecoveredPassword: async () => {},
@@ -193,6 +220,9 @@ test('closed beta login does not expose public account creation', () => {
     React.createElement(AuthPage, {
       data: starter,
       login: async () => {},
+      activateInvitation: async () => {},
+      showInviteActivation: () => {},
+      hideInviteActivation: () => {},
       resendConfirmation: async () => {},
       resetPassword: async () => {},
       saveRecoveredPassword: async () => {},
@@ -203,6 +233,7 @@ test('closed beta login does not expose public account creation', () => {
   assert.match(markup, /invited beta testers only/);
   assert.match(markup, /Request beta access/);
   assert.match(markup, /Forgot password/);
+  assert.match(markup, /Activate an invitation/);
   assert.doesNotMatch(markup, /Create an account/);
   assert.doesNotMatch(markup, /Create account and continue/);
 });

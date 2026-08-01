@@ -48,7 +48,7 @@ export function isEmailConfirmationError(error: unknown): boolean {
     error.message === 'Confirm your email before signing in.';
 }
 
-type AuthOperation = 'general' | 'recovery';
+type AuthOperation = 'general' | 'recovery' | 'invite';
 
 export function readableAuthError(
   message: string,
@@ -63,6 +63,20 @@ export function readableAuthError(
   if (operation === 'recovery' && (trimmed === '{}' || !trimmed)) {
     return new Error(
       'The password reset email could not be sent. Check the Media Factory email service and try again.',
+    );
+  }
+  if (
+    operation === 'invite' &&
+    (
+      lower.includes('token has expired') ||
+      lower.includes('token is invalid') ||
+      lower.includes('invalid token') ||
+      lower.includes('otp expired') ||
+      lower.includes('invalid otp')
+    )
+  ) {
+    return new Error(
+      'The invitation code is incorrect or has expired. Ask for a new invitation and try again.',
     );
   }
   if (
@@ -234,6 +248,35 @@ export async function resendSignupConfirmation(email: string): Promise<void> {
 export async function updateCloudPassword(password: string): Promise<void> {
   const { error } = await getClient().auth.updateUser({ password });
   if (error) throw readableAuthError(error.message, error.code);
+}
+
+export function normaliseInvitationCode(code: string): string {
+  return code.replace(/[\s-]/g, '');
+}
+
+export async function activateInvitedCloudAccount(
+  email: string,
+  code: string,
+  password: string,
+): Promise<Account> {
+  const authClient = getClient();
+  const normalisedEmail = email.trim().toLowerCase();
+  const token = normaliseInvitationCode(code);
+  const { data, error } = await authClient.auth.verifyOtp({
+    email: normalisedEmail,
+    token,
+    type: 'invite',
+  });
+
+  if (error) throw readableAuthError(error.message, error.code, 'invite');
+  if (!data.user || !data.session) {
+    throw new Error('The invitation could not be activated. Ask for a new invitation and try again.');
+  }
+
+  const { error: passwordError } = await authClient.auth.updateUser({ password });
+  if (passwordError) throw readableAuthError(passwordError.message, passwordError.code, 'invite');
+
+  return accountFrom(data.user, await profileForUser(authClient, data.user));
 }
 
 export type AuthLinkResult = 'invite' | 'recovery' | null;

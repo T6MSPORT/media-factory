@@ -8,6 +8,7 @@ type TextFieldProps = {
   readOnly?: boolean;
   autoComplete?: string;
   placeholder?: string;
+  inputMode?: 'text' | 'numeric' | 'email' | 'tel' | 'url' | 'search' | 'decimal';
 };
 
 export function TextField({
@@ -18,6 +19,7 @@ export function TextField({
   readOnly = false,
   autoComplete,
   placeholder,
+  inputMode,
 }: TextFieldProps) {
   return (
     <label>
@@ -28,6 +30,7 @@ export function TextField({
         readOnly={readOnly}
         autoComplete={autoComplete}
         placeholder={placeholder}
+        inputMode={inputMode}
         onChange={event => onChange(event.target.value)}
       />
     </label>
