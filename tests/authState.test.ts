@@ -19,7 +19,7 @@ const {
   signedOutData,
   validateRegistration,
 } = await server.ssrLoadModule('/src/state/authState.ts');
-const { ConfirmationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
+const { AuthPage, ConfirmationForm, RegistrationForm, WorkspaceMigration } = await server.ssrLoadModule('/src/pages/AuthPage.tsx');
 const { readableAuthError } = await server.ssrLoadModule('/src/services/cloudAuth.ts');
 const { normaliseData, starter } = await server.ssrLoadModule('/src/store.ts');
 
@@ -149,6 +149,25 @@ test('registration only asks for the driver name beyond login credentials', () =
   assert.doesNotMatch(markup, /Team name/);
   assert.doesNotMatch(markup, /Upload driver image/);
   assert.doesNotMatch(markup, /Upload team logo/);
+});
+
+test('closed beta login does not expose public account creation', () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(AuthPage, {
+      data: starter,
+      login: async () => {},
+      resendConfirmation: async () => {},
+      resetPassword: async () => {},
+      saveRecoveredPassword: async () => {},
+    }),
+  );
+
+  assert.match(markup, /CLOSED BETA/);
+  assert.match(markup, /invited beta testers only/);
+  assert.match(markup, /Request beta access/);
+  assert.match(markup, /Forgot password/);
+  assert.doesNotMatch(markup, /Create an account/);
+  assert.doesNotMatch(markup, /Create account and continue/);
 });
 
 test('saved cloud accounts normalise safely and never restore a local session', () => {
