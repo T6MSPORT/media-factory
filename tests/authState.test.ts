@@ -140,6 +140,8 @@ test('invitation email uses a fixed activation URL with a visible fallback', () 
     invitationTemplate,
     /href="https:\/\/t6msport\.github\.io\/media-factory\/\?activate=invite"/,
   );
+  assert.match(invitationTemplate, /<table role="presentation"/);
+  assert.doesNotMatch(invitationTemplate, /target="_blank"/);
   assert.match(invitationTemplate, /Copy this address into your browser/);
   assert.match(invitationTemplate, /\{\{ \.Token \}\}/);
   assert.match(invitationTemplate, /\{\{ \.Email \}\}/);
