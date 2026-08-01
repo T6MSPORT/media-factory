@@ -130,19 +130,23 @@ test('auth callbacks accept invite and recovery token hashes only', () => {
   assert.equal(authLinkFromSearch('?token_hash=token&type=signup'), null);
 });
 
-test('invitation email uses one scanner-safe query parameter', () => {
+test('invitation email uses a fixed activation URL with a visible fallback', () => {
   const invitationTemplate = readFileSync(
     fileURLToPath(new URL('../supabase/templates/invite.html', import.meta.url)),
     'utf8',
   );
 
-  assert.match(invitationTemplate, /\.SiteURL/);
-  assert.match(invitationTemplate, /\?activate=invite/);
+  assert.match(
+    invitationTemplate,
+    /href="https:\/\/t6msport\.github\.io\/media-factory\/\?activate=invite"/,
+  );
+  assert.match(invitationTemplate, /Copy this address into your browser/);
   assert.match(invitationTemplate, /\{\{ \.Token \}\}/);
   assert.match(invitationTemplate, /\{\{ \.Email \}\}/);
   assert.doesNotMatch(invitationTemplate, /&/);
   assert.doesNotMatch(invitationTemplate, /\.TokenHash/);
   assert.doesNotMatch(invitationTemplate, /\.ConfirmationURL/);
+  assert.doesNotMatch(invitationTemplate, /\.SiteURL/);
 });
 
 test('invitation activation accepts the delivered code without putting it in the URL', () => {
