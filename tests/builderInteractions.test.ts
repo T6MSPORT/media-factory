@@ -117,6 +117,7 @@ test('image upload and positioning controls retain their approved patches', () =
     heroX: 0,
     heroY: 0,
     heroScale: 1,
+    heroOverlayOpacity: 0,
   });
   assert.deepEqual(centreBackgroundPatch, { heroX: 0, heroY: 0 });
   assert.deepEqual(zoomBackgroundToFillPatch, {
@@ -134,6 +135,7 @@ test('image upload and positioning controls retain their approved patches', () =
     heroImage: '',
     heroImageWidth: 0,
     heroImageHeight: 0,
+    heroOverlayOpacity: 0,
     heroX: 0,
     heroY: 0,
     heroScale: 1,

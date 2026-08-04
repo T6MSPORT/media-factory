@@ -17,6 +17,9 @@ const server = await createServer({
 const { Graphic } = await server.ssrLoadModule(
   '/src/components/builder/Graphic.tsx',
 );
+const { BackgroundLayers } = await server.ssrLoadModule(
+  '/src/components/builder/GraphicLayers.tsx',
+);
 const { GRAPHIC_ELEMENTS } = await server.ssrLoadModule(
   '/src/components/builder/GraphicElements.tsx',
 );
@@ -244,6 +247,26 @@ for (const template of templates) {
     });
   }
 }
+
+test('hero black overlay uses the selected opacity above the image', () => {
+  const project = makeProject('event', 'feed');
+  project.heroOverlayOpacity = 35;
+
+  const markup = renderToStaticMarkup(
+    createElement(BackgroundLayers, {
+      w: 1080,
+      h: 1350,
+      project,
+      branding: data.branding,
+      loadedHeroSize: { width: 1920, height: 1080 },
+    }),
+  );
+
+  assert.match(
+    markup,
+    /data-hero-black-overlay="true"[^>]*fill="#000000"[^>]*opacity="0\.35"/,
+  );
+});
 
 test('qualifying result restores identity and centres the combined position composition', () => {
   const project = makeProject('results', 'story');

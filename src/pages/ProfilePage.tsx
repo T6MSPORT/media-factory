@@ -48,6 +48,7 @@ export function ProfilePage({ data, setData }: ProfilePageProps) {
             image={profile.driverImage}
             fallback={<UserRound size={48} />}
             onChange={driverImage => update({ driverImage })}
+            onRemove={() => update({ driverImage: undefined })}
           />
           <div className="logo-preview-stack">
             <ProfileAssetCard

@@ -62,6 +62,7 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
     heroY: 0,
     heroScale: 1,
     heroFlip: false,
+    heroOverlayOpacity: 0,
     driverX: 0,
     driverY: 0,
     driverScale: 1,
@@ -331,6 +332,7 @@ test('load retains storage migrations and rejects invalid persisted values', () 
             id: 'graphic',
             heroImage: 'hero',
             heroScale: 0.5,
+            heroOverlayOpacity: 150,
             driverVisible: false,
             exportedAt: 123,
           },
@@ -354,6 +356,7 @@ test('load retains storage migrations and rejects invalid persisted values', () 
   assert.equal(loaded.branding.headingFont, starter.branding.headingFont);
   assert.equal(loaded.branding.bodyFont, MOTORSPORT_FONTS[2]);
   assert.equal(loaded.projects[0].heroScale, 1);
+  assert.equal(loaded.projects[0].heroOverlayOpacity, 100);
   assert.equal(loaded.projects[0].driverVisible, false);
   assert.equal(loaded.projects[0].exportedAt, undefined);
   assert.equal(loaded.projects.length, 1);

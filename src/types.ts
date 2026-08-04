@@ -69,7 +69,7 @@ export type GraphicDetails = {
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];
-  createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean;
+  createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean; heroOverlayOpacity?:number;
   driverX:number; driverY:number; driverScale:number; driverVisible:boolean; exportedAt?:string;
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;
   details:GraphicDetails;

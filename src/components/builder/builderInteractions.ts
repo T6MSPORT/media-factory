@@ -55,6 +55,7 @@ export const removeBackgroundHeroPatch: Partial<Project> = {
   heroImage: '',
   heroImageWidth: 0,
   heroImageHeight: 0,
+  heroOverlayOpacity: 0,
   ...resetBackgroundPatch,
 };
 
@@ -112,6 +113,7 @@ export function getUploadedHeroPatch(
     heroX: 0,
     heroY: 0,
     heroScale: 1,
+    heroOverlayOpacity: 0,
   };
 }
 

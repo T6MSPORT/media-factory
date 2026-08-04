@@ -25,7 +25,7 @@ test('event dates support a single day and compact same-month ranges', () => {
 test('event date ranges retain both month names when they cross a month', () => {
   assert.equal(
     formatEventDateRange('2026-08-30', '2026-09-01'),
-    '30 AUGUST – 1 SEPTEMBER',
+    '30 AUGUST–1 SEPTEMBER',
   );
 });
 

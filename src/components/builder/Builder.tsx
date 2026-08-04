@@ -207,6 +207,14 @@ export function Builder({
             value={project.heroScale}
             onChange={heroScale => patch({ heroScale })}
           />
+          <RangeField
+            label="Black overlay opacity"
+            min={0}
+            max={100}
+            step={1}
+            value={project.heroOverlayOpacity ?? 0}
+            onChange={heroOverlayOpacity => patch({ heroOverlayOpacity })}
+          />
           <div className="control-actions">
             <button onClick={() => patch(centreBackgroundPatch)}>Centre</button>
             <button onClick={() => patch(zoomBackgroundToFillPatch)}>

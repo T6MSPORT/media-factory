@@ -72,6 +72,16 @@ export function BackgroundLayers({
             preserveAspectRatio="none"
           />
           <rect width={w} height={h} fill="url(#bgOverlay)" />
+          {(project.heroOverlayOpacity ?? 0) > 0 && (
+            <rect
+              data-hero-black-overlay="true"
+              width={w}
+              height={h}
+              fill="#000000"
+              opacity={(project.heroOverlayOpacity ?? 0) / 100}
+              pointerEvents="none"
+            />
+          )}
         </>
       )}
       <rect

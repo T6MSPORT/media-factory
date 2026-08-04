@@ -44,6 +44,7 @@ export function createProject(
     heroY: 0,
     heroScale: 1,
     heroFlip: false,
+    heroOverlayOpacity: 0,
     driverX: 0,
     driverY: 0,
     driverScale: 1,
