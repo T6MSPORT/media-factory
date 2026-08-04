@@ -52,10 +52,10 @@ export const formatEventDateRange = (start: string, end?: string): string => {
       month: 'long',
       timeZone: 'UTC',
     });
-    return `${dayFormatter.format(startDate)}–${dayFormatter.format(endDate)} ${monthFormatter.format(endDate)}`.toUpperCase();
+    return `${dayFormatter.format(startDate)}-${dayFormatter.format(endDate)} ${monthFormatter.format(endDate)}`.toUpperCase();
   }
 
-  return `${formatEventDate(start)}–${formatEventDate(end)}`;
+  return `${formatEventDate(start)}-${formatEventDate(end)}`;
 };
 
 export const toSafeFileName = (value: string): string =>
