@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  Eraser,
   FolderKanban,
   LayoutTemplate,
   Palette,
@@ -13,6 +14,7 @@ export type PageId =
   | 'profile'
   | 'branding'
   | 'sponsors'
+  | 'background-remover'
   | 'saved'
   | 'builder';
 
@@ -28,5 +30,6 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { id: 'profile', label: 'Profile', icon: UserRound },
   { id: 'branding', label: 'Branding', icon: Palette },
   { id: 'sponsors', label: 'Sponsors', icon: UsersRound },
+  { id: 'background-remover', label: 'Background Remover', icon: Eraser },
   { id: 'saved', label: 'Saved Graphics', icon: FolderKanban },
 ] as const;

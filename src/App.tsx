@@ -6,6 +6,7 @@ import { MEDIA_FACTORY_UI_COLORS } from './config/branding';
 import { useMediaFactory } from './hooks/useMediaFactory';
 import {
   AuthPage,
+  BackgroundRemoverPage,
   BrandingPage,
   HomePage,
   OnboardingPage,
@@ -120,6 +121,7 @@ export default function App() {
           {page === 'profile' && <ProfilePage data={data} setData={setData} />}
           {page === 'branding' && <BrandingPage data={data} setData={setData} />}
           {page === 'sponsors' && <SponsorsPage data={data} setData={setData} />}
+          {page === 'background-remover' && <BackgroundRemoverPage />}
           {page === 'saved' && (
             <SavedGraphicsPage data={data} setData={setData} open={openProject} />
           )}
