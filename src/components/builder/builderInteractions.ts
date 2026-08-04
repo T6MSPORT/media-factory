@@ -51,6 +51,13 @@ export const resetBackgroundPatch: Partial<Project> = {
   heroFlip: false,
 };
 
+export const removeBackgroundHeroPatch: Partial<Project> = {
+  heroImage: '',
+  heroImageWidth: 0,
+  heroImageHeight: 0,
+  ...resetBackgroundPatch,
+};
+
 export const resetDriverPatch: Partial<Project> = {
   driverX: 0,
   driverY: 0,

@@ -75,6 +75,7 @@ test('new projects retain defaults, timestamps and the first ten sponsors', () =
       round: '',
       circuit: '',
       date: '',
+      dateEnd: '',
       time: '',
       headline: '',
       subheadline: '',

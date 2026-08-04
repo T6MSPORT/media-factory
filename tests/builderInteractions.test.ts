@@ -17,6 +17,7 @@ const {
   exportProjectPng,
   getBackgroundDragPatch,
   getUploadedHeroPatch,
+  removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
   zoomBackgroundToFillPatch,
@@ -124,6 +125,15 @@ test('image upload and positioning controls retain their approved patches', () =
     heroScale: 1,
   });
   assert.deepEqual(resetBackgroundPatch, {
+    heroX: 0,
+    heroY: 0,
+    heroScale: 1,
+    heroFlip: false,
+  });
+  assert.deepEqual(removeBackgroundHeroPatch, {
+    heroImage: '',
+    heroImageWidth: 0,
+    heroImageHeight: 0,
     heroX: 0,
     heroY: 0,
     heroScale: 1,

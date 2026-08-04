@@ -1,8 +1,9 @@
-import { Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react';
 import { Upload } from '../components/forms/ImageUpload';
 import { PageHeader } from '../components/ui';
 import {
   addSponsor,
+  moveSponsor,
   removeSponsor,
   SPONSOR_LIMIT,
   updateBranding,
@@ -63,17 +64,23 @@ export function SponsorsPage({ data, setData }: SponsorsPageProps) {
         </label>
       </div>
       <p className="field-help">
+        Use the arrows to set the order shown in the sponsor bar.{' '}
         Transparent padding is removed automatically when a logo is uploaded. Logo dimensions are
         measured after transparent padding is removed, then each logo is normalised by visible area
         while preserving its proportions.
       </p>
       <div className="stack">
-        {data.sponsors.map((sponsor) => (
+        {data.sponsors.map((sponsor, index) => (
           <SponsorCard
             key={sponsor.id}
             sponsor={sponsor}
+            index={index}
+            sponsorCount={data.sponsors.length}
             update={(patch) =>
               setData(updateSponsor(data, sponsor.id, patch))
+            }
+            move={(direction) =>
+              setData(moveSponsor(data, sponsor.id, direction))
             }
             remove={() =>
               setData(removeSponsor(data, sponsor.id))
@@ -87,11 +94,21 @@ export function SponsorsPage({ data, setData }: SponsorsPageProps) {
 
 type SponsorCardProps = {
   sponsor: Sponsor;
+  index: number;
+  sponsorCount: number;
   update: (patch: Partial<Sponsor>) => void;
+  move: (direction: -1 | 1) => void;
   remove: () => void;
 };
 
-function SponsorCard({ sponsor, update, remove }: SponsorCardProps) {
+function SponsorCard({
+  sponsor,
+  index,
+  sponsorCount,
+  update,
+  move,
+  remove,
+}: SponsorCardProps) {
   return (
     <div className="edit-card">
       <div className="brand-mark">
@@ -111,9 +128,34 @@ function SponsorCard({ sponsor, update, remove }: SponsorCardProps) {
           on={logo => saveSponsorLogo(logo, update)}
         />
       </div>
-      <button className="icon danger" onClick={remove}>
-        <Trash2 size={17} />
-      </button>
+      <div className="sponsor-order-actions">
+        <button
+          className="icon"
+          aria-label={`Move ${sponsor.name} up`}
+          title="Move up"
+          disabled={index === 0}
+          onClick={() => move(-1)}
+        >
+          <ArrowUp size={17} />
+        </button>
+        <button
+          className="icon"
+          aria-label={`Move ${sponsor.name} down`}
+          title="Move down"
+          disabled={index === sponsorCount - 1}
+          onClick={() => move(1)}
+        >
+          <ArrowDown size={17} />
+        </button>
+        <button
+          className="icon danger"
+          aria-label={`Remove ${sponsor.name}`}
+          title="Remove sponsor"
+          onClick={remove}
+        >
+          <Trash2 size={17} />
+        </button>
+      </div>
     </div>
   );
 }

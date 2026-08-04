@@ -15,6 +15,7 @@ const {
   SPONSOR_LIMIT,
   addSponsor,
   getSavedProjects,
+  moveSponsor,
   removeSponsor,
   removeSavedProject,
   renameSavedProject,
@@ -141,6 +142,16 @@ test('sponsor updates target one record and retain measured logo dimensions', ()
     logoWidth: 320,
     logoHeight: 180,
   });
+});
+
+test('sponsors can be reordered while preserving their records', () => {
+  const movedUp = moveSponsor(data, secondSponsor.id, -1);
+  assert.deepEqual(movedUp.sponsors, [secondSponsor, firstSponsor]);
+
+  const movedDown = moveSponsor(data, firstSponsor.id, 1);
+  assert.deepEqual(movedDown.sponsors, [secondSponsor, firstSponsor]);
+  assert.equal(moveSponsor(data, firstSponsor.id, -1), data);
+  assert.equal(moveSponsor(data, secondSponsor.id, 1), data);
 });
 
 test('failed logo measurement still clears the stored dimensions', () => {

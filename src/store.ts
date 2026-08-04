@@ -18,6 +18,7 @@ export const emptyDetails: GraphicDetails = {
   round: '',
   circuit: '',
   date: '',
+  dateEnd: '',
   time: '',
   headline: '',
   subheadline: '',
@@ -216,6 +217,10 @@ export function normaliseData(value: unknown): Data {
     const details: GraphicDetails = {
       ...emptyDetails,
       ...project.details,
+      dateEnd:
+        typeof project.details?.dateEnd === 'string'
+          ? project.details.dateEnd
+          : '',
       resultSession: legacyQualifying
         ? 'qualifying'
         : project.details?.resultSession === 'qualifying'

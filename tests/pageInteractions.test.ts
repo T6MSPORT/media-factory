@@ -317,6 +317,53 @@ test('schedule fields show only the selected days and five inline session rows p
   );
 });
 
+test('event fields accept a single date or an optional date range', () => {
+  const updates: Array<Partial<Project['details']>> = [];
+  const project: Project = {
+    id: 'event',
+    name: 'Event Poster',
+    template: 'event',
+    format: 'feed',
+    sponsorIds: [],
+    createdAt: '',
+    updatedAt: '',
+    heroX: 0,
+    heroY: 0,
+    heroScale: 1,
+    heroFlip: false,
+    driverX: 0,
+    driverY: 0,
+    driverScale: 1,
+    driverVisible: true,
+    details: {
+      eventName: '',
+      round: '1',
+      circuit: 'Brands Hatch',
+      date: '2026-09-06',
+      dateEnd: '',
+      time: '',
+      headline: '',
+      subheadline: '',
+      result: '',
+      position: '',
+      scheduleLines: '',
+      sponsorName: '',
+    },
+  };
+  const tree = TemplateFields({
+    project,
+    setDetails: details => updates.push(details),
+  });
+  const startDate = fieldInLabel(tree, 'Start date', 'input');
+  const endDate = fieldInLabel(tree, 'End date', 'input');
+
+  assert.equal(startDate.props?.type, 'date');
+  assert.equal(endDate.props?.type, 'date');
+  assert.equal(endDate.props?.min, '2026-09-06');
+  endDate.props?.onChange({ target: { value: '2026-09-08' } });
+  assert.deepEqual(updates, [{ dateEnd: '2026-09-08' }]);
+});
+
 test('sponsor appreciation exposes a sponsor-logo selector', () => {
   const updates: Array<Partial<Project['details']>> = [];
   const sponsorProject: Project = {
@@ -521,9 +568,10 @@ test('branding controls expose five approved fonts and update the live preview',
   assert.match(textContent(tree), /SPONSOR BAR · 5 PER ROW/);
 });
 
-test('sponsor interactions add, resize, rename and remove a logo slot', () => {
+test('sponsor interactions add, resize, rename, reorder and remove a logo slot', () => {
   const sponsor = { id: 'sponsor-one', name: 'Corbeau' };
-  const data: Data = { ...completeData, sponsors: [sponsor] };
+  const secondSponsor = { id: 'sponsor-two', name: 'Esports Edge' };
+  const data: Data = { ...completeData, sponsors: [sponsor, secondSponsor] };
   const updates: Data[] = [];
   const tree = SponsorsPage({
     data,
@@ -541,16 +589,22 @@ test('sponsor interactions add, resize, rename and remove a logo slot', () => {
       event: { target: { value: string } },
     ) => void
   )({ target: { value: 'Corbeau Seats' } });
+  const moveDown = findElements(tree, 'button').find(
+    button => button.props?.['aria-label'] === 'Move Corbeau down',
+  );
+  assert.ok(moveDown);
+  (moveDown.props?.onClick as () => void)();
   const remove = findElements(tree, 'button').find(
-    button => button.props?.className === 'icon danger',
+    button => button.props?.['aria-label'] === 'Remove Corbeau',
   );
   assert.ok(remove);
   (remove.props?.onClick as () => void)();
 
-  assert.equal(updates[0].sponsors.length, 2);
+  assert.equal(updates[0].sponsors.length, 3);
   assert.equal(updates[1].branding.sponsorLogoScale, 1.25);
   assert.equal(updates[2].sponsors[0].name, 'Corbeau Seats');
-  assert.deepEqual(updates[3].sponsors, []);
+  assert.deepEqual(updates[3].sponsors, [secondSponsor, sponsor]);
+  assert.deepEqual(updates[4].sponsors, [secondSponsor]);
 });
 
 test('sponsor page enforces the ten-logo limit in the component', () => {

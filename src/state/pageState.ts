@@ -48,6 +48,30 @@ export function updateSponsor(
   };
 }
 
+export function moveSponsor(
+  data: Data,
+  sponsorId: string,
+  direction: -1 | 1,
+): Data {
+  const currentIndex = data.sponsors.findIndex(sponsor => sponsor.id === sponsorId);
+  const nextIndex = currentIndex + direction;
+  if (
+    currentIndex < 0 ||
+    nextIndex < 0 ||
+    nextIndex >= data.sponsors.length
+  ) {
+    return data;
+  }
+
+  const sponsors = [...data.sponsors];
+  [sponsors[currentIndex], sponsors[nextIndex]] = [
+    sponsors[nextIndex],
+    sponsors[currentIndex],
+  ];
+
+  return { ...data, sponsors };
+}
+
 export function removeSponsor(data: Data, sponsorId: string): Data {
   return {
     ...data,

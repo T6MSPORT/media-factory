@@ -67,6 +67,46 @@ export function TemplateFields({
     );
   }
 
+  if (project.template === 'event') {
+    return (
+      <>
+        <TextField
+          label="Round(s)"
+          value={project.details.round}
+          onChange={round => setDetails({ round })}
+        />
+        <TextField
+          label="Track name"
+          value={project.details.circuit}
+          onChange={circuit => setDetails({ circuit })}
+        />
+        <TextField
+          label="Start date"
+          value={project.details.date}
+          type="date"
+          onChange={date =>
+            setDetails({
+              date,
+              dateEnd:
+                project.details.dateEnd && project.details.dateEnd < date
+                  ? ''
+                  : project.details.dateEnd,
+            })
+          }
+        />
+        <label>
+          End date <span className="optional-label">Optional</span>
+          <input
+            type="date"
+            min={project.details.date || undefined}
+            value={project.details.dateEnd || ''}
+            onChange={event => setDetails({ dateEnd: event.target.value })}
+          />
+        </label>
+      </>
+    );
+  }
+
   return (
     <>
       {TEMPLATE_FIELDS[project.template].map(field =>

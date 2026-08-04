@@ -14,6 +14,7 @@ import {
   centreBackgroundPatch,
   exportProjectPng,
   getUploadedHeroPatch,
+  removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
   zoomBackgroundToFillPatch,
@@ -171,10 +172,18 @@ export function Builder({
             }}
           />
           {project.heroImage && (
-            <div className="selected-hero">
-              <img src={project.heroImage} />
-              <span>Background for this graphic only</span>
-            </div>
+            <>
+              <div className="selected-hero">
+                <img src={project.heroImage} />
+                <span>Background for this graphic only</span>
+              </div>
+              <button
+                className="asset-remove"
+                onClick={() => patch(removeBackgroundHeroPatch)}
+              >
+                Remove background image
+              </button>
+            </>
           )}
           <RangeField
             label="Move left / right"

@@ -60,7 +60,7 @@ export type ScheduleSessionType = ''|'Practice'|'Qualifying'|'Race';
 export type ScheduleSession = { type:ScheduleSessionType; time:string };
 export type ScheduleDay = { day:ScheduleDayName; sessions:ScheduleSession[] };
 export type GraphicDetails = {
-  eventName:string; round:string; circuit:string; date:string; time:string;
+  eventName:string; round:string; circuit:string; date:string; dateEnd?:string; time:string;
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;

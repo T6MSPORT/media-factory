@@ -260,6 +260,7 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .schedule-session-row select,.schedule-session-row input{min-width:0;padding-inline:6px}
 .schedule-remove-day{float:right;margin:0 0 7px 8px;padding:5px 9px;font-size:10px}
 .asset-remove{width:100%;margin-top:8px;border-color:#69383d;background:#2a171a;color:#ffb4ba}
+.sponsor-order-actions{display:grid;gap:7px;width:42px}.sponsor-order-actions .icon{width:42px}.sponsor-order-actions .icon:disabled{opacity:.3;cursor:not-allowed}.optional-label{float:right;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}@media(max-width:700px){.sponsor-order-actions{display:flex;width:auto}.sponsor-order-actions .icon{width:42px}}
 
 @media(max-width:700px){
   .schedule-top-fields,.schedule-day-grid{grid-template-columns:1fr}

@@ -1,5 +1,5 @@
 import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
-import { formatEventDate } from '../../utils/format';
+import { formatEventDateRange } from '../../utils/format';
 import podiumWreath from '../../assets/wreath.png';
 import {
   fitTextSize,
@@ -315,7 +315,7 @@ export function EventTemplate({
         fontWeight="700"
         letterSpacing="3"
       >
-        {formatEventDate(details.date)}
+        {formatEventDateRange(details.date, details.dateEnd)}
       </text>
     </g>
   );
