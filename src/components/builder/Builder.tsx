@@ -124,6 +124,7 @@ export function Builder({
             sponsors={data.sponsors}
             setDetails={setDetails}
           />
+{project.template !== 'sponsor' && (
 <SelectField
   label="Main text alignment"
   value={project.textAlignment || 'left'}
@@ -134,6 +135,7 @@ export function Builder({
   <option value="left">Left</option>
   <option value="right">Right</option>
 </SelectField>
+)}
           <h3>Background graphic</h3>
           <ToggleField
             label="Lock across templates"
