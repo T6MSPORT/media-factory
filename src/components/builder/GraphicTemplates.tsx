@@ -3,6 +3,7 @@ import { formatEventDateRange } from '../../utils/format';
 import podiumWreath from '../../assets/wreath.png';
 import {
   fitTextSize,
+  formatScheduleDayHeading,
   getAnnouncementTemplateLayout,
   getEventTemplateLayout,
   getResultsTemplateLayout,
@@ -73,6 +74,10 @@ function ResultsTemplate({
   bodyFont,
 }: TemplateSharedProps & { w: number; h: number }) {
   const layout = getResultsTemplateLayout(w, h, project);
+  const rightAligned = project.textAlignment === 'right';
+const mainTextX = rightAligned ? w - layout.margin : layout.margin;
+const secondaryTextX = mainTextX + (rightAligned ? -2 : 2);
+const mainTextAnchor = rightAligned ? 'end' : 'start';
 
   return (
     <g fill={branding.accent}>
@@ -85,7 +90,8 @@ function ResultsTemplate({
         bodyFont={bodyFont}
       />
       <text
-        x={layout.margin}
+        x={mainTextX}
+        textAnchor={mainTextAnchor}
         y={layout.titleY}
         dominantBaseline="hanging"
         fontFamily={headingFont}
@@ -96,7 +102,8 @@ function ResultsTemplate({
         {layout.title}
       </text>
       <text
-        x={layout.margin}
+        x={mainTextX}
+        textAnchor={mainTextAnchor}
         y={layout.trackY}
         dominantBaseline="hanging"
         fontFamily={headingFont}
@@ -113,7 +120,8 @@ function ResultsTemplate({
       </text>
       {layout.roundText && (
         <text
-          x={layout.margin + 2}
+          x={mainTextX}
+          textAnchor={mainTextAnchor}
           y={layout.roundY}
           dominantBaseline="hanging"
           fontFamily={bodyFont}
@@ -260,7 +268,10 @@ export function EventTemplate({
     eventDateY,
     roundLabel,
   } = getEventTemplateLayout(w, project, profile);
-
+const rightAligned = project.textAlignment === 'right';
+const mainTextX = rightAligned ? w - eventBlockX : eventBlockX;
+const secondaryTextX = mainTextX + (rightAligned ? -4 : 4);
+const mainTextAnchor = rightAligned ? 'end' : 'start';
   return (
     <g fill={branding.accent}>
       <ChampionshipDriverHeader
@@ -272,7 +283,8 @@ export function EventTemplate({
         bodyFont={bodyFont}
       />
       <text
-        x={eventBlockX}
+        x={mainTextX}
+        textAnchor={mainTextAnchor}
         y={eventHeadingY}
         dominantBaseline="hanging"
         fontFamily={headingFont}
@@ -283,7 +295,8 @@ export function EventTemplate({
         NEXT RACE
       </text>
       <text
-        x={eventBlockX + 4}
+        x={secondaryTextX}
+        textAnchor={mainTextAnchor}
         y={eventRoundY}
         dominantBaseline="hanging"
         fontFamily={bodyFont}
@@ -294,7 +307,8 @@ export function EventTemplate({
         {roundLabel}
       </text>
       <text
-        x={eventBlockX}
+        x={secondaryTextX}
+        textAnchor={mainTextAnchor}
         y={eventTrackY}
         dominantBaseline="hanging"
         fontFamily={headingFont}
@@ -308,7 +322,8 @@ export function EventTemplate({
         {eventTrackText}
       </text>
       <text
-        x={eventBlockX + 4}
+        x={secondaryTextX}
+        textAnchor={mainTextAnchor}
         y={eventDateY}
         dominantBaseline="hanging"
         fontFamily={bodyFont}
@@ -447,26 +462,16 @@ export function StandardTemplate({
 
   if (project.template === 'announcement') {
     const layout = getAnnouncementTemplateLayout(w, h, project);
-    const backgroundOpacity = Math.min(
-      100,
-      Math.max(0, project.details.announcementBackgroundOpacity ?? 32),
-    ) / 100;
-
+const rightAligned = project.textAlignment === 'right';
+const isOrbitron = headingFont.toLowerCase().includes('orbitron');
+const titleX = rightAligned ? w - layout.titleX : layout.titleX;
+const announcementTitleSize = isOrbitron
+  ? layout.titleSize * 0.88
+  : layout.titleSize;
+const textX = rightAligned ? w - layout.textX : layout.textX;
+const textAnchor = rightAligned ? 'end' : 'start';
     return (
       <g fontFamily={bodyFont} fill={branding.accent}>
-        <defs>
-          <linearGradient
-            id="announcement-text-background"
-            x1="0"
-            y1="0"
-            x2="1"
-            y2="1"
-          >
-            <stop offset="0%" stopColor="#000000" stopOpacity={backgroundOpacity} />
-            <stop offset="62%" stopColor="#000000" stopOpacity={backgroundOpacity * 0.375} />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-          </linearGradient>
-        </defs>
         <ChampionshipDriverHeader
           w={w}
           project={project}
@@ -476,25 +481,20 @@ export function StandardTemplate({
           bodyFont={bodyFont}
         />
         <text
-          x={layout.titleX}
+          x={titleX}
+          textAnchor={textAnchor}
           y={layout.titleY}
           dominantBaseline="hanging"
           fontFamily={headingFont}
-          fontSize={layout.titleSize}
+          fontSize={announcementTitleSize}
           fontWeight="900"
           letterSpacing="-3"
         >
           {layout.title}
         </text>
-        <rect
-          x={layout.textBackgroundX}
-          y={layout.textBackgroundY}
-          width={layout.textBackgroundWidth}
-          height={layout.textBackgroundHeight}
-          fill="url(#announcement-text-background)"
-        />
         <text
-          x={layout.textX}
+          x={textX}
+          textAnchor={textAnchor}
           y={layout.textY}
           dominantBaseline="hanging"
           fontSize={layout.textSize}
@@ -504,7 +504,7 @@ export function StandardTemplate({
           {layout.lines.map((line, index) => (
             <tspan
               key={`${line}-${index}`}
-              x={layout.textX}
+              x={textX}
               dy={index === 0 ? 0 : layout.textLineHeight}
             >
               {line}
@@ -517,6 +517,10 @@ export function StandardTemplate({
 
   if (project.template === 'schedule') {
     const layout = getScheduleTemplateLayout(w, h, project);
+    const rightAligned = project.textAlignment === 'right';
+const mainTextX = rightAligned ? w - layout.margin : layout.margin;
+const secondaryTextX = mainTextX + (rightAligned ? -2 : 2);
+const mainTextAnchor = rightAligned ? 'end' : 'start';
 
     return (
       <g fontFamily={bodyFont} fill={branding.accent}>
@@ -529,7 +533,8 @@ export function StandardTemplate({
           bodyFont={bodyFont}
         />
         <text
-          x={layout.margin}
+          x={mainTextX}
+          textAnchor={mainTextAnchor}
           y={layout.titleY}
           dominantBaseline="hanging"
           fontFamily={headingFont}
@@ -540,7 +545,8 @@ export function StandardTemplate({
           {layout.title}
         </text>
         <text
-          x={layout.margin}
+          x={mainTextX}
+          textAnchor={mainTextAnchor}
           y={layout.trackY}
           dominantBaseline="hanging"
           fontFamily={headingFont}
@@ -557,7 +563,8 @@ export function StandardTemplate({
         </text>
         {layout.roundText && (
           <text
-            x={layout.margin + 2}
+            x={secondaryTextX}
+            textAnchor={mainTextAnchor}
             y={layout.roundY}
             dominantBaseline="hanging"
             fontFamily={bodyFont}
@@ -584,13 +591,8 @@ export function StandardTemplate({
               fontFamily={headingFont}
               fontSize={layout.dayHeadingSize}
               fontWeight="900"
-              textLength={Math.min(
-                day.width - 32,
-                day.day.length * layout.dayHeadingSize * 0.6,
-              )}
-              lengthAdjust="spacingAndGlyphs"
-            >
-              {day.day.toUpperCase() || 'SELECT DAY'}
+>
+  {formatScheduleDayHeading(day.day, day.date)}
             </text>
             {day.sessions.map((session, sessionIndex) => {
               const rowTop =

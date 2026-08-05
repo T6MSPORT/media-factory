@@ -73,6 +73,33 @@ export function getStandardTemplateLayout(
   };
 }
 
+export function formatScheduleDayHeading(day: string, date?: string) {
+  const dayLabel = day.trim().toUpperCase() || 'SELECT DAY';
+
+  if (!date) return dayLabel;
+
+  const [, month, dayOfMonth] = date.split('-').map(Number);
+  const monthNames = [
+    'JANUARY',
+    'FEBRUARY',
+    'MARCH',
+    'APRIL',
+    'MAY',
+    'JUNE',
+    'JULY',
+    'AUGUST',
+    'SEPTEMBER',
+    'OCTOBER',
+    'NOVEMBER',
+    'DECEMBER',
+  ];
+
+  if (!month || !dayOfMonth || !monthNames[month - 1]) {
+    return dayLabel;
+  }
+
+  return `${dayLabel} · ${dayOfMonth} ${monthNames[month - 1]}`;
+}
 export function getResultsTemplateLayout(
   w: number,
   h: number,

@@ -58,7 +58,11 @@ export type Sponsor = {id:string; name:string; logo?:string; logoWidth?:number; 
 export type ScheduleDayName = ''|'Friday'|'Saturday'|'Sunday';
 export type ScheduleSessionType = ''|'Practice'|'Qualifying'|'Race';
 export type ScheduleSession = { type:ScheduleSessionType; time:string };
-export type ScheduleDay = { day:ScheduleDayName; sessions:ScheduleSession[] };
+export type ScheduleDay = {
+  day: ScheduleDayName;
+  date?: string;
+  sessions: ScheduleSession[];
+};
 export type GraphicDetails = {
   eventName:string; round:string; circuit:string; date:string; dateEnd?:string; time:string;
   headline:string; subheadline:string; result:string; position:string;
@@ -73,6 +77,7 @@ export type GraphicDetails = {
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];
   customWidth?:number; customHeight?:number;
+  textAlignment?: 'left' | 'right';
   createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean; heroOverlayOpacity?:number;
   driverX:number; driverY:number; driverScale:number; driverVisible:boolean; exportedAt?:string;
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;

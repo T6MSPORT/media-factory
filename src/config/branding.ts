@@ -1,6 +1,7 @@
 export const MOTORSPORT_FONTS = [
   'Orbitron',
   'Rajdhani',
+  'Inter',
   'Teko',
   'Oxanium',
   'Russo One',

@@ -100,21 +100,21 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '046398f686ebdbed974f40c7f4785067cc95205f758c267348dc0bd47b616933',
+    '8899b9e889278f1118a15488e0b809bb67d5122168bebd1db09ce275c96e6ada',
   'event:feed':
-    '39481971cca8a3b9bf92ccfe26ce51eaf3b017002f3ef0ef30abe915bc8bdcc7',
+    '9ad3a92a07309df3f2e6d4bac9d5d90f3413d1b415052e3bbed4f99df8a8d3ad',
   'announcement:story':
-    'bfad6a517c3966eb0c6fced99ff0980209050ecaef4fe51035818dc668045aad',
+    '6786fb8812eab441b65fbc8992dc0f2245237b478b5281f8b96dd558f22c52ed',
   'announcement:feed':
-    '234532dbcd16dc35c9ed7145f28f6bc3f1b476fb9ca4621c7da45eb0c416cf19',
+    '5c76d418984d82943b175a3dd83b29b29421b7a7359cef6b2755c1d172df40dd',
   'schedule:story':
-    '4693d67e3cd14f433bad3875261a3e9c9315e27f5e181774bc5ee7f48e13bfb6',
+    '4d0d1ee73ca609c926d3d273f4b8811ebd7696175100679e0fcc5cc43c529e73',
   'schedule:feed':
-    '0e33f21369d0acaa1626ffc36a699e2d3d493b56d37c5caf93e1d93bead57f08',
+    '7e9b67ec3c06abd7eb38541cb7ac70297dd5e1c1c4bbaa46e528eadcabbc9fc1',
   'results:story':
-    '179f169fd7e29c7fbd92f13b62caad053d47d7cce4ee0fe401fca69d6f96a0bf',
+    '4d06887bea0730f39abbb3852eb140c0cb7b3b65c72423afb98690de89c509ce',
   'results:feed':
-    'a54de2711081edc973ca2feac41550dd85d36192577a6ac160dbc01dd07ed5fc',
+    '5e6a9661d14791572249ca8d86fde1b96252225241b18b9811df82f8961d23d0',
   'sponsor:story':
     'ebf7035dfbc7dffe89d2b9b7da8423f319e84a6da3f90cc929c743de5aefdbed',
   'sponsor:feed':
@@ -205,13 +205,6 @@ for (const template of templates) {
         assert.match(markup, /lengthAdjust="spacingAndGlyphs"/);
         assert.match(markup, /text-anchor="end" dominant-baseline="hanging"/);
       }
-      if (template === 'announcement') {
-        assert.match(markup, /id="announcement-text-background"/);
-        assert.match(
-          markup,
-          /fill="url\(#announcement-text-background\)"/,
-        );
-      }
       if (template === 'schedule') {
         assert.match(
           markup,
@@ -277,7 +270,6 @@ test('announcement opacity and sponsor product placement render from controls', 
   const announcementMarkup = renderToStaticMarkup(
     createElement(Graphic, { project: announcement, data, sponsors, ref: null }),
   );
-  assert.match(announcementMarkup, /stop-opacity="0\.75"/);
 
   const sponsor = makeProject('sponsor', 'square');
   sponsor.details = {

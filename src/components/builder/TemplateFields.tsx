@@ -190,24 +190,6 @@ export function TemplateFields({
     </>
   );
 
-  if (project.template === 'announcement') {
-    return (
-      <>
-        {standardFields}
-        <RangeField
-          label="Text background opacity"
-          min={0}
-          max={100}
-          step={1}
-          value={project.details.announcementBackgroundOpacity ?? 32}
-          onChange={announcementBackgroundOpacity =>
-            setDetails({ announcementBackgroundOpacity })
-          }
-        />
-      </>
-    );
-  }
-
   return standardFields;
 }
 
@@ -370,6 +352,22 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
               ))}
             </select>
           </label>
+
+<label>
+  Date <span className="optional-label">Optional</span>
+  <input
+    type="date"
+    value={scheduleDay.date || ''}
+    onChange={event => {
+      const nextDays = [...days];
+      nextDays[dayIndex] = {
+        ...scheduleDay,
+        date: event.target.value,
+      };
+      updateDays(nextDays);
+    }}
+  />
+</label>
 
           <div className="schedule-sessions">
             {scheduleDay.sessions.map((session, sessionIndex) => (
