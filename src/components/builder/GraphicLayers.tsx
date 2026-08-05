@@ -4,6 +4,7 @@ import {
   getBackgroundLayout,
   getBrandLogoLayout,
   getSponsorLayouts,
+  isStoryLayout,
 } from './rendererCalculations';
 
 type Size = { width: number; height: number };
@@ -86,7 +87,7 @@ export function BackgroundLayers({
       )}
       <rect
         width={w}
-        height={h * (project.format === 'story' ? 0.38 : 0.36)}
+        height={h * (isStoryLayout(project) ? 0.38 : 0.36)}
         fill="url(#topFade)"
         pointerEvents="none"
       />

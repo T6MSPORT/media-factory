@@ -1,5 +1,5 @@
 export type TemplateId = 'event'|'announcement'|'schedule'|'results'|'sponsor';
-export type FormatId = 'feed'|'story';
+export type FormatId = 'feed'|'story'|'square'|'custom';
 export type ResultSessionType = 'qualifying'|'race';
 export type GraphicElementId =
   | 'none'
@@ -64,11 +64,15 @@ export type GraphicDetails = {
   headline:string; subheadline:string; result:string; position:string;
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;
+  announcementBackgroundOpacity?:number;
+  sponsorLogoScale?:number; sponsorLogoY?:number;
+  productImages?:string[];
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
   resultSession?:ResultSessionType; raceNumber?:string;
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];
+  customWidth?:number; customHeight?:number;
   createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean; heroOverlayOpacity?:number;
   driverX:number; driverY:number; driverScale:number; driverVisible:boolean; exportedAt?:string;
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;

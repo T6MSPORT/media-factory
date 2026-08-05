@@ -7,6 +7,7 @@ import {
   renameSavedProject,
 } from '../state/pageState';
 import type { Data, Project } from '../types';
+import { formatSavedGraphicDate } from '../utils/format';
 
 type SavedGraphicsPageProps = {
   data: Data;
@@ -45,8 +46,8 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
                 }
               />
               <small>
-                Saved {new Date(project.exportedAt!).toLocaleDateString()} · Updated{' '}
-                {new Date(project.updatedAt).toLocaleDateString()}
+                Saved {formatSavedGraphicDate(project.exportedAt!)} · Updated{' '}
+                {formatSavedGraphicDate(project.updatedAt)}
               </small>
               <div>
                 <button onClick={() => open(project)}>Open</button>

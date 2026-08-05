@@ -340,7 +340,7 @@ test('combined results layout switches qualifying and race presentation', () => 
       resultSession: 'qualifying',
     },
   });
-  assert.equal(qualifying.title, 'QUALIFYING RESULT');
+  assert.equal(qualifying.title, 'RACE 1 QUALIFYING RESULT');
   assert.equal(qualifying.trackText, 'SILVERSTONE NATIONAL');
   assert.equal(qualifying.roundText, '');
   assert.equal(qualifying.positionNumber, '1');
@@ -429,6 +429,35 @@ test('schedule layout keeps the title and track at the top with selected days un
   assert.ok(schedule.chevronGap > 0);
   assert.equal(schedule.days[0].x, schedule.days[1].x);
   assert.ok(schedule.days[1].y > schedule.days[0].y);
+});
+
+test('square schedules keep three full five-session days inside the canvas', () => {
+  const sessions = [
+    { type: 'Practice' as const, time: '18:00' },
+    { type: 'Qualifying' as const, time: '18:30' },
+    { type: 'Race' as const, time: '19:00' },
+    { type: 'Race' as const, time: '19:30' },
+    { type: 'Race' as const, time: '20:00' },
+  ];
+  const layout = getScheduleTemplateLayout(1080, 1080, {
+    ...project,
+    template: 'schedule',
+    format: 'square',
+    details: {
+      ...details,
+      scheduleDayCount: 3,
+      scheduleDays: [
+        { day: 'Friday', sessions },
+        { day: 'Saturday', sessions },
+        { day: 'Sunday', sessions },
+      ],
+    },
+  });
+  const lastDay = layout.days[2];
+  const contentBottom =
+    lastDay.y + layout.dayHeadingHeight + lastDay.sessions.length * layout.rowHeight;
+  assert.ok(contentBottom <= 968.001);
+  assert.ok(layout.sessionSize >= 16);
 });
 
 test('template extras retain sponsor content', () => {

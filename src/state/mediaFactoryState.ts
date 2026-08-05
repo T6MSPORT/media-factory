@@ -3,7 +3,6 @@ import { emptyDetails, id } from '../store';
 import type {
   BackgroundGraphicLayout,
   Data,
-  FormatId,
   Project,
   TemplateId,
 } from '../types';
@@ -34,6 +33,8 @@ export function createProject(
     name: TEMPLATE_CATALOGUE.find(item => item.id === template)?.name || 'Graphic',
     template,
     format: 'feed',
+    customWidth: 1080,
+    customHeight: 1080,
     sponsorIds: data.sponsors.slice(0, 10).map(sponsor => sponsor.id),
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -93,6 +94,17 @@ const backgroundGraphicKeys = [
   'graphicElementSize',
 ] as const;
 
+function getBackgroundGraphicFormatKey(project: Pick<Project, 'format'|'customWidth'|'customHeight'>) {
+  if (project.format === 'story') return 'story' as const;
+  if (
+    project.format === 'custom' &&
+    (project.customHeight || 1080) / (project.customWidth || 1080) >= 1.5
+  ) {
+    return 'story' as const;
+  }
+  return 'feed' as const;
+}
+
 function getProjectBackgroundGraphic(project: Project): BackgroundGraphicLayout {
   return {
     graphicElement: project.graphicElement || 'none',
@@ -125,11 +137,13 @@ export function updateProjectWithBackgroundGraphicLock(
   const activeProject = data.projects.find(project => project.id === activeId);
   if (!activeProject) return data;
 
-  const nextFormat = (patch.format || activeProject.format) as FormatId;
+  const nextProject = { ...activeProject, ...patch };
+  const nextFormat = getBackgroundGraphicFormatKey(nextProject);
+  const currentFormat = getBackgroundGraphicFormatKey(activeProject);
   let resolvedPatch = patch;
   let backgroundGraphic = data.backgroundGraphic;
 
-  if (backgroundGraphic.locked && patch.format && patch.format !== activeProject.format) {
+  if (backgroundGraphic.locked && nextFormat !== currentFormat) {
     resolvedPatch = { ...resolvedPatch, ...backgroundGraphic[nextFormat] };
   }
 
@@ -151,7 +165,7 @@ export function updateProjectWithBackgroundGraphicLock(
         if (project.id === activeId) {
           return { ...project, ...resolvedPatch, ...nextLayout, updatedAt: timestamp };
         }
-        return project.format === nextFormat
+        return getBackgroundGraphicFormatKey(project) === nextFormat
           ? { ...project, ...nextLayout, updatedAt: timestamp }
           : project;
       }),
@@ -184,10 +198,10 @@ export function setBackgroundGraphicLocked(
     backgroundGraphic: {
       ...data.backgroundGraphic,
       locked: true,
-      [activeProject.format]: layout,
+      [getBackgroundGraphicFormatKey(activeProject)]: layout,
     },
     projects: data.projects.map(project =>
-      project.format === activeProject.format
+      getBackgroundGraphicFormatKey(project) === getBackgroundGraphicFormatKey(activeProject)
         ? { ...project, ...layout, updatedAt: timestamp }
         : project,
     ),
@@ -208,10 +222,10 @@ export function applyBackgroundGraphicToAllTemplates(
     ...data,
     backgroundGraphic: {
       ...data.backgroundGraphic,
-      [activeProject.format]: layout,
+      [getBackgroundGraphicFormatKey(activeProject)]: layout,
     },
     projects: data.projects.map(project =>
-      project.format === activeProject.format
+      getBackgroundGraphicFormatKey(project) === getBackgroundGraphicFormatKey(activeProject)
         ? { ...project, ...layout, updatedAt: timestamp }
         : project,
     ),

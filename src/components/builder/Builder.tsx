@@ -92,7 +92,33 @@ export function Builder({
           >
             <option value="feed">Feed · 1080×1350</option>
             <option value="story">Story · 1080×1920</option>
+            <option value="square">Square · 1080×1080</option>
+            <option value="custom">Custom dimensions</option>
           </SelectField>
+          {project.format === 'custom' && (
+            <div className="custom-dimensions">
+              <label>
+                Width (px)
+                <input
+                  type="number"
+                  min="320"
+                  max="4096"
+                  value={project.customWidth || 1080}
+                  onChange={event => patch({ customWidth: Number(event.target.value) })}
+                />
+              </label>
+              <label>
+                Height (px)
+                <input
+                  type="number"
+                  min="320"
+                  max="4096"
+                  value={project.customHeight || 1080}
+                  onChange={event => patch({ customHeight: Number(event.target.value) })}
+                />
+              </label>
+            </div>
+          )}
           <TemplateFields
             project={project}
             sponsors={data.sponsors}
@@ -107,7 +133,7 @@ export function Builder({
           />
           <p className="control-hint">
             {backgroundGraphicLocked
-              ? `Changes apply to every ${project.format === 'feed' ? 'Feed' : 'Story'} template.`
+              ? 'Changes apply to templates using the same layout shape.'
               : 'Unlocked changes apply to this template only.'}
           </p>
           <SelectField
@@ -160,7 +186,7 @@ export function Builder({
           )}
           {!backgroundGraphicLocked && (
             <button onClick={applyBackgroundGraphicToAll}>
-              Apply to all {project.format === 'feed' ? 'Feed' : 'Story'} templates
+              Apply to templates using this layout shape
             </button>
           )}
 

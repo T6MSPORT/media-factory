@@ -104,9 +104,9 @@ const expectedHashes: Record<string, string> = {
   'event:feed':
     '39481971cca8a3b9bf92ccfe26ce51eaf3b017002f3ef0ef30abe915bc8bdcc7',
   'announcement:story':
-    'f42516575356495c31561c3a5060c007bd248ff7f6527cf9d4a7700fa8eaf0a1',
+    'bfad6a517c3966eb0c6fced99ff0980209050ecaef4fe51035818dc668045aad',
   'announcement:feed':
-    '143bd8544b1dd554bed97c3099a4805608522ac0d4ab64ad4428085b1df3d5c5',
+    '234532dbcd16dc35c9ed7145f28f6bc3f1b476fb9ca4621c7da45eb0c416cf19',
   'schedule:story':
     '4693d67e3cd14f433bad3875261a3e9c9315e27f5e181774bc5ee7f48e13bfb6',
   'schedule:feed':
@@ -268,6 +268,37 @@ test('hero black overlay uses the selected opacity above the image', () => {
   );
 });
 
+test('announcement opacity and sponsor product placement render from controls', () => {
+  const announcement = makeProject('announcement', 'feed');
+  announcement.details = {
+    ...announcement.details,
+    announcementBackgroundOpacity: 75,
+  };
+  const announcementMarkup = renderToStaticMarkup(
+    createElement(Graphic, { project: announcement, data, sponsors, ref: null }),
+  );
+  assert.match(announcementMarkup, /stop-opacity="0\.75"/);
+
+  const sponsor = makeProject('sponsor', 'square');
+  sponsor.details = {
+    ...sponsor.details,
+    sponsorLogoScale: 1.25,
+    sponsorLogoY: 50,
+    productImages: [
+      'data:image/png;base64,product-one',
+      'data:image/png;base64,product-two',
+      'data:image/png;base64,product-three',
+    ],
+  };
+  const sponsorMarkup = renderToStaticMarkup(
+    createElement(Graphic, { project: sponsor, data, sponsors, ref: null }),
+  );
+  assert.match(sponsorMarkup, /viewBox="0 0 1080 1080"/);
+  assert.match(sponsorMarkup, /data-featured-sponsor="corbeau"[^>]*width="1175"/);
+  assert.equal((sponsorMarkup.match(/data-product-placement=/g) || []).length, 3);
+  assert.match(sponsorMarkup, /data:image\/png;base64,product-three/);
+});
+
 test('qualifying result restores identity and centres the combined position composition', () => {
   const project = makeProject('results', 'story');
   project.details = {
@@ -275,6 +306,7 @@ test('qualifying result restores identity and centres the combined position comp
     circuit: 'Silverstone National',
     position: 'P1',
     resultSession: 'qualifying',
+    raceNumber: '3',
   };
 
   const markup = renderToStaticMarkup(
@@ -286,7 +318,7 @@ test('qualifying result restores identity and centres the combined position comp
     }),
   );
 
-  assert.match(markup, /QUALIFYING RESULT/);
+  assert.match(markup, /RACE 3 QUALIFYING RESULT/);
   assert.match(markup, /SILVERSTONE NATIONAL/);
   assert.match(markup, />P</);
   assert.match(markup, />1</);

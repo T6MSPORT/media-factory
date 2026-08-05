@@ -26,6 +26,10 @@ export const emptyDetails: GraphicDetails = {
   position: '',
   scheduleLines: '',
   sponsorName: '',
+  announcementBackgroundOpacity: 32,
+  sponsorLogoScale: 1,
+  sponsorLogoY: 0,
+  productImages: [],
   scheduleDayCount: 1,
   resultSession: 'race',
   raceNumber: '1',
@@ -229,11 +233,36 @@ export function normaliseData(value: unknown): Data {
       raceNumber: ['1', '2', '3'].includes(String(project.details?.raceNumber))
         ? String(project.details?.raceNumber)
         : '1',
+      announcementBackgroundOpacity: Number.isFinite(
+        project.details?.announcementBackgroundOpacity,
+      )
+        ? Math.min(100, Math.max(0, project.details!.announcementBackgroundOpacity!))
+        : 32,
+      sponsorLogoScale: Number.isFinite(project.details?.sponsorLogoScale)
+        ? Math.min(2, Math.max(0.25, project.details!.sponsorLogoScale!))
+        : 1,
+      sponsorLogoY: Number.isFinite(project.details?.sponsorLogoY)
+        ? Math.min(300, Math.max(-300, project.details!.sponsorLogoY!))
+        : 0,
+      productImages: Array.isArray(project.details?.productImages)
+        ? project.details!.productImages!
+            .filter(image => typeof image === 'string' && image.length < 3000000)
+            .slice(0, 3)
+        : [],
     };
     const scheduleDays = normaliseScheduleDays(details);
 
     return ({
     ...project,
+    format: ['feed', 'story', 'square', 'custom'].includes(String(project.format))
+      ? project.format
+      : 'feed',
+    customWidth: Number.isFinite(project.customWidth)
+      ? Math.min(4096, Math.max(320, Math.round(project.customWidth!)))
+      : 1080,
+    customHeight: Number.isFinite(project.customHeight)
+      ? Math.min(4096, Math.max(320, Math.round(project.customHeight!)))
+      : 1080,
     template: legacyQualifying ? 'results' : project.template,
     details: {
       ...details,

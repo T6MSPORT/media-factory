@@ -7,7 +7,8 @@ import type {
   ScheduleSessionType,
   Sponsor,
 } from '../../types';
-import { TextField } from '../forms/PropertyEditor';
+import { RangeField, TextField } from '../forms/PropertyEditor';
+import { Upload } from '../forms/ImageUpload';
 
 type TemplateFieldsProps = {
   project: Project;
@@ -42,28 +43,78 @@ export function TemplateFields({
       sponsors[0]?.id ||
       '';
 
+    const productImages = project.details.productImages || [];
+    const updateProductImage = (index: number, image: string) => {
+      const next = [...productImages];
+      next[index] = image;
+      setDetails({ productImages: next.slice(0, 3) });
+    };
+
     return (
-      <label>
-        Sponsor logo
-        <select
-          value={selectedSponsorId}
-          disabled={!sponsors.length}
-          onChange={event => {
-            const sponsor = sponsors.find(item => item.id === event.target.value);
-            setDetails({
-              sponsorId: event.target.value,
-              sponsorName: sponsor?.name || '',
-            });
-          }}
-        >
-          {!sponsors.length && <option value="">No sponsors available</option>}
-          {sponsors.map(sponsor => (
-            <option value={sponsor.id} key={sponsor.id}>
-              {sponsor.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <>
+        <label>
+          Sponsor logo
+          <select
+            value={selectedSponsorId}
+            disabled={!sponsors.length}
+            onChange={event => {
+              const sponsor = sponsors.find(item => item.id === event.target.value);
+              setDetails({
+                sponsorId: event.target.value,
+                sponsorName: sponsor?.name || '',
+              });
+            }}
+          >
+            {!sponsors.length && <option value="">No sponsors available</option>}
+            {sponsors.map(sponsor => (
+              <option value={sponsor.id} key={sponsor.id}>
+                {sponsor.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <RangeField
+          label="Sponsor logo scale"
+          min={0.25}
+          max={2}
+          step={0.05}
+          value={project.details.sponsorLogoScale ?? 1}
+          onChange={sponsorLogoScale => setDetails({ sponsorLogoScale })}
+        />
+        <RangeField
+          label="Sponsor logo position up / down"
+          min={-300}
+          max={300}
+          step={5}
+          value={project.details.sponsorLogoY ?? 0}
+          onChange={sponsorLogoY => setDetails({ sponsorLogoY })}
+        />
+        <h3>Product placement</h3>
+        <p className="control-hint">Add up to three optional transparent product images.</p>
+        {Array.from({ length: 3 }, (_, index) => (
+          <div className="product-image-control" key={index}>
+            <Upload
+              label={`Product image ${index + 1}`}
+              purpose="portrait"
+              on={image => updateProductImage(index, image)}
+            />
+            {productImages[index] && (
+              <>
+                <div className="selected-hero product-image-preview">
+                  <img src={productImages[index]} />
+                  <span>Product {index + 1}</span>
+                </div>
+                <button
+                  className="asset-remove"
+                  onClick={() => updateProductImage(index, '')}
+                >
+                  Remove product image {index + 1}
+                </button>
+              </>
+            )}
+          </div>
+        ))}
+      </>
     );
   }
 
@@ -107,7 +158,7 @@ export function TemplateFields({
     );
   }
 
-  return (
+  const standardFields = (
     <>
       {TEMPLATE_FIELDS[project.template].map(field =>
         field.type === 'textarea' ? (
@@ -138,6 +189,26 @@ export function TemplateFields({
       )}
     </>
   );
+
+  if (project.template === 'announcement') {
+    return (
+      <>
+        {standardFields}
+        <RangeField
+          label="Text background opacity"
+          min={0}
+          max={100}
+          step={1}
+          value={project.details.announcementBackgroundOpacity ?? 32}
+          onChange={announcementBackgroundOpacity =>
+            setDetails({ announcementBackgroundOpacity })
+          }
+        />
+      </>
+    );
+  }
+
+  return standardFields;
 }
 
 function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
@@ -164,19 +235,19 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
         value={project.details.circuit}
         onChange={circuit => setDetails({ circuit })}
       />
+      <label>
+        Race
+        <select
+          value={project.details.raceNumber || '1'}
+          onChange={event => setDetails({ raceNumber: event.target.value })}
+        >
+          <option value="1">Race 1</option>
+          <option value="2">Race 2</option>
+          <option value="3">Race 3</option>
+        </select>
+      </label>
       {resultSession === 'race' && (
         <>
-          <label>
-            Race
-            <select
-              value={project.details.raceNumber || '1'}
-              onChange={event => setDetails({ raceNumber: event.target.value })}
-            >
-              <option value="1">Race 1</option>
-              <option value="2">Race 2</option>
-              <option value="3">Race 3</option>
-            </select>
-          </label>
           <TextField
             label="Round number"
             value={project.details.round}

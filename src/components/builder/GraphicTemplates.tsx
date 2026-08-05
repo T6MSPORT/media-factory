@@ -9,6 +9,7 @@ import {
   getScheduleTemplateLayout,
   getStandardTemplateLayout,
   getTemplateExtraLayout,
+  isStoryLayout,
 } from './rendererCalculations';
 
 type TemplateSharedProps = {
@@ -340,7 +341,8 @@ export function StandardTemplate({
   featuredSponsor?: Sponsor;
 }) {
   if (project.template === 'sponsor') {
-    const isStory = project.format === 'story';
+    const isStory = isStoryLayout(project);
+    const isCompact = h / w <= 1.05;
     const margin = 70;
     const sponsorTitle = 'PROUDLY SUPPORTED BY';
     const titleSize = fitTextSize(
@@ -351,10 +353,27 @@ export function StandardTemplate({
       0.62,
       -3,
     );
-    const titleY = isStory ? 350 : 300;
-    const logoWidth = w - margin * 2;
-    const logoHeight = isStory ? 520 : 390;
-    const logoY = titleY + titleSize + (isStory ? 90 : 70);
+    const titleY = isCompact ? 235 : isStory ? 350 : 300;
+    const logoScale = Math.min(2, Math.max(0.25, project.details.sponsorLogoScale ?? 1));
+    const baseLogoWidth = w - margin * 2;
+    const baseLogoHeight = isCompact ? 260 : isStory ? 520 : 390;
+    const logoWidth = baseLogoWidth * logoScale;
+    const logoHeight = baseLogoHeight * logoScale;
+    const logoX = (w - logoWidth) / 2;
+    const logoY =
+      titleY + titleSize + (isCompact ? 45 : isStory ? 90 : 70) +
+      (project.details.sponsorLogoY ?? 0);
+    const productImages = (project.details.productImages || []).filter(Boolean).slice(0, 3);
+    const productGap = 28;
+    const productAreaWidth = w - margin * 2;
+    const productCellWidth = productImages.length
+      ? (productAreaWidth - productGap * (productImages.length - 1)) / productImages.length
+      : 0;
+    const productHeight = Math.min(
+      productCellWidth * 1.18,
+      isCompact ? 270 : isStory ? 470 : 330,
+    );
+    const productY = h - productHeight - (isCompact ? 155 : 170);
 
     return (
       <g fill={branding.accent}>
@@ -382,7 +401,7 @@ export function StandardTemplate({
           <image
             data-featured-sponsor={featuredSponsor.id}
             href={featuredSponsor.logo}
-            x={margin}
+            x={logoX}
             y={logoY}
             width={logoWidth}
             height={logoHeight}
@@ -410,12 +429,28 @@ export function StandardTemplate({
             {(featuredSponsor?.name || 'SPONSOR LOGO').toUpperCase()}
           </text>
         )}
+        {productImages.map((image, index) => (
+          <image
+            key={`${index}-${image.slice(-16)}`}
+            data-product-placement={index + 1}
+            href={image}
+            x={margin + index * (productCellWidth + productGap)}
+            y={productY}
+            width={productCellWidth}
+            height={productHeight}
+            preserveAspectRatio="xMidYMax meet"
+          />
+        ))}
       </g>
     );
   }
 
   if (project.template === 'announcement') {
     const layout = getAnnouncementTemplateLayout(w, h, project);
+    const backgroundOpacity = Math.min(
+      100,
+      Math.max(0, project.details.announcementBackgroundOpacity ?? 32),
+    ) / 100;
 
     return (
       <g fontFamily={bodyFont} fill={branding.accent}>
@@ -427,8 +462,8 @@ export function StandardTemplate({
             x2="1"
             y2="1"
           >
-            <stop offset="0%" stopColor="#000000" stopOpacity=".32" />
-            <stop offset="62%" stopColor="#000000" stopOpacity=".12" />
+            <stop offset="0%" stopColor="#000000" stopOpacity={backgroundOpacity} />
+            <stop offset="62%" stopColor="#000000" stopOpacity={backgroundOpacity * 0.375} />
             <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </linearGradient>
         </defs>

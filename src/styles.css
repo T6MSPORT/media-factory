@@ -459,4 +459,5 @@ nav button:hover,nav button.active{background:color-mix(in srgb,var(--brand-prim
 .background-remover-error{margin:14px 0 0;padding:12px 14px;border:1px solid #6c3439;border-radius:8px;background:#2b171a;color:#ff9aa3;font-size:13px}
 .background-remover-note{margin:12px 0 0;color:#7f8896;font-size:12px}
 @media(max-width:900px){.background-remover-previews{grid-template-columns:1fr}.background-remover-canvas{min-height:260px}}
+.custom-dimensions{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1}.product-image-control{display:grid;gap:8px;align-content:start}.product-image-preview img{object-fit:contain}
 @media(max-width:560px){.background-remover-dropzone{min-height:350px;padding:24px}.background-remover-actions{display:grid}.background-remover-actions button{justify-content:center;width:100%}}

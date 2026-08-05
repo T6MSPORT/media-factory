@@ -31,6 +31,8 @@ type PngExporter = (
   node: SVGSVGElement,
   format: FormatId,
   projectName: string,
+  customWidth?: number,
+  customHeight?: number,
 ) => Promise<void>;
 
 export const centreBackgroundPatch: Partial<Project> = {
@@ -82,7 +84,7 @@ export function getBackgroundDragPatch(
   drag: BackgroundDragState,
   point: Point,
   preview: PreviewSize,
-  format: FormatId,
+  formatOrProject: FormatId | Pick<Project, 'format'|'customWidth'|'customHeight'>,
 ): Partial<Project> | null {
   if (
     drag.pointerId !== point.pointerId ||
@@ -92,7 +94,7 @@ export function getBackgroundDragPatch(
     return null;
   }
 
-  const canvas = getCanvasDimensions(format);
+  const canvas = getCanvasDimensions(formatOrProject);
   const deltaX = (point.clientX - drag.clientX) * (canvas.width / preview.width);
   const deltaY = (point.clientY - drag.clientY) * (canvas.height / preview.height);
 
@@ -125,7 +127,13 @@ export async function exportProjectPng(
   now: () => string = () => new Date().toISOString(),
 ): Promise<boolean> {
   try {
-    await exporter(node, project.format, project.name);
+    await exporter(
+      node,
+      project.format,
+      project.name,
+      project.customWidth,
+      project.customHeight,
+    );
     patch({ exportedAt: project.exportedAt || now() });
     return true;
   } catch (error) {

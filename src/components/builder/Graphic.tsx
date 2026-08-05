@@ -23,7 +23,7 @@ export function Graphic({
   onBackgroundPointerMove,
   onBackgroundPointerUp,
 }: GraphicProps) {
-  const { width: w, height: h } = getCanvasDimensions(project.format);
+  const { width: w, height: h } = getCanvasDimensions(project);
   const loadedHeroSize = useHeroDimensions(project);
 
   return (

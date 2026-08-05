@@ -1,5 +1,5 @@
 import type { FormatId } from '../types';
-import { getCanvasDimensions, toSafeFileName } from './format';
+import { getOutputDimensions, toSafeFileName } from './format';
 import orbitronUrl from '@fontsource-variable/orbitron/files/orbitron-latin-wght-normal.woff2?url';
 import oxaniumUrl from '@fontsource-variable/oxanium/files/oxanium-latin-wght-normal.woff2?url';
 import tekoUrl from '@fontsource-variable/teko/files/teko-latin-wght-normal.woff2?url';
@@ -91,8 +91,10 @@ export type PngExportPlan = {
 export function getPngExportPlan(
   format: FormatId,
   projectName: string,
+  customWidth?: number,
+  customHeight?: number,
 ): PngExportPlan {
-  const { width, height } = getCanvasDimensions(format);
+  const { width, height } = getOutputDimensions(format, customWidth, customHeight);
   return {
     width,
     height,
@@ -105,6 +107,8 @@ export async function exportSvgAsPng(
   node: SVGSVGElement,
   format: FormatId,
   projectName: string,
+  customWidth?: number,
+  customHeight?: number,
 ): Promise<void> {
   try {
     await document.fonts?.ready;
@@ -119,7 +123,7 @@ export async function exportSvgAsPng(
 
   return new Promise((resolve, reject) => {
     image.onload = () => {
-      const plan = getPngExportPlan(format, projectName);
+      const plan = getPngExportPlan(format, projectName, customWidth, customHeight);
       const canvas = document.createElement('canvas');
       canvas.width = plan.width;
       canvas.height = plan.height;

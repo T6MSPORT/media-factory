@@ -6,6 +6,13 @@ import type {
   TemplateId,
 } from '../../types';
 
+export const isStoryLayout = (
+  project: Pick<Project, 'format'|'customWidth'|'customHeight'>,
+) =>
+  project.format === 'story' ||
+  (project.format === 'custom' &&
+    (project.customHeight || 1080) / (project.customWidth || 1080) >= 1.5);
+
 type Size = { width: number; height: number };
 
 export function fitTextSize(
@@ -56,7 +63,7 @@ export function getStandardTemplateLayout(
 
   return {
     titleY,
-    titleSize: project.format === 'story' ? 82 : 68,
+    titleSize: isStoryLayout(project) ? 82 : 68,
     subY: titleY + 55,
     detailY: titleY + 130,
     dateY: titleY + 174,
@@ -71,7 +78,7 @@ export function getResultsTemplateLayout(
   h: number,
   project: Project,
 ) {
-  const isStory = project.format === 'story';
+  const isStory = isStoryLayout(project);
   const margin = 70;
   const contentWidth = w - margin * 2;
   const session = project.details.resultSession || 'race';
@@ -82,7 +89,7 @@ export function getResultsTemplateLayout(
     : '1';
   const title =
     session === 'qualifying'
-      ? 'QUALIFYING RESULT'
+      ? `RACE ${raceNumber} QUALIFYING RESULT`
       : `RACE ${raceNumber} RESULT`;
   const titleY = isStory ? 350 : 300;
   const titleSize = fitTextSize(
@@ -177,7 +184,7 @@ export function getAnnouncementTemplateLayout(
   h: number,
   project: Project,
 ) {
-  const isStory = project.format === 'story';
+  const isStory = isStoryLayout(project);
   const margin = 70;
   const title = templateTitles.announcement;
   const titleMaxWidth = w - margin * 2;
@@ -246,7 +253,8 @@ export function getScheduleTemplateLayout(
   h: number,
   project: Project,
 ) {
-  const isStory = project.format === 'story';
+  const isStory = isStoryLayout(project);
+  const isCompact = h / w <= 1.05;
   const margin = 70;
   const dayCount = Math.min(
     3,
@@ -278,46 +286,50 @@ export function getScheduleTemplateLayout(
       })),
   }));
   const contentWidth = w - margin * 2;
-  const titleY = isStory ? 350 : 310;
-  const titleSize = isStory ? 112 : 94;
-  const trackY = titleY + titleSize + (isStory ? 26 : 20);
+  const titleY = isCompact ? 235 : isStory ? 350 : 310;
+  const titleSize = isCompact ? 72 : isStory ? 112 : 94;
+  const trackY = titleY + titleSize + (isCompact ? 14 : isStory ? 26 : 20);
   const trackText =
     project.details.circuit.trim().toUpperCase() || 'TRACK NAME';
   const trackSize = fitTextSize(
     trackText,
-    isStory ? 58 : 50,
+    isCompact ? 44 : isStory ? 58 : 50,
     contentWidth,
-    isStory ? 34 : 30,
+    isCompact ? 26 : isStory ? 34 : 30,
     0.6,
     1,
   );
   const roundText = formatRoundLabel(project.details.round);
-  const roundSize = isStory ? 31 : 26;
-  const roundY = trackY + trackSize + (isStory ? 22 : 16);
+  const roundSize = isCompact ? 22 : isStory ? 31 : 26;
+  const roundY = trackY + trackSize + (isCompact ? 10 : isStory ? 22 : 16);
   const daysY =
-    roundY + (roundText ? roundSize + (isStory ? 42 : 32) : isStory ? 24 : 20);
-  const dayHeadingSize = dayCount === 3 ? (isStory ? 34 : 26) : isStory ? 40 : 32;
-  const dayHeadingHeight = dayHeadingSize + (isStory ? 22 : 18);
-  const dayGap = isStory ? 26 : 18;
+    roundY + (roundText
+      ? roundSize + (isCompact ? 18 : isStory ? 42 : 32)
+      : isCompact ? 12 : isStory ? 24 : 20);
+  const dayHeadingSize = isCompact
+    ? dayCount === 3 ? 23 : 28
+    : dayCount === 3 ? (isStory ? 34 : 26) : isStory ? 40 : 32;
+  const dayHeadingHeight = dayHeadingSize + (isCompact ? 12 : isStory ? 22 : 18);
+  const dayGap = isCompact ? 10 : isStory ? 26 : 18;
   const totalRows = days.reduce((count, day) => count + day.sessions.length, 0);
-  const availableHeight = h - daysY - (isStory ? 170 : 145);
+  const availableHeight = h - daysY - (isCompact ? 112 : isStory ? 170 : 145);
   const rowHeight = Math.max(
-    isStory ? 38 : 31,
+    isCompact ? 20 : isStory ? 38 : 31,
     Math.min(
-      isStory ? 62 : 52,
+      isCompact ? 42 : isStory ? 62 : 52,
       totalRows
         ? (availableHeight - dayCount * dayHeadingHeight - (dayCount - 1) * dayGap) /
             totalRows
-        : isStory ? 62 : 52,
+        : isCompact ? 42 : isStory ? 62 : 52,
     ),
   );
   const sessionSize = Math.min(
-    isStory ? 46 : 40,
-    Math.max(isStory ? 35 : 31, rowHeight * 0.72),
+    isCompact ? 30 : isStory ? 46 : 40,
+    Math.max(isCompact ? 16 : isStory ? 35 : 31, rowHeight * 0.72),
   );
   const chevronStartX = contentWidth * 0.4;
   const chevronEndX = contentWidth * 0.6;
-  const chevronGap = isStory ? 29 : 25;
+  const chevronGap = isCompact ? 20 : isStory ? 29 : 25;
   let nextDayY = daysY;
   const positionedDays = days.map(day => {
     const positionedDay = {
@@ -427,7 +439,7 @@ export function getEventTemplateLayout(
   project: Project,
   profile: DriverProfile,
 ) {
-  const isStory = project.format === 'story';
+  const isStory = isStoryLayout(project);
   const eventTop = isStory ? 70 : 58;
   const eventBlockX = 70;
   const eventIdentityRight = w - eventBlockX;

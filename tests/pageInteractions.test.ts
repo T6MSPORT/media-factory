@@ -376,7 +376,42 @@ test('event fields accept a single date or an optional date range', () => {
   assert.deepEqual(updates, [{ dateEnd: '2026-09-08' }]);
 });
 
-test('sponsor appreciation exposes a sponsor-logo selector', () => {
+test('qualifying results include the Race 1 to Race 3 selector', () => {
+  const project: Project = {
+    ...completeData.projects[0],
+    id: 'qualifying-result',
+    name: 'Qualifying Result',
+    template: 'results',
+    format: 'feed',
+    sponsorIds: [],
+    createdAt: '',
+    updatedAt: '',
+    heroX: 0,
+    heroY: 0,
+    heroScale: 1,
+    heroFlip: false,
+    driverX: 0,
+    driverY: 0,
+    driverScale: 1,
+    driverVisible: true,
+    details: {
+      ...starter.projects[0]?.details,
+      eventName: '', round: '', circuit: '', date: '', time: '', headline: '',
+      subheadline: '', result: '', position: '', scheduleLines: '', sponsorName: '',
+      resultSession: 'qualifying',
+      raceNumber: '2',
+    },
+  };
+  const tree = TemplateFields({ project, setDetails: () => {} });
+  const raceSelect = fieldInLabel(tree, 'Race', 'select');
+  assert.equal(raceSelect.props?.value, '2');
+  assert.deepEqual(
+    findElements(raceSelect, 'option').map(option => textContent(option)),
+    ['Race 1', 'Race 2', 'Race 3'],
+  );
+});
+
+test('sponsor appreciation exposes logo controls and three product slots', () => {
   const updates: Array<Partial<Project['details']>> = [];
   const sponsorProject: Project = {
     id: 'sponsor-graphic',
@@ -421,6 +456,9 @@ test('sponsor appreciation exposes a sponsor-logo selector', () => {
   const selector = findElements(tree, 'select')[0];
 
   assert.ok(findLabel(tree, 'Sponsor logo'));
+  assert.ok(findLabel(tree, 'Sponsor logo scale'));
+  assert.ok(findLabel(tree, 'Sponsor logo position up / down'));
+  assert.equal(textContent(tree).match(/Product image [123]/g)?.length, 3);
   assert.equal(selector.props?.value, 'corbeau');
   selector.props?.onChange({ target: { value: 'edge' } });
   assert.deepEqual(updates, [
@@ -491,6 +529,8 @@ test('saved graphic cards rename, reopen and confirm before deletion', () => {
     setData: (next: Data) => updates.push(next),
     open: (project: Project) => opened.push(project),
   });
+
+  assert.match(textContent(tree), /Saved 25\/07\/26 · Updated 25\/07\/26/);
 
   const nameInput = findElements(tree, 'input')[0];
   (

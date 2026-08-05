@@ -28,7 +28,7 @@ export function useBackgroundDrag(
     if (!drag || drag.pointerId !== event.pointerId || !svg) return;
 
     const rect = svg.getBoundingClientRect();
-    const nextPatch = getBackgroundDragPatch(drag, event, rect, project.format);
+    const nextPatch = getBackgroundDragPatch(drag, event, rect, project);
     if (nextPatch) patch(nextPatch);
   };
 

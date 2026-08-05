@@ -161,6 +161,29 @@ test('PNG plans retain full resolution and safe filenames', () => {
     fileName: 'bathurst-race-weekend.png',
     mimeType: 'image/png',
   });
+  assert.deepEqual(getPngExportPlan('square', 'Square Graphic'), {
+    width: 1080,
+    height: 1080,
+    fileName: 'square-graphic.png',
+    mimeType: 'image/png',
+  });
+  assert.deepEqual(getPngExportPlan('custom', 'Custom Graphic', 1600, 900), {
+    width: 1600,
+    height: 900,
+    fileName: 'custom-graphic.png',
+    mimeType: 'image/png',
+  });
+});
+
+test('custom export forwards the exact requested output dimensions', async () => {
+  const calls: unknown[][] = [];
+  await exportProjectPng(
+    {} as SVGSVGElement,
+    { ...project, format: 'custom', customWidth: 1600, customHeight: 900 },
+    () => {},
+    async (...args: unknown[]) => { calls.push(args); },
+  );
+  assert.deepEqual(calls[0].slice(1), ['custom', project.name, 1600, 900]);
 });
 
 test('PNG export resolves only the fonts used by the SVG for embedding', () => {
