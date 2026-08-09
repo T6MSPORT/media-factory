@@ -1,5 +1,7 @@
 import { PageHeader } from '../components/ui';
+import { GraphicScene } from '../components/builder/GraphicScene';
 import { MOTORSPORT_FONTS } from '../config/branding';
+import { createProject } from '../state/mediaFactoryState';
 import { updateBranding } from '../state/pageState';
 import type { Branding, Data } from '../types';
 
@@ -10,9 +12,12 @@ type BrandingPageProps = {
 
 export function BrandingPage({ data, setData }: BrandingPageProps) {
   const branding = data.branding;
-  const profile = data.profile;
   const update = (patch: Partial<Branding>) =>
     setData(updateBranding(data, patch));
+  const previewProject = createProject('event', data, {
+    createId: () => 'branding-preview',
+    now: () => '2026-01-01T00:00:00.000Z',
+  });
 
   return (
     <div className="page">
@@ -72,23 +77,21 @@ export function BrandingPage({ data, setData }: BrandingPageProps) {
           </div>
         </div>
         <div className="branding-preview-shell">
-          <div
-            className="branding-preview-window"
-            style={{ background: `linear-gradient(145deg,${branding.secondary},#050607)` }}
-          >
-            <div className="preview-stripe" style={{ background: branding.primary }} />
-            <div className="preview-copy" style={{ color: branding.accent }}>
-              <small style={{ fontFamily: branding.bodyFont }}>
-                #{profile.number || '00'} · {profile.team || 'YOUR TEAM'}
-              </small>
-              <strong style={{ fontFamily: branding.headingFont }}>RACE WEEKEND</strong>
-              <span style={{ fontFamily: branding.bodyFont }}>BRAND PREVIEW</span>
-            </div>
-            <div className="preview-logos">
-              {profile.competitionLogo ? <img src={profile.competitionLogo} /> : <div>COMP</div>}
-              {profile.teamLogo ? <img src={profile.teamLogo} /> : <div>TEAM</div>}
-            </div>
-            <div className="preview-sponsor-bar">SPONSOR BAR · 5 PER ROW</div>
+          <div className="branding-preview-window">
+            <svg
+              viewBox="0 0 1080 1350"
+              xmlns="http://www.w3.org/2000/svg"
+              className="graphic"
+            >
+              <GraphicScene
+              w={1080}
+              h={1350}
+              project={previewProject}
+              data={data}
+              sponsors={data.sponsors.slice(0, 10)}
+              loadedHeroSize={null}
+              />
+            </svg>
           </div>
         </div>
       </div>
