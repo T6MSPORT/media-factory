@@ -6,7 +6,6 @@ import {
   moveSponsor,
   removeSponsor,
   SPONSOR_LIMIT,
-  updateBranding,
   updateSponsor,
 } from '../state/pageState';
 import type { Data, Sponsor } from '../types';
@@ -31,8 +30,6 @@ type SponsorsPageProps = {
 };
 
 export function SponsorsPage({ data, setData }: SponsorsPageProps) {
-  const logoScale = data.branding.sponsorLogoScale || 1;
-
   return (
     <div className="page">
       <PageHeader
@@ -47,21 +44,6 @@ export function SponsorsPage({ data, setData }: SponsorsPageProps) {
         >
           Add sponsor
         </button>
-        <label className="sponsor-size-control">
-          Logo visual size <span>{Math.round(logoScale * 100)}%</span>
-          <input
-            type="range"
-            min="0.65"
-            max="1.4"
-            step="0.05"
-            value={logoScale}
-            onChange={(event) =>
-              setData(updateBranding(data, {
-                sponsorLogoScale: +event.target.value,
-              }))
-            }
-          />
-        </label>
       </div>
       <p className="field-help">
         Use the arrows to set the order shown in the sponsor bar.{' '}
