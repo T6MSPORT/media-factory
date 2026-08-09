@@ -618,11 +618,11 @@ test('branding controls expose five approved fonts and update the live preview',
 
   assert.equal(updates[0].branding.primary, '#c70000');
   assert.equal(updates[1].branding.headingFont, MOTORSPORT_FONTS[2]);
-  assert.match(textContent(tree), /#46 · T6 Msport/);
-  assert.match(textContent(tree), /SPONSOR BAR · 5 PER ROW/);
+  assert.match(textContent(tree), /RICH WEATHERILL#46T6 MSPORTNEXT RACE/);
+  assert.match(textContent(tree), /SPONSOR BAR/);
 });
 
-test('sponsor interactions add, resize, rename, reorder and remove a logo slot', () => {
+test('sponsor interactions add, rename, reorder and remove a logo slot without a visual-size slider', () => {
   const sponsor = { id: 'sponsor-one', name: 'Corbeau' };
   const secondSponsor = { id: 'sponsor-two', name: 'Esports Edge' };
   const data: Data = { ...completeData, sponsors: [sponsor, secondSponsor] };
@@ -633,11 +633,7 @@ test('sponsor interactions add, resize, rename, reorder and remove a logo slot',
   });
 
   (findButton(tree, 'Add sponsor').props?.onClick as () => void)();
-  (
-    fieldInLabel(tree, 'Logo visual size', 'input').props?.onChange as (
-      event: { target: { value: string } },
-    ) => void
-  )({ target: { value: '1.25' } });
+  assert.doesNotMatch(textContent(tree), /Logo visual size/);
   (
     fieldInLabel(tree, 'Name', 'input').props?.onChange as (
       event: { target: { value: string } },
@@ -655,10 +651,9 @@ test('sponsor interactions add, resize, rename, reorder and remove a logo slot',
   (remove.props?.onClick as () => void)();
 
   assert.equal(updates[0].sponsors.length, 3);
-  assert.equal(updates[1].branding.sponsorLogoScale, 1.25);
-  assert.equal(updates[2].sponsors[0].name, 'Corbeau Seats');
-  assert.deepEqual(updates[3].sponsors, [secondSponsor, sponsor]);
-  assert.deepEqual(updates[4].sponsors, [secondSponsor]);
+  assert.equal(updates[1].sponsors[0].name, 'Corbeau Seats');
+  assert.deepEqual(updates[2].sponsors, [secondSponsor, sponsor]);
+  assert.deepEqual(updates[3].sponsors, [secondSponsor]);
 });
 
 test('sponsor page enforces the ten-logo limit in the component', () => {
