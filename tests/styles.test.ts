@@ -14,3 +14,16 @@ test('desktop builder controls scroll when their content exceeds the viewport', 
   assert.match(desktopBuilder[1], /overflow-x:\s*hidden/);
   assert.doesNotMatch(desktopBuilder[1], /overflow:\s*hidden/);
 });
+
+test('mobile builder preview remains part of normal vertical page scrolling', () => {
+  assert.match(styles, /\.preview\s*\{[\s\S]*?overflow:\s*visible/);
+  assert.match(styles, /\.graphic\s*\{[\s\S]*?touch-action:\s*pan-y/);
+});
+
+test('profile driver preview uses a reduced image scale on desktop and mobile', () => {
+  assert.match(
+    styles,
+    /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?width:\s*min\(72%,\s*560px\)/,
+  );
+  assert.match(styles, /@media \(max-width:\s*700px\)[\s\S]*?width:\s*68%/);
+});
