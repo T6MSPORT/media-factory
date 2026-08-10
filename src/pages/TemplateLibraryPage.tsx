@@ -1,6 +1,7 @@
 import type { TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader } from '../components/ui';
+import { TemplateThumbnail } from '../components/TemplateThumbnail';
 
 type TemplateLibraryPageProps = {
   openTemplate: (template: TemplateId) => void;
@@ -21,9 +22,7 @@ export function TemplateLibraryPage({ openTemplate }: TemplateLibraryPageProps) 
             onClick={() => openTemplate(template.id)}
             key={template.id}
           >
-            <div className={`thumb ${template.id}`}>
-              <span>{template.name}</span>
-            </div>
+            <TemplateThumbnail id={template.id} name={template.name} />
             <b>{template.name}</b>
             <p>{template.description}</p>
           </button>

@@ -100,25 +100,25 @@ const formats: FormatId[] = ['story', 'feed'];
 
 const expectedHashes: Record<string, string> = {
   'event:story':
-    '8899b9e889278f1118a15488e0b809bb67d5122168bebd1db09ce275c96e6ada',
+    '38ebd68bfcbaacb799bdee679ccc466c30d9fb699be160b117c2d6cc5f377723',
   'event:feed':
-    '9ad3a92a07309df3f2e6d4bac9d5d90f3413d1b415052e3bbed4f99df8a8d3ad',
+    'a9dc1d1c2014c533234e674257dfcaf9db1f0a3e62a09f2cc68bf92d836f3c24',
   'announcement:story':
-    '6786fb8812eab441b65fbc8992dc0f2245237b478b5281f8b96dd558f22c52ed',
+    '80cd595b430a6a67e60606533b96d66f73fd892fc31ee184af1e8ec7f46f5416',
   'announcement:feed':
-    '5c76d418984d82943b175a3dd83b29b29421b7a7359cef6b2755c1d172df40dd',
+    'c4c6e44394a431f1966c1b3b74b0ef8e421b8a0f6f3bb1160c505ca80991ec7f',
   'schedule:story':
-    '4d0d1ee73ca609c926d3d273f4b8811ebd7696175100679e0fcc5cc43c529e73',
+    'cd5ad09cf7c0a7cccb229e29d3d76966d66e7842665ae6a77018bad69ec469e2',
   'schedule:feed':
-    '7e9b67ec3c06abd7eb38541cb7ac70297dd5e1c1c4bbaa46e528eadcabbc9fc1',
+    '1721d5f4eb15ab3addfb5d3c41f9ff3e73dcc658af4b9f12cb0db45a3ed44071',
   'results:story':
-    '4d06887bea0730f39abbb3852eb140c0cb7b3b65c72423afb98690de89c509ce',
+    '6a00e03a5910c0e70f3be86b5650f6069fdcc4cdfcf861c5c17086d919c38b96',
   'results:feed':
-    '5e6a9661d14791572249ca8d86fde1b96252225241b18b9811df82f8961d23d0',
+    '16cef98870dfba1e37e0a891dd6ec9c1273b0f4c1a1c1b933ceb6ba7a3af8bf3',
   'sponsor:story':
-    'ebf7035dfbc7dffe89d2b9b7da8423f319e84a6da3f90cc929c743de5aefdbed',
+    '513a6ac0df65d67908645d8fa5a98a65366e6b5bf88b6db8c92ab89128412d3a',
   'sponsor:feed':
-    'ee99a500d881e22b5845929289a174850f45497f38580f2778c920255a763eee',
+    'abdada8f4895bf44f4e704e169cdbd3684100fd800b50dc9a3296ece67e80555',
 };
 
 function makeProject(template: TemplateId, format: FormatId): Project {

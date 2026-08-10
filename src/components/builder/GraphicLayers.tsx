@@ -61,7 +61,7 @@ export function BackgroundLayers({
           <stop offset="1" stopColor="#000000" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <rect width={w} height={h} fill="url(#bg)" />
+      <rect x={-1} y={-1} width={w + 2} height={h + 2} fill="url(#bg)" />
       {project.heroImage && loadedHeroSize && (
         <>
           <image
@@ -72,12 +72,14 @@ export function BackgroundLayers({
             height={renderedHeroHeight}
             preserveAspectRatio="none"
           />
-          <rect width={w} height={h} fill="url(#bgOverlay)" />
+          <rect x={-1} y={-1} width={w + 2} height={h + 2} fill="url(#bgOverlay)" />
           {(project.heroOverlayOpacity ?? 0) > 0 && (
             <rect
               data-hero-black-overlay="true"
-              width={w}
-              height={h}
+              x={-1}
+              y={-1}
+              width={w + 2}
+              height={h + 2}
               fill="#000000"
               opacity={(project.heroOverlayOpacity ?? 0) / 100}
               pointerEvents="none"

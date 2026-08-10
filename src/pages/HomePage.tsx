@@ -2,6 +2,7 @@ import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
 import { FolderKanban, LayoutTemplate, UsersRound } from 'lucide-react';
+import { TemplateThumbnail } from '../components/TemplateThumbnail';
 
 type HomePageProps = {
   data: Data;
@@ -20,9 +21,7 @@ function TemplateCard({
 }) {
   return (
     <button className="template-card" onClick={() => openTemplate(template.id)}>
-      <div className={`thumb ${template.id}`}>
-        <span>{template.name}</span>
-      </div>
+      <TemplateThumbnail id={template.id} name={template.name} />
       <b>{template.name}</b>
       <p>{template.description}</p>
     </button>

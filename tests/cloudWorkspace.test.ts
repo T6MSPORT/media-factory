@@ -70,10 +70,22 @@ test('cloud workspace upserts the full shared data contract for one account', as
     },
   } as unknown as SupabaseClient;
 
-  await saveCloudWorkspace('driver-46', starter, client);
+  const imageWorkspace = {
+    ...starter,
+    profile: { ...starter.profile, driverImage: 'data:image/webp;base64,driver' },
+    projects: [{
+      ...starter.projects[0],
+      id: 'event-template',
+      heroImage: 'data:image/webp;base64,background',
+    }],
+  };
+  await saveCloudWorkspace('driver-46', imageWorkspace, client);
   assert.equal(conflict, 'user_id');
   assert.equal(saved?.user_id, 'driver-46');
-  assert.equal(saved?.workspace_data, starter);
+  assert.equal(saved?.workspace_data, imageWorkspace);
+  const workspace = saved?.workspace_data as typeof imageWorkspace;
+  assert.equal(workspace.profile.driverImage, 'data:image/webp;base64,driver');
+  assert.equal(workspace.projects[0].heroImage, 'data:image/webp;base64,background');
   assert.equal(saved?.schema_version, 1);
   assert.equal(typeof saved?.updated_at, 'string');
 });

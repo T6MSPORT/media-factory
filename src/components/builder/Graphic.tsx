@@ -32,6 +32,7 @@ export function Graphic({
       viewBox={`0 0 ${w} ${h}`}
       xmlns="http://www.w3.org/2000/svg"
       className="graphic"
+      overflow="hidden"
     >
       <GraphicScene
         w={w}
