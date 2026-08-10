@@ -1,6 +1,8 @@
 import type { PageId } from '../../config/navigation';
 import { NAVIGATION_ITEMS } from '../../config/navigation';
-import { LogOut } from 'lucide-react';
+import { LogOut, MoreHorizontal } from 'lucide-react';
+
+const MOBILE_PRIMARY_PAGES: PageId[] = ['home', 'templates', 'saved', 'profile'];
 
 interface SidebarProps {
   activePage: PageId;
@@ -15,6 +17,9 @@ export function Sidebar({
   accountEmail,
   onSignOut,
 }: SidebarProps) {
+  const mobilePrimary = NAVIGATION_ITEMS.filter(item => MOBILE_PRIMARY_PAGES.includes(item.id));
+  const mobileMore = NAVIGATION_ITEMS.filter(item => !MOBILE_PRIMARY_PAGES.includes(item.id));
+
   return (
     <aside>
       <div className="logo">
@@ -24,7 +29,7 @@ export function Sidebar({
           <small>DRIVER GRAPHICS</small>
         </div>
       </div>
-      <nav aria-label="Main navigation">
+      <nav className="desktop-navigation" aria-label="Main navigation">
         {NAVIGATION_ITEMS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -36,6 +41,38 @@ export function Sidebar({
             {label}
           </button>
         ))}
+      </nav>
+      <nav className="mobile-navigation" aria-label="Mobile navigation">
+        {mobilePrimary.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            type="button"
+            className={activePage === id ? 'active' : ''}
+            onClick={() => onNavigate(id)}
+          >
+            <Icon aria-hidden="true" size={18} />
+            {label}
+          </button>
+        ))}
+        <details className="mobile-more">
+          <summary className={mobileMore.some(item => item.id === activePage) ? 'active' : ''}>
+            <MoreHorizontal aria-hidden="true" size={18} />
+            More
+          </summary>
+          <div className="mobile-more-menu">
+            {mobileMore.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                className={activePage === id ? 'active' : ''}
+                onClick={() => onNavigate(id)}
+              >
+                <Icon aria-hidden="true" size={18} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </details>
       </nav>
       <div className="aside-foot">
         {accountEmail && <span title={accountEmail}>{accountEmail}</span>}

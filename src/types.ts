@@ -79,7 +79,8 @@ export type Project = {
   customWidth?:number; customHeight?:number;
   textAlignment?: 'left' | 'right';
   createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean; heroOverlayOpacity?:number;
-  driverX:number; driverY:number; driverScale:number; driverVisible:boolean; exportedAt?:string;
+  driverX:number; driverY:number; driverScale:number; driverVisible:boolean;
+  savedAt?:string; exportedAt?:string;
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;
   details:GraphicDetails;
 };

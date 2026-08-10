@@ -142,7 +142,10 @@ test('sidebar exposes every approved destination and reports navigation', () => 
     activePage: 'branding',
     onNavigate: (page: string) => navigated.push(page),
   });
-  const buttons = findElements(tree, 'button');
+  const desktopNavigation = findElements(tree, 'nav').find(
+    element => element.props?.className === 'desktop-navigation',
+  );
+  const buttons = findElements(desktopNavigation, 'button');
 
   assert.deepEqual(
     buttons.map(button => textContent(button).trim()),
@@ -153,8 +156,15 @@ test('sidebar exposes every approved destination and reports navigation', () => 
     'active',
   );
 
-  (findButton(tree, 'Saved Graphics').props?.onClick as () => void)();
+  (findButton(tree, 'Saved Designs').props?.onClick as () => void)();
   assert.deepEqual(navigated, ['saved']);
+  assert.equal(findElements(tree, 'summary').some(item => textContent(item).includes('More')), true);
+  assert.equal(
+    findElements(tree, 'nav')
+      .filter(element => element.props?.className === 'mobile-navigation')
+      .some(element => textContent(element).includes('Saved Designs')),
+    true,
+  );
 });
 
 test('background remover is available from the main menu with a local upload flow', () => {
@@ -466,15 +476,15 @@ test('sponsor appreciation exposes logo controls and three product slots', () =>
   ]);
 });
 
-test('saved graphics empty state remains visible without successful exports', () => {
+test('saved designs empty state explains the explicit save action', () => {
   const tree = SavedGraphicsPage({
     data: completeData,
     setData: () => {},
     open: () => {},
   });
 
-  assert.match(textContent(tree), /No saved graphics yet/);
-  assert.match(textContent(tree), /saved here when its PNG is exported/);
+  assert.match(textContent(tree), /No saved designs yet/);
+  assert.match(textContent(tree), /select Save design/);
 });
 
 test('saved graphic cards rename, reopen and confirm before deletion', () => {
@@ -486,7 +496,7 @@ test('saved graphic cards rename, reopen and confirm before deletion', () => {
     sponsorIds: [],
     createdAt: '2026-07-24T10:00:00.000Z',
     updatedAt: '2026-07-25T10:00:00.000Z',
-    exportedAt: '2026-07-25T10:00:00.000Z',
+    savedAt: '2026-07-25T10:00:00.000Z',
     heroImage: '',
     heroImageWidth: 0,
     heroImageHeight: 0,
@@ -545,7 +555,7 @@ test('saved graphic cards rename, reopen and confirm before deletion', () => {
 
   assert.equal(updates[0].projects[0].name, 'Bathurst Final');
   assert.deepEqual(opened, [savedProject]);
-  assert.deepEqual(prompts, ['Delete "Bathurst Race Day" from Saved Graphics?']);
+  assert.deepEqual(prompts, ['Delete "Bathurst Race Day" from Saved Designs?']);
   assert.deepEqual(updates[1].projects, []);
 });
 

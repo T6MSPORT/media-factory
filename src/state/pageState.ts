@@ -80,7 +80,7 @@ export function removeSponsor(data: Data, sponsorId: string): Data {
 }
 
 export function getSavedProjects(data: Data): Project[] {
-  return data.projects.filter(project => project.exportedAt);
+  return data.projects.filter(project => project.savedAt);
 }
 
 export function renameSavedProject(
@@ -102,8 +102,8 @@ export function removeSavedProject(
   projectId: string,
   confirmDelete: (message: string) => boolean = message => window.confirm(message),
 ): Data {
-  const project = data.projects.find(item => item.id === projectId && item.exportedAt);
-  if (!project || !confirmDelete(`Delete "${project.name}" from Saved Graphics?`)) {
+  const project = data.projects.find(item => item.id === projectId && item.savedAt);
+  if (!project || !confirmDelete(`Delete "${project.name}" from Saved Designs?`)) {
     return data;
   }
 

@@ -285,7 +285,13 @@ export function normaliseData(value: unknown): Data {
     graphicElementSize: Number.isFinite(project.graphicElementSize)
       ? Math.min(200, Math.max(10, project.graphicElementSize!))
       : 45,
-    exportedAt: typeof project.exportedAt === 'string' ? project.exportedAt : undefined,
+    savedAt:
+      typeof project.savedAt === 'string'
+        ? project.savedAt
+        : typeof project.exportedAt === 'string'
+          ? project.exportedAt
+          : undefined,
+    exportedAt: undefined,
     heroScale:
       Number.isFinite(project.heroScale) && project.heroScale! >= 1 ? project.heroScale! : 1,
     heroOverlayOpacity: Number.isFinite(project.heroOverlayOpacity)

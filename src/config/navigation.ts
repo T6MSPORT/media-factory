@@ -31,5 +31,5 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { id: 'branding', label: 'Branding', icon: Palette },
   { id: 'sponsors', label: 'Sponsors', icon: UsersRound },
   { id: 'background-remover', label: 'Background Remover', icon: Eraser },
-  { id: 'saved', label: 'Saved Graphics', icon: FolderKanban },
+  { id: 'saved', label: 'Saved Designs', icon: FolderKanban },
 ] as const;

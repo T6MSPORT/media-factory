@@ -64,7 +64,7 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
         <StatCard value={data.sponsors.length} label="Sponsors" />
         <StatCard
           value={getSavedProjects(data).length}
-          label="Saved graphics"
+          label="Saved designs"
         />
       </div>
 

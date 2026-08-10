@@ -122,9 +122,7 @@ export function getUploadedHeroPatch(
 export async function exportProjectPng(
   node: SVGSVGElement,
   project: Project,
-  patch: ProjectPatch,
   exporter: PngExporter = exportSvgAsPng,
-  now: () => string = () => new Date().toISOString(),
 ): Promise<boolean> {
   try {
     await exporter(
@@ -134,10 +132,17 @@ export async function exportProjectPng(
       project.customWidth,
       project.customHeight,
     );
-    patch({ exportedAt: project.exportedAt || now() });
     return true;
   } catch (error) {
     console.error('Media Factory could not export this graphic.', error);
     return false;
   }
+}
+
+export function saveProjectDesign(
+  project: Project,
+  patch: ProjectPatch,
+  now: () => string = () => new Date().toISOString(),
+): void {
+  patch({ savedAt: project.savedAt || now() });
 }

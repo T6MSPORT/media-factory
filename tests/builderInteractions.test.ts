@@ -20,6 +20,7 @@ const {
   removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
+  saveProjectDesign,
   zoomBackgroundToFillPatch,
 } = await server.ssrLoadModule(
   '/src/components/builder/builderInteractions.ts',
@@ -180,7 +181,6 @@ test('custom export forwards the exact requested output dimensions', async () =>
   await exportProjectPng(
     {} as SVGSVGElement,
     { ...project, format: 'custom', customWidth: 1600, customHeight: 900 },
-    () => {},
     async (...args: unknown[]) => { calls.push(args); },
   );
   assert.deepEqual(calls[0].slice(1), ['custom', project.name, 1600, 900]);
@@ -206,31 +206,17 @@ test('PNG export resolves only the fonts used by the SVG for embedding', () => {
   assert.equal(EXPORT_FONT_FILES.length, 6);
 });
 
-test('a graphic is marked saved only after PNG export succeeds', async () => {
-  const patches: Partial<Project>[] = [];
-  let exportFinished = false;
-  const exporter = async () => {
-    await Promise.resolve();
-    exportFinished = true;
-  };
-
+test('PNG export downloads without changing saved design state', async () => {
   const exported = await exportProjectPng(
     {} as SVGSVGElement,
     project,
-    patch => {
-      assert.equal(exportFinished, true);
-      patches.push(patch);
-    },
-    exporter,
-    () => '2026-07-25T10:00:00.000Z',
+    async () => {},
   );
 
   assert.equal(exported, true);
-  assert.deepEqual(patches, [{ exportedAt: '2026-07-25T10:00:00.000Z' }]);
 });
 
-test('a failed PNG export does not add the graphic to Saved Graphics', async () => {
-  const patches: Partial<Project>[] = [];
+test('a failed PNG export reports failure without changing the design', async () => {
   const originalError = console.error;
   console.error = () => {};
 
@@ -238,33 +224,32 @@ test('a failed PNG export does not add the graphic to Saved Graphics', async () 
     const exported = await exportProjectPng(
       {} as SVGSVGElement,
       project,
-      patch => patches.push(patch),
       async () => {
         throw new Error('export failed');
       },
     );
 
     assert.equal(exported, false);
-    assert.deepEqual(patches, []);
   } finally {
     console.error = originalError;
   }
 });
 
-test('re-exporting retains the original Saved Graphics timestamp', async () => {
+test('Save design marks a draft once and retains its original saved date', () => {
   const patches: Partial<Project>[] = [];
-  const exportedProject = {
-    ...project,
-    exportedAt: '2026-07-24T09:00:00.000Z',
-  };
-
-  await exportProjectPng(
-    {} as SVGSVGElement,
-    exportedProject,
+  saveProjectDesign(
+    project,
     patch => patches.push(patch),
-    async () => {},
     () => '2026-07-25T10:00:00.000Z',
   );
+  saveProjectDesign(
+    { ...project, savedAt: '2026-07-24T09:00:00.000Z' },
+    patch => patches.push(patch),
+    () => '2026-07-26T10:00:00.000Z',
+  );
 
-  assert.deepEqual(patches, [{ exportedAt: '2026-07-24T09:00:00.000Z' }]);
+  assert.deepEqual(patches, [
+    { savedAt: '2026-07-25T10:00:00.000Z' },
+    { savedAt: '2026-07-24T09:00:00.000Z' },
+  ]);
 });

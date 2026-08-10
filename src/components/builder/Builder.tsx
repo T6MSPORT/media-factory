@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { ChevronLeft, Download, Settings2 } from 'lucide-react';
+import { Check, ChevronLeft, Download, Save, Settings2 } from 'lucide-react';
 import { useBackgroundDrag } from '../../hooks/useBackgroundDrag';
 import type { Data, Project } from '../../types';
 import { exportSvgAsPng } from '../../utils/export';
@@ -17,6 +17,7 @@ import {
   removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
+  saveProjectDesign,
   zoomBackgroundToFillPatch,
 } from './builderInteractions';
 import { Graphic } from './Graphic';
@@ -57,7 +58,7 @@ export function Builder({
 
   const exportPng = () => {
     if (!svg.current) return;
-    void exportProjectPng(svg.current, project, patch, exportSvgAsPng);
+    void exportProjectPng(svg.current, project, exportSvgAsPng);
   };
 
   return (
@@ -68,19 +69,30 @@ export function Builder({
           Templates
         </button>
         <input value={project.name} onChange={event => patch({ name: event.target.value })} />
-        <button
-          onClick={exportPng}
-          className="primary"
-          disabled={!scheduleDaysComplete}
-          title={
-            scheduleDaysComplete
-              ? undefined
-              : 'Select a day for every schedule section before exporting'
-          }
-        >
-          <Download size={18} />
-          Export PNG
-        </button>
+        <div className="builder-top-actions">
+          <button
+            type="button"
+            className="save-design"
+            onClick={() => saveProjectDesign(project, patch)}
+            disabled={Boolean(project.savedAt)}
+          >
+            {project.savedAt ? <Check size={18} /> : <Save size={18} />}
+            {project.savedAt ? 'Saved' : 'Save design'}
+          </button>
+          <button
+            onClick={exportPng}
+            className="primary"
+            disabled={!scheduleDaysComplete}
+            title={
+              scheduleDaysComplete
+                ? undefined
+                : 'Select a day for every schedule section before exporting'
+            }
+          >
+            <Download size={18} />
+            Export PNG
+          </button>
+        </div>
       </div>
       <div className="builder-body">
         <section className="controls">

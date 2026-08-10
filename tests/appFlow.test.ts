@@ -24,7 +24,7 @@ const {
   updateProfile,
   updateSponsor,
 } = await server.ssrLoadModule('/src/state/pageState.ts');
-const { exportProjectPng } = await server.ssrLoadModule(
+const { exportProjectPng, saveProjectDesign } = await server.ssrLoadModule(
   '/src/components/builder/builderInteractions.ts',
 );
 const { load, save, starter } = await server.ssrLoadModule('/src/store.ts');
@@ -74,19 +74,22 @@ test('complete driver-to-saved-graphic flow retains every approved state transit
   );
 
   const editedProject = data.projects[0];
-  const exportPatches: Partial<Project>[] = [];
   const exported = await exportProjectPng(
     {} as SVGSVGElement,
     editedProject,
-    patch => exportPatches.push(patch),
     async () => {},
-    () => '2026-07-25T12:30:00.000Z',
   );
   assert.equal(exported, true);
+  const savePatches: Partial<Project>[] = [];
+  saveProjectDesign(
+    editedProject,
+    patch => savePatches.push(patch),
+    () => '2026-07-25T12:30:00.000Z',
+  );
   data = updateProject(
     data,
     editedProject.id,
-    exportPatches[0],
+    savePatches[0],
     () => '2026-07-25T12:30:00.000Z',
   );
 
@@ -94,7 +97,7 @@ test('complete driver-to-saved-graphic flow retains every approved state transit
   assert.equal(data.profile.driverImage, 'data:image/webp;base64,driver');
   assert.deepEqual(data.projects[0].sponsorIds, ['sponsor-corbeau']);
   assert.equal(data.projects[0].details.circuit, 'Mount Panorama');
-  assert.equal(data.projects[0].exportedAt, '2026-07-25T12:30:00.000Z');
+  assert.equal(data.projects[0].savedAt, '2026-07-25T12:30:00.000Z');
   assert.deepEqual(getSavedProjects(data), [data.projects[0]]);
 
   data = renameSavedProject(
@@ -127,7 +130,8 @@ test('the complete flow survives autosave and reload without losing assets', () 
     projects: [
       {
         ...project,
-        exportedAt: '2026-07-25T13:30:00.000Z',
+        savedAt: '2026-07-25T13:30:00.000Z',
+        exportedAt: undefined,
       },
     ],
   };

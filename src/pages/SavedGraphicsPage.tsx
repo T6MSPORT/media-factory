@@ -21,14 +21,14 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
   return (
     <div className="page">
       <PageHeader
-        title="Saved graphics"
-        subtitle="Reopen graphics that have been saved by exporting a PNG."
+        title="Saved designs"
+        subtitle="Reopen editable designs you have deliberately saved."
       />
       {savedProjects.length === 0 ? (
         <div className="empty">
           <FolderKanban size={42} />
-          <h3>No saved graphics yet</h3>
-          <p>A graphic is saved here when its PNG is exported.</p>
+          <h3>No saved designs yet</h3>
+          <p>Open a template and select Save design to add it here.</p>
         </div>
       ) : (
         <div className="project-grid">
@@ -46,7 +46,7 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
                 }
               />
               <small>
-                Saved {formatSavedGraphicDate(project.exportedAt!)} · Updated{' '}
+                Saved {formatSavedGraphicDate(project.savedAt!)} · Updated{' '}
                 {formatSavedGraphicDate(project.updatedAt)}
               </small>
               <div>
