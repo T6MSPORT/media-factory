@@ -539,26 +539,9 @@ aside,
 h1,h2,h3{font-family:'Inter',Arial,sans-serif;letter-spacing:-.3px;margin:0}
 p{line-height:1.6}
 
-/* HUD corner-bracket signature Ã¢â‚¬â€ applied to every bounded card surface */
+/* bounded card surfaces */
 .panel,.stat,.template-card,.edit-card,.project-card,.asset-preview-card,
 .hero-card,.branding-preview-window{position:relative}
-.panel::after,.stat::after,.template-card::after,.edit-card::after,
-.project-card::after,.asset-preview-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .16s ease;
-  background:
-    linear-gradient(var(--brand-accent),var(--brand-accent)) top left/12px 2px no-repeat,
-    linear-gradient(var(--brand-accent),var(--brand-accent)) top left/2px 12px no-repeat,
-    linear-gradient(var(--brand-accent),var(--brand-accent)) bottom right/12px 2px no-repeat,
-    linear-gradient(var(--brand-accent),var(--brand-accent)) bottom right/2px 12px no-repeat;
-}
-.panel:hover::after,.stat:hover::after,.template-card:hover::after,
-.edit-card:hover::after,.project-card:hover::after,.asset-preview-card:hover::after{opacity:.6}
 
 /* ===================================================================
    APP SHELL

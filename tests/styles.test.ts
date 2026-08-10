@@ -4,6 +4,12 @@ import test from 'node:test';
 
 const styles = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8');
 
+test('cards do not show decorative corner indicators', () => {
+  assert.doesNotMatch(styles, /\.template-card::after/);
+  assert.doesNotMatch(styles, /\.stat::after/);
+  assert.doesNotMatch(styles, /\.project-card::after/);
+});
+
 test('desktop builder controls scroll when their content exceeds the viewport', () => {
   const desktopBuilder = styles.match(
     /@media \(min-width: 1101px\) \{[\s\S]*?\.controls \{([\s\S]*?)\n  \}/,
