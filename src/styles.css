@@ -994,11 +994,14 @@ textarea{min-height:100px;resize:vertical;font:inherit}
 .template-motif{position:absolute;inset:14px 14px auto auto;z-index:2;width:72px;height:72px;display:grid;place-items:center;border:1px solid #ffffff38;border-radius:18px;background:linear-gradient(145deg,#ffffff1c,#ffffff08);color:#fff;box-shadow:0 14px 32px #0008;transform:rotate(4deg)}
 .thumb.announcement .template-motif{transform:rotate(-5deg)}
 .thumb.schedule .template-motif{border-radius:12px}
-.thumb.results .template-motif{background:linear-gradient(145deg,color-mix(in srgb,var(--brand-primary) 58%,#fff),color-mix(in srgb,var(--brand-primary) 35%,#111))}
-.thumb.sponsor .template-motif{border-radius:50%}
 input[type="date"],input[type="time"]{color-scheme:dark}
 input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer}
 .graphic{display:block;overflow:hidden;border:0;outline:0;background:#050607}
+.field-label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;white-space:nowrap}
+.optional-label{float:none}
+input[type="date"],input[type="time"]{-webkit-text-fill-color:#fff;color:#fff;background-color:var(--carbon-0)}
+input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date-and-time-value{color:#fff;text-align:left}
+.profile-asset-teamLogo .asset-preview-image img,.profile-asset-competitionLogo .asset-preview-image img{width:72%;height:72%;margin:auto}
 
 .export-preview{height:220px;border-radius:var(--r-sm);background:var(--carbon-0);display:grid;place-items:center;overflow:hidden;color:var(--muted)}
 .export-preview img{width:100%;height:100%;object-fit:contain}
@@ -1115,6 +1118,7 @@ input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webki
     max-width: 100%;
     max-height: 100%;
     touch-action: none;
+    box-shadow: none;
   }
 
   .controls {

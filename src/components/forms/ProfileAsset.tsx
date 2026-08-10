@@ -32,10 +32,12 @@ export function ProfileAssetCard({
   onRemove,
 }: ProfileAssetCardProps) {
   const config = PROFILE_ASSETS[asset];
-  const driverClass = asset === 'driverImage' ? ' driver-asset-preview' : '';
+  const assetClass = asset === 'driverImage'
+    ? ' driver-asset-preview'
+    : ` profile-asset-${asset}`;
 
   return (
-    <div className={`asset-preview-card${driverClass}`}>
+    <div className={`asset-preview-card${assetClass}`}>
       <div className="asset-preview-image">
         {image ? <img src={image} /> : fallback || <span>{config.fallback}</span>}
       </div>

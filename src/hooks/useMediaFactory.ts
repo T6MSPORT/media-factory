@@ -221,6 +221,40 @@ export function useMediaFactory() {
     };
   }, [activeWorkspaceId, data, migrationCandidate]);
 
+  useEffect(() => {
+    if (!activeWorkspaceId || !data.authentication.signedIn || migrationCandidate) return;
+    let cancelled = false;
+    let loading = false;
+
+    const refreshWorkspace = async () => {
+      if (cancelled || loading || document.visibilityState === 'hidden') return;
+      loading = true;
+      try {
+        const remote = await loadCloudWorkspace(activeWorkspaceId);
+        if (!cancelled && remote) {
+          const account = dataRef.current.authentication.account;
+          const next = account ? applyCloudAccount(remote.data, account) : remote.data;
+          if (JSON.stringify(next) !== JSON.stringify(dataRef.current)) setData(next);
+        }
+      } catch {
+        // Autosave reports persistent cloud failures; a transient refresh can retry quietly.
+      } finally {
+        loading = false;
+      }
+    };
+
+    const timer = window.setInterval(refreshWorkspace, 8000);
+    const onFocus = () => void refreshWorkspace();
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, [activeWorkspaceId, data.authentication.signedIn, migrationCandidate]);
+
   const retryStorage = async () => {
     try {
       if (!activeWorkspaceId) throw new Error('Sign in before retrying browser storage.');

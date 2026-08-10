@@ -146,7 +146,7 @@ export function TemplateFields({
           }
         />
         <label>
-          End date <span className="optional-label">Optional</span>
+          <span className="field-label-row">End date <span className="optional-label">Optional</span></span>
           <input
             type="date"
             min={project.details.date || undefined}
@@ -354,7 +354,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           </label>
 
 <label>
-  Date <span className="optional-label">Optional</span>
+  <span className="field-label-row">Date <span className="optional-label">Optional</span></span>
   <input
     type="date"
     value={scheduleDay.date || ''}
