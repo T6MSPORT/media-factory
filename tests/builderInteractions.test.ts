@@ -16,6 +16,7 @@ const {
   createBackgroundDrag,
   exportProjectPng,
   getBackgroundDragPatch,
+  getBackgroundPinchScale,
   getUploadedHeroPatch,
   removeBackgroundHeroPatch,
   resetBackgroundPatch,
@@ -108,6 +109,13 @@ test('background dragging ignores another pointer and an unavailable preview', (
     ),
     null,
   );
+});
+
+test('background pinch zoom scales proportionally within safe limits', () => {
+  assert.ok(Math.abs(getBackgroundPinchScale(1.2, 100, 150) - 1.8) < 0.0001);
+  assert.equal(getBackgroundPinchScale(2, 100, 200), 2.5);
+  assert.equal(getBackgroundPinchScale(1.2, 100, 20), 1);
+  assert.equal(getBackgroundPinchScale(1.4, 0, 100), 1.4);
 });
 
 test('image upload and positioning controls retain their approved patches', () => {

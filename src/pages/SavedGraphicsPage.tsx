@@ -1,4 +1,4 @@
-import { FolderKanban, Trash2 } from 'lucide-react';
+import { FolderKanban, Pencil, Trash2 } from 'lucide-react';
 import { PageHeader } from '../components/ui';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import {
@@ -39,12 +39,17 @@ export function SavedGraphicsPage({ data, setData, open }: SavedGraphicsPageProp
                   {TEMPLATE_CATALOGUE.find((template) => template.id === project.template)?.name}
                 </span>
               </div>
-              <input
-                value={project.name}
-                onChange={(event) =>
-                  setData(renameSavedProject(data, project.id, event.target.value))
-                }
-              />
+              <label className="saved-design-name">
+                <span><Pencil size={14} aria-hidden="true" /> Design name</span>
+                <input
+                  aria-label={`Rename ${project.name}`}
+                  value={project.name}
+                  onChange={(event) =>
+                    setData(renameSavedProject(data, project.id, event.target.value))
+                  }
+                />
+                <small>Edit this field to rename your saved design.</small>
+              </label>
               <small>
                 Saved {formatSavedGraphicDate(project.savedAt!)} · Updated{' '}
                 {formatSavedGraphicDate(project.updatedAt)}

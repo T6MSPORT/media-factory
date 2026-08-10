@@ -2,6 +2,7 @@ import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
 import { getSavedProjects } from '../state/pageState';
+import { FolderKanban, LayoutTemplate, UsersRound } from 'lucide-react';
 
 type HomePageProps = {
   data: Data;
@@ -72,16 +73,20 @@ export function HomePage({
           value={TEMPLATE_CATALOGUE.length}
           label="Templates"
           onClick={openTemplates}
+          icon={LayoutTemplate}
         />
         <StatCard
           value={data.sponsors.length}
           label="Sponsors"
           onClick={openSponsors}
+          icon={UsersRound}
+          className="sponsors-stat"
         />
         <StatCard
           value={getSavedProjects(data).length}
           label="Saved designs"
           onClick={openSavedDesigns}
+          icon={FolderKanban}
         />
       </div>
 

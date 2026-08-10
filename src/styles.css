@@ -672,9 +672,11 @@ textarea{min-height:100px;resize:vertical;font:inherit}
 .stat strong{font-size:32px;font-weight:800;display:block;color:var(--brand-accent);
   font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 .stat span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}
-.stat-action{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.stat-action{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;overflow:hidden}
 .stat-action:hover{transform:translateY(-2px);border-color:var(--brand-primary)}
 .stat-action:focus-visible{outline:2px solid var(--brand-primary);outline-offset:3px}
+.stat-copy{display:grid;gap:3px;position:relative;z-index:1}
+.stat-graphic{width:68px;height:68px;display:grid;place-items:center;flex:0 0 68px;border-radius:50%;color:var(--brand-primary);background:color-mix(in srgb,var(--brand-primary) 12%,transparent);transform:rotate(-8deg)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3);margin:var(--sp-5) 0 var(--sp-6)}
 
 .edit-card{
@@ -888,6 +890,11 @@ textarea{min-height:100px;resize:vertical;font:inherit}
 }
 .builder-top>input{max-width:440px;font-weight:700}
 .builder-top .primary{margin-left:auto}
+.builder-top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.builder-top-actions .primary{margin-left:0}
+.secondary-action{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--brand-primary) 45%,var(--line-strong));border-radius:var(--r-sm);background:transparent;color:var(--text);font-weight:700;cursor:pointer}
+.secondary-action:hover{border-color:var(--brand-primary);background:color-mix(in srgb,var(--brand-primary) 10%,transparent)}
+.secondary-action:disabled{cursor:default;color:var(--muted);border-color:var(--line);background:var(--carbon-1)}
 .builder-top .back svg{width:18px}
 .back{display:flex;align-items:center;background:transparent;color:var(--text);border:0;cursor:pointer;
   font-weight:600;font-size:13px;gap:2px}
@@ -898,6 +905,8 @@ textarea{min-height:100px;resize:vertical;font:inherit}
   padding:var(--sp-4);display:grid;align-content:start;gap:var(--sp-3)
 }
 .controls h3{margin:var(--sp-2) 0 2px}
+.control-section{display:grid;gap:var(--sp-3)}
+.mobile-editor-actions,.mobile-control-nav,.mobile-project-name,.mobile-gesture-hint{display:none}
 .controls button{padding:10px;border:1px solid color-mix(in srgb,var(--brand-primary) 26%,#343a44);
   background:color-mix(in srgb,var(--brand-primary) 12%,var(--brand-secondary));color:var(--text);
   border-radius:var(--r-sm);cursor:pointer;transition:border-color .12s ease}
@@ -969,6 +978,7 @@ textarea{min-height:100px;resize:vertical;font:inherit}
   .controls{border-right:0}
   .preview{padding:var(--sp-3)}
   .graphic{width:100%;height:auto}
+  .sponsors-stat{display:none}
 }
 @media(max-width:650px){
   .profile-inputs .form-grid,.logo-preview-stack{grid-template-columns:1fr}
@@ -1034,23 +1044,17 @@ textarea{min-height:100px;resize:vertical;font:inherit}
   }
 
   .builder-top {
-    height: auto;
-    min-height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: 52px;
+    min-height: 52px;
     gap: 10px;
-    padding: 10px 12px;
-    flex-wrap: wrap;
+    padding: 8px 12px;
   }
 
-  .builder-top > input {
-    order: 3;
-    width: 100%;
-    max-width: none;
-  }
-
-  .builder-top .primary {
-    margin-left: auto;
-    padding: 10px 12px;
-  }
+  .builder-top > input,
+  .builder-top > .builder-top-actions { display: none; }
 
   .builder-body {
     display: flex;
@@ -1059,25 +1063,88 @@ textarea{min-height:100px;resize:vertical;font:inherit}
 
   .preview {
     order: 1;
-    padding: 12px;
-    min-height: 0;
-    overflow: visible;
+    position: sticky;
+    top: 52px;
+    z-index: 30;
+    height: clamp(220px, 42vh, 380px);
+    min-height: 220px;
+    padding: 10px;
+    overflow: hidden;
+    border-bottom: 1px solid color-mix(in srgb,var(--brand-primary) 26%,var(--line-strong));
   }
 
   .graphic {
-    width: 100%;
-    height: auto;
+    width: auto;
+    height: 100%;
     max-width: 100%;
-    max-height: none;
-    touch-action: pan-y;
+    max-height: 100%;
+    touch-action: none;
   }
 
   .controls {
     order: 2;
-    padding: 18px 16px 40px;
+    padding: 12px 16px 100px;
     gap: 12px;
   }
+
+  .mobile-editor-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mobile-editor-actions .primary,
+  .mobile-editor-actions .secondary-action {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .mobile-control-nav {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 6px;
+  }
+
+  .mobile-control-nav button {
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    padding: 9px 4px;
+    font-size: 10px;
+  }
+
+  .mobile-control-nav button.active {
+    color: var(--brand-accent);
+    border-color: var(--brand-primary);
+    background: color-mix(in srgb,var(--brand-primary) 22%,var(--brand-secondary));
+  }
+
+  .control-section { display: none; }
+  .control-section.mobile-active { display: grid; }
+  .mobile-project-name { display: grid; }
+  .background-slider-controls { display: none; }
+
+  .mobile-gesture-hint {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    z-index: 2;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #0b0d10d9;
+    color: #fff;
+    font-size: 10px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
 }
+.saved-design-name{margin:12px 0 7px;display:grid;gap:6px;text-transform:none;letter-spacing:0}
+.saved-design-name>span{display:flex;align-items:center;gap:6px;color:var(--text);font-weight:700;font-size:12px}
+.saved-design-name input{margin:0;font-weight:700;border-color:color-mix(in srgb,var(--brand-primary) 55%,var(--line-strong))}
+.saved-design-name small{color:var(--muted);font-size:11px;text-transform:none;letter-spacing:0}
 
 /* Keep the full driver portrait visible at a calmer scale on every screen. */
 .profile-previews > .driver-asset-preview .asset-preview-image img {

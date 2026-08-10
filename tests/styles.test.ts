@@ -22,8 +22,14 @@ test('desktop builder controls scroll when their content exceeds the viewport', 
 });
 
 test('mobile builder preview remains part of normal vertical page scrolling', () => {
-  assert.match(styles, /\.preview\s*\{[\s\S]*?overflow:\s*visible/);
-  assert.match(styles, /\.graphic\s*\{[\s\S]*?touch-action:\s*pan-y/);
+  assert.match(styles, /\.preview\s*\{[\s\S]*?position:\s*sticky/);
+  assert.match(styles, /\.graphic\s*\{[\s\S]*?touch-action:\s*none/);
+  assert.match(styles, /\.control-section\.mobile-active\s*\{\s*display:\s*grid/);
+  assert.match(styles, /\.background-slider-controls\s*\{\s*display:\s*none/);
+});
+
+test('mobile home hides the sponsors summary card', () => {
+  assert.match(styles, /\.sponsors-stat\s*\{\s*display:\s*none/);
 });
 
 test('profile driver preview uses a reduced image scale on desktop and mobile', () => {

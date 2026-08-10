@@ -104,6 +104,15 @@ export function getBackgroundDragPatch(
   };
 }
 
+export function getBackgroundPinchScale(
+  initialScale: number,
+  initialDistance: number,
+  currentDistance: number,
+): number {
+  if (initialDistance <= 0 || currentDistance <= 0) return initialScale;
+  return Math.min(2.5, Math.max(1, initialScale * (currentDistance / initialDistance)));
+}
+
 export function getUploadedHeroPatch(
   heroImage: string,
   size: ImageSize,

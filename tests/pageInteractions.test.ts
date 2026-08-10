@@ -555,6 +555,9 @@ test('saved graphic cards rename, reopen and confirm before deletion', () => {
     open: (project: Project) => opened.push(project),
   });
 
+  assert.match(textContent(tree), /Design name/);
+  assert.match(textContent(tree), /Edit this field to rename your saved design/);
+
   assert.match(textContent(tree), /Saved 25\/07\/26 · Updated 25\/07\/26/);
 
   const nameInput = findElements(tree, 'input')[0];

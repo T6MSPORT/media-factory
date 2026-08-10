@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Check, ChevronLeft, Download, Save, Settings2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Check, ChevronLeft, Download, Image, Layers3, Save, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
 import { useBackgroundDrag } from '../../hooks/useBackgroundDrag';
 import type { Data, Project } from '../../types';
 import { exportSvgAsPng } from '../../utils/export';
@@ -43,6 +43,7 @@ export function Builder({
   applyBackgroundGraphicToAll,
   back,
 }: BuilderProps) {
+  const [mobileSection, setMobileSection] = useState<'details' | 'design' | 'background' | 'driver'>('details');
   const svg = useRef<SVGSVGElement>(null);
   const backgroundDrag = useBackgroundDrag(svg, project, patch);
   const sponsors = data.sponsors.slice(0, 10);
@@ -72,7 +73,7 @@ export function Builder({
         <div className="builder-top-actions">
           <button
             type="button"
-            className="save-design"
+            className="secondary-action save-design"
             onClick={() => saveProjectDesign(project, patch)}
             disabled={Boolean(project.savedAt)}
           >
@@ -96,7 +97,45 @@ export function Builder({
       </div>
       <div className="builder-body">
         <section className="controls">
+          <div className="mobile-editor-actions">
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() => saveProjectDesign(project, patch)}
+              disabled={Boolean(project.savedAt)}
+            >
+              {project.savedAt ? <Check size={18} /> : <Save size={18} />}
+              {project.savedAt ? 'Saved' : 'Save design'}
+            </button>
+            <button
+              type="button"
+              className="primary"
+              onClick={exportPng}
+              disabled={!scheduleDaysComplete}
+            >
+              <Download size={18} /> Export PNG
+            </button>
+          </div>
+          <div className="mobile-control-nav" aria-label="Editor controls">
+            <button className={mobileSection === 'details' ? 'active' : ''} onClick={() => setMobileSection('details')}>
+              <SlidersHorizontal size={17} /> Details
+            </button>
+            <button className={mobileSection === 'design' ? 'active' : ''} onClick={() => setMobileSection('design')}>
+              <Layers3 size={17} /> Design
+            </button>
+            <button className={mobileSection === 'background' ? 'active' : ''} onClick={() => setMobileSection('background')}>
+              <Image size={17} /> Background
+            </button>
+            <button className={mobileSection === 'driver' ? 'active' : ''} onClick={() => setMobileSection('driver')}>
+              <UserRound size={17} /> Driver
+            </button>
+          </div>
+          <div className={`control-section ${mobileSection === 'details' ? 'mobile-active' : ''}`}>
           <h3>Graphic details</h3>
+          <label className="mobile-project-name">
+            Design name
+            <input value={project.name} onChange={event => patch({ name: event.target.value })} />
+          </label>
           <SelectField
             label="Format"
             value={project.format}
@@ -148,6 +187,8 @@ export function Builder({
   <option value="right">Right</option>
 </SelectField>
 )}
+          </div>
+          <div className={`control-section ${mobileSection === 'design' ? 'mobile-active' : ''}`}>
           <h3>Background graphic</h3>
           <ToggleField
             label="Lock across templates"
@@ -213,6 +254,8 @@ export function Builder({
             </button>
           )}
 
+          </div>
+          <div className={`control-section background-control-section ${mobileSection === 'background' ? 'mobile-active' : ''}`}>
           <h3>Background hero image</h3>
           <BackgroundUpload
             on={async heroImage => {
@@ -234,6 +277,7 @@ export function Builder({
               </button>
             </>
           )}
+          <div className="background-slider-controls">
           <RangeField
             label="Move left / right"
             min={-500}
@@ -256,6 +300,7 @@ export function Builder({
             value={project.heroScale}
             onChange={heroScale => patch({ heroScale })}
           />
+          </div>
           <RangeField
             label="Black overlay opacity"
             min={0}
@@ -277,7 +322,9 @@ export function Builder({
             Drag directly on the preview to reposition the background.
           </p>
 
-          {data.profile.driverImage && (
+          </div>
+          <div className={`control-section ${mobileSection === 'driver' ? 'mobile-active' : ''}`}>
+          {data.profile.driverImage ? (
             <>
               <h3>Driver image</h3>
               <ToggleField
@@ -311,14 +358,20 @@ export function Builder({
                 Reset driver image
               </button>
             </>
+          ) : (
+            <p className="control-hint">Add a driver image from Profile to enable these controls.</p>
           )}
 
           <div className="locked">
             <Settings2 size={16} />
             <span>Text positions, logos, sponsor bar and design layers are locked.</span>
           </div>
+          </div>
         </section>
         <section className="preview">
+          {project.heroImage && (
+            <div className="mobile-gesture-hint">Drag to reposition · Pinch to zoom</div>
+          )}
           <Graphic
             ref={svg}
             project={project}
