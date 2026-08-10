@@ -28,7 +28,7 @@ export function isCloudAuthConfigured(): boolean {
   return Boolean(supabaseUrl && supabaseAnonKey);
 }
 
-function getClient(): SupabaseClient {
+export function getCloudClient(): SupabaseClient {
   if (!isCloudAuthConfigured()) {
     throw new Error('Cloud login has not been configured yet.');
   }
@@ -157,7 +157,7 @@ function accountFrom(user: User, profile: ProfileRow): Account {
 }
 
 export async function currentCloudAccount(): Promise<Account | null> {
-  const authClient = getClient();
+  const authClient = getCloudClient();
   const { data, error } = await authClient.auth.getSession();
   if (error) throw readableAuthError(error.message, error.code);
   if (!data.session?.user) return null;
@@ -172,7 +172,7 @@ export async function registerCloudAccount(
   password: string,
   driverName: string,
 ): Promise<RegistrationResult> {
-  const authClient = getClient();
+  const authClient = getCloudClient();
   const normalisedEmail = email.trim().toLowerCase();
   const name = driverName.trim();
   const { data, error } = await authClient.auth.signUp({
@@ -209,7 +209,7 @@ export async function signInCloud(
   email: string,
   password: string,
 ): Promise<Account> {
-  const authClient = getClient();
+  const authClient = getCloudClient();
   const { data, error } = await authClient.auth.signInWithPassword({
     email: email.trim().toLowerCase(),
     password,
@@ -222,12 +222,12 @@ export async function signInCloud(
 }
 
 export async function signOutCloud(): Promise<void> {
-  const { error } = await getClient().auth.signOut();
+  const { error } = await getCloudClient().auth.signOut();
   if (error) throw readableAuthError(error.message);
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
-  const { error } = await getClient().auth.resetPasswordForEmail(
+  const { error } = await getCloudClient().auth.resetPasswordForEmail(
     email.trim().toLowerCase(),
     { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
   );
@@ -235,7 +235,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
 }
 
 export async function resendSignupConfirmation(email: string): Promise<void> {
-  const { error } = await getClient().auth.resend({
+  const { error } = await getCloudClient().auth.resend({
     type: 'signup',
     email: email.trim().toLowerCase(),
     options: {
@@ -246,7 +246,7 @@ export async function resendSignupConfirmation(email: string): Promise<void> {
 }
 
 export async function updateCloudPassword(password: string): Promise<void> {
-  const { error } = await getClient().auth.updateUser({ password });
+  const { error } = await getCloudClient().auth.updateUser({ password });
   if (error) throw readableAuthError(error.message, error.code);
 }
 
@@ -260,7 +260,7 @@ export async function activateInvitedCloudAccount(
   password: string,
   driverName: string,
 ): Promise<Account> {
-  const authClient = getClient();
+  const authClient = getCloudClient();
   const normalisedEmail = email.trim().toLowerCase();
   const token = normaliseInvitationCode(code);
   const name = driverName.trim();
@@ -321,7 +321,7 @@ export async function consumeAuthLink(): Promise<AuthLinkResult> {
 
   if (!tokenHash || !type) return null;
 
-  const { error } = await getClient().auth.verifyOtp({
+  const { error } = await getCloudClient().auth.verifyOtp({
     token_hash: tokenHash,
     type,
   });
@@ -332,7 +332,7 @@ export async function consumeAuthLink(): Promise<AuthLinkResult> {
 }
 
 export function listenForCloudAuth(listener: AuthListener): () => void {
-  const authClient = getClient();
+  const authClient = getCloudClient();
   const { data } = authClient.auth.onAuthStateChange(
     (event: AuthChangeEvent, session: Session | null) => {
       if (!session?.user) {

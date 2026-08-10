@@ -2,8 +2,9 @@
 
 ## Cloud login
 
-Media Factory uses Supabase Auth for email/password accounts and a protected `profiles`
-table for the driver's permanent name.
+Media Factory uses Supabase Auth for email/password accounts, a protected `profiles`
+table for the driver's permanent name, and a protected `user_workspaces` table for each
+driver's centrally stored templates, graphics, branding, sponsors, and profile assets.
 
 1. Create a Supabase project.
 2. Run the SQL files in `supabase/migrations` in filename order in the Supabase SQL editor.
@@ -14,11 +15,14 @@ table for the driver's permanent name.
 5. The production workflow contains the project URL and browser-safe publishable key explicitly.
    Supabase security is enforced by row-level security, not by hiding the publishable key.
 
-Passwords and sessions are handled by Supabase. The browser stores only the cloud account
-identity and the user's Media Factory work. The database trigger prevents a driver name from
-being changed after registration.
+Passwords and sessions are handled by Supabase. Supabase is authoritative for each signed-in
+user's workspace so the same designs load on web and mobile. IndexedDB remains as a local cache
+and as the source for migrating older browser-only work. Row-level security restricts each
+workspace to its owner, and the database trigger prevents a driver name from being changed.
 
-Media Factory is a browser-based motorsport graphics application for racing drivers. It stores driver details, branding and sponsor assets locally, renders graphics as SVG and exports finished artwork as PNG.
+Media Factory is a motorsport graphics application for racing drivers. It centrally stores each
+signed-in driver's details, branding, sponsor assets, and designs, renders graphics as SVG, and
+exports finished artwork as PNG.
 
 ## Requirements
 

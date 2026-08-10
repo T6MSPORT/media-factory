@@ -42,7 +42,7 @@ test('storage recovery stays hidden when persistence is healthy', () => {
   assert.equal(StorageRecovery({ issue: undefined, retry: () => {} }), null);
 });
 
-test('load recovery warns that existing browser data was not overwritten', () => {
+test('load recovery warns that cloud and cached data were not overwritten', () => {
   let retries = 0;
   const tree = StorageRecovery({
     issue: { operation: 'load', error: new SyntaxError('broken') },
@@ -52,7 +52,7 @@ test('load recovery warns that existing browser data was not overwritten', () =>
   });
 
   assert.match(textContent(tree), /Saved data could not be loaded/);
-  assert.match(textContent(tree), /has not been overwritten/);
+  assert.match(textContent(tree), /have not been overwritten/);
   (findButton(tree)?.props?.onClick as () => void)();
   assert.equal(retries, 1);
 });

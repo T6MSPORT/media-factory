@@ -20,7 +20,7 @@ export function StorageRecovery({ issue, retry }: StorageRecoveryProps) {
         </strong>
         <span>
           {isLoadFailure
-            ? 'Your existing browser data has not been overwritten.'
+            ? 'Your cloud workspace and local cache have not been overwritten.'
             : 'Your latest changes are still open. Keep this tab open and retry.'}
         </span>
       </div>

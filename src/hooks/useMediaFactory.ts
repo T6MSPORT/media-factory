@@ -29,6 +29,7 @@ import {
   signOutCloud,
   updateCloudPassword,
 } from '../services/cloudAuth';
+import { loadCloudWorkspace, saveCloudWorkspace } from '../services/cloudWorkspace';
 import {
   deleteLegacyData,
   loadAccountData,
@@ -75,10 +76,17 @@ export function useMediaFactory() {
   ) => {
     let saved: Data | undefined;
     try {
-      saved = await loadAccountData(account.id);
+      const cloudWorkspace = await loadCloudWorkspace(account.id);
+      saved = cloudWorkspace?.data;
+      if (saved) await saveAccountData(account.id, saved);
       setStorageIssue(undefined);
     } catch (error) {
       setStorageIssue({ operation: 'load', error });
+      try {
+        saved = await loadAccountData(account.id);
+      } catch {
+        // IndexedDB is only a cache; retain the cloud error as the actionable issue.
+      }
     }
 
     if (saved) {
@@ -97,6 +105,7 @@ export function useMediaFactory() {
         setActiveWorkspaceId(account.id);
         setData(migrated);
         try {
+          await saveCloudWorkspace(account.id, migrated);
           await saveAccountData(account.id, migrated);
           await deleteLegacyData();
           clearLegacyStorage();
@@ -118,6 +127,7 @@ export function useMediaFactory() {
     setActiveWorkspaceId(account.id);
     setData(fresh);
     try {
+      await saveCloudWorkspace(account.id, fresh);
       await saveAccountData(account.id, fresh);
     } catch (error) {
       setStorageIssue({ operation: 'save', error });
@@ -195,12 +205,13 @@ export function useMediaFactory() {
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       try {
+        await saveCloudWorkspace(activeWorkspaceId, data);
         await saveAccountData(activeWorkspaceId, data);
         if (!cancelled) setStorageIssue(undefined);
       } catch (error) {
         if (!cancelled) setStorageIssue({ operation: 'save', error });
       }
-    }, 100);
+    }, 500);
 
     return () => {
       cancelled = true;
@@ -211,6 +222,7 @@ export function useMediaFactory() {
   const retryStorage = async () => {
     try {
       if (!activeWorkspaceId) throw new Error('Sign in before retrying browser storage.');
+      await saveCloudWorkspace(activeWorkspaceId, dataRef.current);
       await saveAccountData(activeWorkspaceId, dataRef.current);
       setStorageIssue(undefined);
     } catch (error) {
@@ -324,6 +336,7 @@ export function useMediaFactory() {
     setMigrationCandidate(undefined);
     setData(migrated);
     try {
+      await saveCloudWorkspace(account.id, migrated);
       await saveAccountData(account.id, migrated);
       await deleteLegacyData();
       clearLegacyStorage();
@@ -341,6 +354,7 @@ export function useMediaFactory() {
     setMigrationCandidate(undefined);
     setData(fresh);
     try {
+      await saveCloudWorkspace(account.id, fresh);
       await saveAccountData(account.id, fresh);
       await deleteLegacyData();
       clearLegacyStorage();
