@@ -1,4 +1,5 @@
 import type { FormatId, Project } from '../../types';
+import type { PngExportResult } from '../../utils/export';
 import { exportSvgAsPng } from '../../utils/export';
 import { getCanvasDimensions } from '../../utils/format';
 
@@ -26,14 +27,13 @@ type ImageSize = {
   height: number;
 };
 
-type ProjectPatch = (patch: Partial<Project>) => void;
 type PngExporter = (
   node: SVGSVGElement,
   format: FormatId,
   projectName: string,
   customWidth?: number,
   customHeight?: number,
-) => Promise<void>;
+) => Promise<PngExportResult>;
 
 export const centreBackgroundPatch: Partial<Project> = {
   heroX: 0,
@@ -132,26 +132,17 @@ export async function exportProjectPng(
   node: SVGSVGElement,
   project: Project,
   exporter: PngExporter = exportSvgAsPng,
-): Promise<boolean> {
+): Promise<PngExportResult | null> {
   try {
-    await exporter(
+    return await exporter(
       node,
       project.format,
       project.name,
       project.customWidth,
       project.customHeight,
     );
-    return true;
   } catch (error) {
     console.error('Media Factory could not export this graphic.', error);
-    return false;
+    return null;
   }
-}
-
-export function saveProjectDesign(
-  project: Project,
-  patch: ProjectPatch,
-  now: () => string = () => new Date().toISOString(),
-): void {
-  patch({ savedAt: project.savedAt || now() });
 }

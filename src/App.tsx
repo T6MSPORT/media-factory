@@ -11,7 +11,7 @@ import {
   HomePage,
   OnboardingPage,
   ProfilePage,
-  SavedGraphicsPage,
+  ExportsPage,
   SponsorsPage,
   TemplateLibraryPage,
 } from './pages';
@@ -21,11 +21,11 @@ export default function App() {
   const {
     activeProject,
     applyBackgroundGraphicToAll,
+    archiveExport,
     authError,
     authReady,
     data,
     finishOnboarding,
-    openProject,
     openTemplate,
     login,
     logout,
@@ -40,6 +40,7 @@ export default function App() {
     patchProject,
     passwordSetupMode,
     retryStorage,
+    resetActiveTemplate,
     resendConfirmation,
     resetPassword,
     saveRecoveredPassword,
@@ -116,7 +117,7 @@ export default function App() {
               openTemplate={openTemplate}
               openTemplates={() => setPage('templates')}
               openSponsors={() => setPage('sponsors')}
-              openSavedDesigns={() => setPage('saved')}
+              openExports={() => setPage('exports')}
             />
           )}
           {page === 'templates' && <TemplateLibraryPage openTemplate={openTemplate} />}
@@ -124,8 +125,8 @@ export default function App() {
           {page === 'branding' && <BrandingPage data={data} setData={setData} />}
           {page === 'sponsors' && <SponsorsPage data={data} setData={setData} />}
           {page === 'background-remover' && <BackgroundRemoverPage />}
-          {page === 'saved' && (
-            <SavedGraphicsPage data={data} setData={setData} open={openProject} />
+          {page === 'exports' && (
+            <ExportsPage data={data} setData={setData} />
           )}
           {page === 'builder' && activeProject && (
             <Builder
@@ -135,6 +136,8 @@ export default function App() {
               backgroundGraphicLocked={data.backgroundGraphic.locked}
               setBackgroundGraphicLocked={setBackgroundGraphicLock}
               applyBackgroundGraphicToAll={applyBackgroundGraphicToAll}
+              archiveExport={archiveExport}
+              resetTemplate={resetActiveTemplate}
               back={() => setPage('templates')}
             />
           )}

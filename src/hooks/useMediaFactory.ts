@@ -30,6 +30,7 @@ import {
   updateCloudPassword,
 } from '../services/cloudAuth';
 import { loadCloudWorkspace, saveCloudWorkspace } from '../services/cloudWorkspace';
+import { uploadCloudExport } from '../services/cloudExports';
 import {
   deleteLegacyData,
   loadAccountData,
@@ -39,6 +40,7 @@ import {
 import { loadResult, STORAGE_KEY, type StorageIssue } from '../store';
 import { starter } from '../store';
 import type { Account, Data, Project, TemplateId } from '../types';
+import type { PngExportResult } from '../utils/export';
 
 export function useMediaFactory() {
   const initial = useRef(loadResult()).current;
@@ -365,13 +367,9 @@ export function useMediaFactory() {
   };
 
   const openTemplate = (template: TemplateId) => {
-    const project = createProject(template, data);
-    setData(current => addProject(current, project));
-    setActiveId(project.id);
-    setPage('builder');
-  };
-
-  const openProject = (project: Project) => {
+    const existing = data.projects.find(project => project.template === template);
+    const project = existing || createProject(template, data);
+    if (!existing) setData(current => addProject(current, project));
     setActiveId(project.id);
     setPage('builder');
   };
@@ -390,6 +388,27 @@ export function useMediaFactory() {
     setData(current => applyBackgroundGraphicToAllTemplates(current, activeId));
   };
 
+  const resetActiveTemplate = () => {
+    setData(current => ({
+      ...current,
+      projects: current.projects.map(project => {
+        if (project.id !== activeId) return project;
+        return {
+          ...createProject(project.template, current),
+          id: project.id,
+          createdAt: project.createdAt,
+        };
+      }),
+    }));
+  };
+
+  const archiveExport = async (project: Project, result: PngExportResult) => {
+    const accountId = dataRef.current.authentication.account?.id;
+    if (!accountId) throw new Error('Sign in before exporting.');
+    const record = await uploadCloudExport(accountId, project, result);
+    setData(current => ({ ...current, exports: [record, ...current.exports].slice(0, 100) }));
+  };
+
   return {
     activeProject: data.projects.find(project => project.id === activeId),
     authError,
@@ -405,13 +424,14 @@ export function useMediaFactory() {
     showInviteActivation,
     hideInviteActivation,
     startFreshWorkspace,
-    openProject,
     openTemplate,
     page,
     patchProject,
     passwordSetupMode,
     setBackgroundGraphicLock,
     applyBackgroundGraphicToAll,
+    resetActiveTemplate,
+    archiveExport,
     setData,
     setPage,
     storageIssue,

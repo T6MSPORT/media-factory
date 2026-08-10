@@ -15,7 +15,7 @@ export type PageId =
   | 'branding'
   | 'sponsors'
   | 'background-remover'
-  | 'saved'
+  | 'exports'
   | 'builder';
 
 export interface NavigationItem {
@@ -31,5 +31,5 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { id: 'branding', label: 'Branding', icon: Palette },
   { id: 'sponsors', label: 'Sponsors', icon: UsersRound },
   { id: 'background-remover', label: 'Background Remover', icon: Eraser },
-  { id: 'saved', label: 'Saved Designs', icon: FolderKanban },
+  { id: 'exports', label: 'Exports', icon: FolderKanban },
 ] as const;

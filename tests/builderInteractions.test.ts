@@ -21,7 +21,6 @@ const {
   removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
-  saveProjectDesign,
   zoomBackgroundToFillPatch,
 } = await server.ssrLoadModule(
   '/src/components/builder/builderInteractions.ts',
@@ -83,7 +82,6 @@ test('background dragging converts preview movement into exact canvas movement',
     { heroX: 130, heroY: 80 },
   );
 });
-
 test('background dragging ignores another pointer and an unavailable preview', () => {
   const drag = createBackgroundDrag(project, {
     clientX: 100,
@@ -189,7 +187,10 @@ test('custom export forwards the exact requested output dimensions', async () =>
   await exportProjectPng(
     {} as SVGSVGElement,
     { ...project, format: 'custom', customWidth: 1600, customHeight: 900 },
-    async (...args: unknown[]) => { calls.push(args); },
+    async (...args: unknown[]) => {
+      calls.push(args);
+      return { blob: new Blob(), fileName: 'custom.png' };
+    },
   );
   assert.deepEqual(calls[0].slice(1), ['custom', project.name, 1600, 900]);
 });
@@ -214,14 +215,14 @@ test('PNG export resolves only the fonts used by the SVG for embedding', () => {
   assert.equal(EXPORT_FONT_FILES.length, 6);
 });
 
-test('PNG export downloads without changing saved design state', async () => {
+test('PNG export returns the downloaded file for cloud archiving', async () => {
   const exported = await exportProjectPng(
     {} as SVGSVGElement,
     project,
-    async () => {},
+    async () => ({ blob: new Blob(['png']), fileName: 'bathurst.png' }),
   );
 
-  assert.equal(exported, true);
+  assert.equal(exported?.fileName, 'bathurst.png');
 });
 
 test('a failed PNG export reports failure without changing the design', async () => {
@@ -237,27 +238,9 @@ test('a failed PNG export reports failure without changing the design', async ()
       },
     );
 
-    assert.equal(exported, false);
+    assert.equal(exported, null);
   } finally {
     console.error = originalError;
   }
 });
 
-test('Save design marks a draft once and retains its original saved date', () => {
-  const patches: Partial<Project>[] = [];
-  saveProjectDesign(
-    project,
-    patch => patches.push(patch),
-    () => '2026-07-25T10:00:00.000Z',
-  );
-  saveProjectDesign(
-    { ...project, savedAt: '2026-07-24T09:00:00.000Z' },
-    patch => patches.push(patch),
-    () => '2026-07-26T10:00:00.000Z',
-  );
-
-  assert.deepEqual(patches, [
-    { savedAt: '2026-07-25T10:00:00.000Z' },
-    { savedAt: '2026-07-24T09:00:00.000Z' },
-  ]);
-});

@@ -84,9 +84,14 @@ export type Project = {
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;
   details:GraphicDetails;
 };
+export type ExportRecord = {
+  id:string; storagePath:string; fileName:string; projectName:string;
+  template:TemplateId; format:FormatId; createdAt:string;
+};
 export type Data = {
   onboardingComplete:boolean; profile:DriverProfile; branding:Branding;
   sponsors:Sponsor[]; projects:Project[];
+  exports:ExportRecord[];
   backgroundGraphic:BackgroundGraphicSettings;
   authentication:Authentication;
 };

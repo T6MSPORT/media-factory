@@ -87,6 +87,7 @@ export type PngExportPlan = {
   fileName: string;
   mimeType: 'image/png';
 };
+export type PngExportResult = { blob: Blob; fileName: string };
 
 export function getPngExportPlan(
   format: FormatId,
@@ -109,7 +110,7 @@ export async function exportSvgAsPng(
   projectName: string,
   customWidth?: number,
   customHeight?: number,
-): Promise<void> {
+): Promise<PngExportResult> {
   try {
     await document.fonts?.ready;
   } catch {
@@ -149,7 +150,7 @@ export async function exportSvgAsPng(
         anchor.download = plan.fileName;
         anchor.click();
         URL.revokeObjectURL(anchor.href);
-        resolve();
+        resolve({ blob, fileName: plan.fileName });
       }, plan.mimeType);
     };
 

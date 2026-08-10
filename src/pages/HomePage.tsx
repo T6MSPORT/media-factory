@@ -1,7 +1,6 @@
 import type { Data, TemplateId } from '../types';
 import { TEMPLATE_CATALOGUE } from '../config/templates';
 import { PageHeader, StatCard } from '../components/ui';
-import { getSavedProjects } from '../state/pageState';
 import { FolderKanban, LayoutTemplate, UsersRound } from 'lucide-react';
 
 type HomePageProps = {
@@ -9,7 +8,7 @@ type HomePageProps = {
   openTemplate: (template: TemplateId) => void;
   openTemplates: () => void;
   openSponsors: () => void;
-  openSavedDesigns: () => void;
+  openExports: () => void;
 };
 
 function TemplateCard({
@@ -35,7 +34,7 @@ export function HomePage({
   openTemplate,
   openTemplates,
   openSponsors,
-  openSavedDesigns,
+  openExports,
 }: HomePageProps) {
   return (
     <div className="page branded-home">
@@ -83,9 +82,9 @@ export function HomePage({
           className="sponsors-stat"
         />
         <StatCard
-          value={getSavedProjects(data).length}
-          label="Saved designs"
-          onClick={openSavedDesigns}
+          value={data.exports.length}
+          label="Exports"
+          onClick={openExports}
           icon={FolderKanban}
         />
       </div>

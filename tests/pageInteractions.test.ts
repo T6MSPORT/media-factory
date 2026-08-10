@@ -156,13 +156,13 @@ test('sidebar exposes every approved destination and reports navigation', () => 
     'active',
   );
 
-  (findButton(tree, 'Saved Designs').props?.onClick as () => void)();
-  assert.deepEqual(navigated, ['saved']);
+  (findButton(tree, 'Exports').props?.onClick as () => void)();
+  assert.deepEqual(navigated, ['exports']);
   assert.equal(findElements(tree, 'summary').some(item => textContent(item).includes('More')), true);
   assert.equal(
     findElements(tree, 'nav')
       .filter(element => element.props?.className === 'mobile-navigation')
-      .some(element => textContent(element).includes('Saved Designs')),
+      .some(element => textContent(element).includes('Exports')),
     true,
   );
 });
@@ -178,7 +178,7 @@ test('background remover is available from the main menu with a local upload flo
   assert.match(source, /accept="image\/jpeg,image\/png,image\/webp"/);
 });
 
-test('home actions open templates, sponsors, saved designs and a popular template', () => {
+test('home actions open templates, sponsors, exports and a popular template', () => {
   const opened: string[] = [];
   let browsed = 0;
   let sponsorsOpened = 0;
@@ -192,7 +192,7 @@ test('home actions open templates, sponsors, saved designs and a popular templat
     openSponsors: () => {
       sponsorsOpened += 1;
     },
-    openSavedDesigns: () => {
+    openExports: () => {
       savedOpened += 1;
     },
   });
@@ -200,7 +200,7 @@ test('home actions open templates, sponsors, saved designs and a popular templat
   (findButton(tree, 'Browse templates').props?.onClick as () => void)();
   (findButtonContaining(tree, 'Templates').props?.onClick as () => void)();
   (findButtonContaining(tree, 'Sponsors').props?.onClick as () => void)();
-  (findButtonContaining(tree, 'Saved designs').props?.onClick as () => void)();
+  (findButtonContaining(tree, 'Exports').props?.onClick as () => void)();
   (
     findButtonContaining(tree, TEMPLATE_CATALOGUE[0].name).props?.onClick as () => void
   )();
@@ -225,7 +225,7 @@ test('home interface colours remain independent from selected branding colours',
     openTemplate: () => {},
     openTemplates: () => {},
     openSponsors: () => {},
-    openSavedDesigns: () => {},
+    openExports: () => {},
   }) as ElementNode;
 
   assert.equal(tree.props?.style, undefined);

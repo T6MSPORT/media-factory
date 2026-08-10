@@ -4,6 +4,6 @@ export { BackgroundRemoverPage } from './BackgroundRemoverPage';
 export { HomePage } from './HomePage';
 export { OnboardingPage } from './OnboardingPage';
 export { ProfilePage } from './ProfilePage';
-export { SavedGraphicsPage } from './SavedGraphicsPage';
+export { ExportsPage } from './ExportsPage';
 export { SponsorsPage } from './SponsorsPage';
 export { TemplateLibraryPage } from './TemplateLibraryPage';

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test, { after } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
-import type { Data, Project } from '../src/types.ts';
+import type { Data } from '../src/types.ts';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const server = await createServer({
@@ -19,19 +19,17 @@ const {
 } = await server.ssrLoadModule('/src/state/mediaFactoryState.ts');
 const {
   addSponsor,
-  getSavedProjects,
-  renameSavedProject,
   updateProfile,
   updateSponsor,
 } = await server.ssrLoadModule('/src/state/pageState.ts');
-const { exportProjectPng, saveProjectDesign } = await server.ssrLoadModule(
+const { exportProjectPng } = await server.ssrLoadModule(
   '/src/components/builder/builderInteractions.ts',
 );
 const { load, save, starter } = await server.ssrLoadModule('/src/store.ts');
 
 after(() => server.close());
 
-test('complete driver-to-saved-graphic flow retains every approved state transition', async () => {
+test('complete driver-to-export flow retains the persistent template state', async () => {
   let data = updateProfile(starter, {
     name: 'Rich Weatherill',
     number: '46',
@@ -77,37 +75,16 @@ test('complete driver-to-saved-graphic flow retains every approved state transit
   const exported = await exportProjectPng(
     {} as SVGSVGElement,
     editedProject,
-    async () => {},
+    async () => ({ blob: new Blob(['png']), fileName: 'bathurst-event-poster.png' }),
   );
-  assert.equal(exported, true);
-  const savePatches: Partial<Project>[] = [];
-  saveProjectDesign(
-    editedProject,
-    patch => savePatches.push(patch),
-    () => '2026-07-25T12:30:00.000Z',
-  );
-  data = updateProject(
-    data,
-    editedProject.id,
-    savePatches[0],
-    () => '2026-07-25T12:30:00.000Z',
-  );
+  assert.equal(exported?.fileName, 'bathurst-event-poster.png');
 
   assert.equal(data.onboardingComplete, true);
   assert.equal(data.profile.driverImage, 'data:image/webp;base64,driver');
   assert.deepEqual(data.projects[0].sponsorIds, ['sponsor-corbeau']);
   assert.equal(data.projects[0].details.circuit, 'Mount Panorama');
-  assert.equal(data.projects[0].savedAt, '2026-07-25T12:30:00.000Z');
-  assert.deepEqual(getSavedProjects(data), [data.projects[0]]);
-
-  data = renameSavedProject(
-    data,
-    editedProject.id,
-    'Bathurst Race Week',
-    '2026-07-25T12:35:00.000Z',
-  );
-  const reopened = getSavedProjects(data)[0];
-  assert.equal(reopened.name, 'Bathurst Race Week');
+  const reopened = data.projects[0];
+  assert.equal(reopened.name, 'Bathurst Event Poster');
   assert.equal(reopened.template, 'event');
   assert.equal(reopened.heroImage, 'data:image/webp;base64,bathurst');
   assert.equal(reopened.details.eventName, 'PTEC Bathurst');
@@ -145,5 +122,5 @@ test('the complete flow survives autosave and reload without losing assets', () 
   const restored = load({ getItem: () => stored });
 
   assert.deepEqual(restored, data);
-  assert.equal(getSavedProjects(restored)[0].id, 'graphic-announcement');
+  assert.equal(restored.projects[0].id, 'graphic-announcement');
 });

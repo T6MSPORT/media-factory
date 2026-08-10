@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Check, ChevronLeft, Download, Image, Layers3, Save, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
+import { ChevronLeft, Download, Image, Layers3, RotateCcw, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
 import { useBackgroundDrag } from '../../hooks/useBackgroundDrag';
 import type { Data, Project } from '../../types';
 import { exportSvgAsPng } from '../../utils/export';
@@ -17,7 +17,6 @@ import {
   removeBackgroundHeroPatch,
   resetBackgroundPatch,
   resetDriverPatch,
-  saveProjectDesign,
   zoomBackgroundToFillPatch,
 } from './builderInteractions';
 import { Graphic } from './Graphic';
@@ -32,6 +31,8 @@ type BuilderProps = {
   setBackgroundGraphicLocked: (locked: boolean) => void;
   applyBackgroundGraphicToAll: () => void;
   back: () => void;
+  archiveExport: (project: Project, result: Awaited<ReturnType<typeof exportSvgAsPng>>) => Promise<void>;
+  resetTemplate: () => void;
 };
 
 export function Builder({
@@ -42,6 +43,8 @@ export function Builder({
   setBackgroundGraphicLocked,
   applyBackgroundGraphicToAll,
   back,
+  archiveExport,
+  resetTemplate,
 }: BuilderProps) {
   const [mobileSection, setMobileSection] = useState<'details' | 'design' | 'background' | 'driver'>('details');
   const svg = useRef<SVGSVGElement>(null);
@@ -57,9 +60,10 @@ export function Builder({
   const setDetails = (details: Partial<Project['details']>) =>
     patch({ details: { ...project.details, ...details } });
 
-  const exportPng = () => {
+  const exportPng = async () => {
     if (!svg.current) return;
-    void exportProjectPng(svg.current, project, exportSvgAsPng);
+    const result = await exportProjectPng(svg.current, project, exportSvgAsPng);
+    if (result) await archiveExport(project, result);
   };
 
   return (
@@ -71,15 +75,6 @@ export function Builder({
         </button>
         <input value={project.name} onChange={event => patch({ name: event.target.value })} />
         <div className="builder-top-actions">
-          <button
-            type="button"
-            className="secondary-action save-design"
-            onClick={() => saveProjectDesign(project, patch)}
-            disabled={Boolean(project.savedAt)}
-          >
-            {project.savedAt ? <Check size={18} /> : <Save size={18} />}
-            {project.savedAt ? 'Saved' : 'Save design'}
-          </button>
           <button
             onClick={exportPng}
             className="primary"
@@ -97,25 +92,6 @@ export function Builder({
       </div>
       <div className="builder-body">
         <section className="controls">
-          <div className="mobile-editor-actions">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() => saveProjectDesign(project, patch)}
-              disabled={Boolean(project.savedAt)}
-            >
-              {project.savedAt ? <Check size={18} /> : <Save size={18} />}
-              {project.savedAt ? 'Saved' : 'Save design'}
-            </button>
-            <button
-              type="button"
-              className="primary"
-              onClick={exportPng}
-              disabled={!scheduleDaysComplete}
-            >
-              <Download size={18} /> Export PNG
-            </button>
-          </div>
           <div className="mobile-control-nav" aria-label="Editor controls">
             <button className={mobileSection === 'details' ? 'active' : ''} onClick={() => setMobileSection('details')}>
               <SlidersHorizontal size={17} /> Details
@@ -367,6 +343,15 @@ export function Builder({
             <span>Text positions, logos, sponsor bar and design layers are locked.</span>
           </div>
           </div>
+          <button
+            type="button"
+            className="reset-template"
+            onClick={() => {
+              if (window.confirm('Reset this template to the Media Factory default?')) resetTemplate();
+            }}
+          >
+            <RotateCcw size={16} /> Reset template to default
+          </button>
         </section>
         <section className="preview">
           {project.heroImage && (

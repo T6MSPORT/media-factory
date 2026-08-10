@@ -2,7 +2,7 @@ import type { PageId } from '../../config/navigation';
 import { NAVIGATION_ITEMS } from '../../config/navigation';
 import { LogOut, MoreHorizontal } from 'lucide-react';
 
-const MOBILE_PRIMARY_PAGES: PageId[] = ['home', 'templates', 'saved', 'profile'];
+const MOBILE_PRIMARY_PAGES: PageId[] = ['home', 'templates', 'exports', 'profile'];
 
 interface SidebarProps {
   activePage: PageId;

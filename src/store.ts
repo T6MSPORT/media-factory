@@ -156,6 +156,7 @@ export const starter: Data = {
   },
   sponsors: [],
   projects: [],
+  exports: [],
   backgroundGraphic: {
     locked: false,
     feed: { ...defaultBackgroundGraphicLayout },
@@ -360,6 +361,15 @@ export function normaliseData(value: unknown): Data {
       : profile,
     branding,
     projects,
+    exports: Array.isArray(parsed.exports)
+      ? parsed.exports.filter(item =>
+          item && typeof item.id === 'string' && typeof item.storagePath === 'string' &&
+          typeof item.fileName === 'string' && typeof item.projectName === 'string' &&
+          typeof item.createdAt === 'string' &&
+          ['event', 'announcement', 'schedule', 'results', 'sponsor'].includes(item.template) &&
+          ['feed', 'story', 'square', 'custom'].includes(item.format),
+        ).slice(0, 100)
+      : [],
     backgroundGraphic,
     authentication,
   };
