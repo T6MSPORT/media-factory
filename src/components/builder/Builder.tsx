@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
-import { ChevronLeft, Download, Image, Layers3, RotateCcw, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
+import { ChevronLeft, Download, Image, Layers3, RotateCcw, SlidersHorizontal, UserRound } from 'lucide-react';
 import { useBackgroundDrag } from '../../hooks/useBackgroundDrag';
 import type { Data, Project } from '../../types';
 import { exportSvgAsPng } from '../../utils/export';
 import { getImageDimensions } from '../../utils/images';
-import { BackgroundUpload } from '../forms/ImageUpload';
+import { BackgroundUpload, Upload } from '../forms/ImageUpload';
 import {
   RangeField,
   SelectField,
@@ -33,6 +33,7 @@ type BuilderProps = {
   back: () => void;
   archiveExport: (project: Project, result: Awaited<ReturnType<typeof exportSvgAsPng>>) => Promise<void>;
   resetTemplate: () => void;
+  setDriverImage: (driverImage: string) => void;
 };
 
 export function Builder({
@@ -45,6 +46,7 @@ export function Builder({
   back,
   archiveExport,
   resetTemplate,
+  setDriverImage,
 }: BuilderProps) {
   const [mobileSection, setMobileSection] = useState<'details' | 'design' | 'background' | 'driver'>('details');
   const svg = useRef<SVGSVGElement>(null);
@@ -299,10 +301,15 @@ export function Builder({
           </p>
 
           </div>
-          <div className={`control-section ${mobileSection === 'driver' ? 'mobile-active' : ''}`}>
+          <div className={`control-section driver-control-section ${mobileSection === 'driver' ? 'mobile-active' : ''}`}>
+          <h3>Driver image</h3>
+          <Upload label={data.profile.driverImage ? 'Replace driver image' : 'Upload driver image'} on={setDriverImage} />
           {data.profile.driverImage ? (
             <>
-              <h3>Driver image</h3>
+              <div className="selected-driver">
+                <img src={data.profile.driverImage} alt="Current driver" />
+                <span>Current driver image</span>
+              </div>
               <ToggleField
                 label="Show driver image"
                 checked={project.driverVisible !== false}
@@ -335,13 +342,8 @@ export function Builder({
               </button>
             </>
           ) : (
-            <p className="control-hint">Add a driver image from Profile to enable these controls.</p>
+            <p className="control-hint">Upload a driver image to enable positioning and scale controls.</p>
           )}
-
-          <div className="locked">
-            <Settings2 size={16} />
-            <span>Text positions, logos, sponsor bar and design layers are locked.</span>
-          </div>
           </div>
           <button
             type="button"

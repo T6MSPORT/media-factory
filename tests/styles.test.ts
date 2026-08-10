@@ -21,8 +21,9 @@ test('desktop builder controls scroll when their content exceeds the viewport', 
   assert.doesNotMatch(desktopBuilder[1], /overflow:\s*hidden/);
 });
 
-test('mobile builder preview remains part of normal vertical page scrolling', () => {
-  assert.match(styles, /\.preview\s*\{[\s\S]*?position:\s*sticky/);
+test('mobile builder freezes the preview and scrolls only the controls', () => {
+  assert.match(styles, /\.builder\s*\{[^}]*height:\s*100dvh[^}]*overflow:\s*hidden/);
+  assert.match(styles, /\.controls\s*\{[^}]*min-height:\s*0[^}]*overflow-y:\s*auto/);
   assert.match(styles, /\.graphic\s*\{[\s\S]*?touch-action:\s*none/);
   assert.match(styles, /\.control-section\.mobile-active\s*\{\s*display:\s*grid/);
   assert.match(styles, /\.background-slider-controls\s*\{\s*display:\s*none/);
