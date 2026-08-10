@@ -178,23 +178,36 @@ test('background remover is available from the main menu with a local upload flo
   assert.match(source, /accept="image\/jpeg,image\/png,image\/webp"/);
 });
 
-test('home actions open the template library and the selected popular template', () => {
+test('home actions open templates, sponsors, saved designs and a popular template', () => {
   const opened: string[] = [];
   let browsed = 0;
+  let sponsorsOpened = 0;
+  let savedOpened = 0;
   const tree = HomePage({
     data: completeData,
     openTemplate: (template: string) => opened.push(template),
     openTemplates: () => {
       browsed += 1;
     },
+    openSponsors: () => {
+      sponsorsOpened += 1;
+    },
+    openSavedDesigns: () => {
+      savedOpened += 1;
+    },
   });
 
   (findButton(tree, 'Browse templates').props?.onClick as () => void)();
+  (findButtonContaining(tree, 'Templates').props?.onClick as () => void)();
+  (findButtonContaining(tree, 'Sponsors').props?.onClick as () => void)();
+  (findButtonContaining(tree, 'Saved designs').props?.onClick as () => void)();
   (
     findButtonContaining(tree, TEMPLATE_CATALOGUE[0].name).props?.onClick as () => void
   )();
 
-  assert.equal(browsed, 1);
+  assert.equal(browsed, 2);
+  assert.equal(sponsorsOpened, 1);
+  assert.equal(savedOpened, 1);
   assert.deepEqual(opened, [TEMPLATE_CATALOGUE[0].id]);
 });
 
@@ -211,6 +224,8 @@ test('home interface colours remain independent from selected branding colours',
     },
     openTemplate: () => {},
     openTemplates: () => {},
+    openSponsors: () => {},
+    openSavedDesigns: () => {},
   }) as ElementNode;
 
   assert.equal(tree.props?.style, undefined);

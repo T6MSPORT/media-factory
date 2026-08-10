@@ -7,6 +7,8 @@ type HomePageProps = {
   data: Data;
   openTemplate: (template: TemplateId) => void;
   openTemplates: () => void;
+  openSponsors: () => void;
+  openSavedDesigns: () => void;
 };
 
 function TemplateCard({
@@ -27,7 +29,13 @@ function TemplateCard({
   );
 }
 
-export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
+export function HomePage({
+  data,
+  openTemplate,
+  openTemplates,
+  openSponsors,
+  openSavedDesigns,
+}: HomePageProps) {
   return (
     <div className="page branded-home">
       <PageHeader
@@ -60,11 +68,20 @@ export function HomePage({ data, openTemplate, openTemplates }: HomePageProps) {
       </section>
 
       <div className="stats">
-        <StatCard value={TEMPLATE_CATALOGUE.length} label="Templates" />
-        <StatCard value={data.sponsors.length} label="Sponsors" />
+        <StatCard
+          value={TEMPLATE_CATALOGUE.length}
+          label="Templates"
+          onClick={openTemplates}
+        />
+        <StatCard
+          value={data.sponsors.length}
+          label="Sponsors"
+          onClick={openSponsors}
+        />
         <StatCard
           value={getSavedProjects(data).length}
           label="Saved designs"
+          onClick={openSavedDesigns}
         />
       </div>
 

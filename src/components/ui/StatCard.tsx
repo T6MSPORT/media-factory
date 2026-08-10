@@ -1,13 +1,14 @@
 interface StatCardProps {
   value: number;
   label: string;
+  onClick: () => void;
 }
 
-export function StatCard({ value, label }: StatCardProps) {
+export function StatCard({ value, label, onClick }: StatCardProps) {
   return (
-    <div className="stat">
+    <button type="button" className="stat stat-action" onClick={onClick}>
       <strong>{value}</strong>
       <span>{label}</span>
-    </div>
+    </button>
   );
 }

@@ -689,6 +689,9 @@ textarea{min-height:100px;resize:vertical;font:inherit}
 .stat strong{font-size:32px;font-weight:800;display:block;color:var(--brand-accent);
   font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 .stat span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.stat-action{width:100%;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.stat-action:hover{transform:translateY(-2px);border-color:var(--brand-primary)}
+.stat-action:focus-visible{outline:2px solid var(--brand-primary);outline-offset:3px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3);margin:var(--sp-5) 0 var(--sp-6)}
 
 .edit-card{

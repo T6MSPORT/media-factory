@@ -115,6 +115,8 @@ export default function App() {
               data={data}
               openTemplate={openTemplate}
               openTemplates={() => setPage('templates')}
+              openSponsors={() => setPage('sponsors')}
+              openSavedDesigns={() => setPage('saved')}
             />
           )}
           {page === 'templates' && <TemplateLibraryPage openTemplate={openTemplate} />}
