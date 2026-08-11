@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Download, Eraser, ImagePlus, RotateCcw } from 'lucide-react';
+import { Download, Eraser, ImagePlus, RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { PageHeader } from '../components/ui';
 import {
   backgroundRemovalFileName,
@@ -7,6 +7,39 @@ import {
 } from '../utils/backgroundRemoval';
 
 type RemovalState = 'idle' | 'processing' | 'complete' | 'error';
+type ImageFilter = 'none' | 'black-and-white' | 'sepia' | 'high-contrast';
+
+export const IMAGE_FILTERS: Record<ImageFilter, { label: string; css: string }> = {
+  none: { label: 'Original colour', css: 'none' },
+  'black-and-white': { label: 'Black and white', css: 'grayscale(1)' },
+  sepia: { label: 'Sepia', css: 'sepia(1)' },
+  'high-contrast': { label: 'High contrast', css: 'contrast(1.45) saturate(1.15)' },
+};
+
+export async function applyImageFilter(blob: Blob, filter: ImageFilter): Promise<Blob> {
+  if (filter === 'none') return blob;
+  const url = URL.createObjectURL(blob);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error('The edited image could not be prepared.'));
+      element.src = url;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Image filters are unavailable in this browser.');
+    context.filter = IMAGE_FILTERS[filter].css;
+    context.drawImage(image, 0, 0);
+    return await new Promise<Blob>((resolve, reject) =>
+      canvas.toBlob(output => output ? resolve(output) : reject(new Error('The edited PNG could not be created.')), 'image/png'),
+    );
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
 
 export function downloadRemovedBackground(blob: Blob, originalName: string) {
   const link = document.createElement('a');
@@ -24,6 +57,7 @@ export function BackgroundRemoverPage() {
   const [progress, setProgress] = useState(0);
   const [state, setState] = useState<RemovalState>('idle');
   const [error, setError] = useState('');
+  const [filter, setFilter] = useState<ImageFilter>('none');
 
   useEffect(() => () => {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -41,6 +75,7 @@ export function BackgroundRemoverPage() {
     setProgress(0);
     setState('idle');
     setError('');
+    setFilter('none');
   };
 
   const process = async (selected: File) => {
@@ -71,8 +106,8 @@ export function BackgroundRemoverPage() {
   return (
     <div className="page background-remover-page">
       <PageHeader
-        title="Background remover"
-        subtitle="Remove an image background and download a transparent PNG ready for your graphics."
+        title="Image editor"
+        subtitle="Remove backgrounds, apply image filters and download a transparent PNG ready for your graphics."
       />
 
       {!file ? (
@@ -101,10 +136,10 @@ export function BackgroundRemoverPage() {
               </div>
             </section>
             <section className="background-remover-card">
-              <span>Background removed</span>
+              <span>Edited image</span>
               <div className="background-remover-canvas transparent">
                 {resultUrl ? (
-                  <img src={resultUrl} alt="Transparent background result" />
+                  <img src={resultUrl} alt="Edited transparent result" style={{ filter: IMAGE_FILTERS[filter].css }} />
                 ) : (
                   <div className="background-remover-status">
                     {state === 'error' ? <Eraser size={30} /> : <span>{progress}%</span>}
@@ -127,6 +162,20 @@ export function BackgroundRemoverPage() {
             </p>
           )}
 
+          {result && (
+            <section className="image-filter-panel">
+              <div><SlidersHorizontal size={18} /><strong>Image filters</strong></div>
+              <label>
+                Filter
+                <select value={filter} onChange={event => setFilter(event.target.value as ImageFilter)}>
+                  {(Object.entries(IMAGE_FILTERS) as Array<[ImageFilter, { label: string; css: string }]>).map(([value, option]) => (
+                    <option key={value} value={value}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+            </section>
+          )}
+
           <div className="background-remover-actions">
             <button type="button" className="icon" onClick={reset}>
               <RotateCcw size={17} /> Start again
@@ -140,9 +189,9 @@ export function BackgroundRemoverPage() {
               <button
                 type="button"
                 className="primary"
-                onClick={() => downloadRemovedBackground(result, file.name)}
+                onClick={async () => downloadRemovedBackground(await applyImageFilter(result, filter), file.name)}
               >
-                <Download size={17} /> Download transparent PNG
+                <Download size={17} /> Download edited PNG
               </button>
             )}
           </div>

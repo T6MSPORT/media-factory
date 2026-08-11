@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import {
-  Eraser,
+  SlidersHorizontal,
   FolderKanban,
   LayoutTemplate,
   Palette,
@@ -30,6 +30,6 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { id: 'profile', label: 'Profile', icon: UserRound },
   { id: 'branding', label: 'Branding', icon: Palette },
   { id: 'sponsors', label: 'Sponsors', icon: UsersRound },
-  { id: 'background-remover', label: 'Background Remover', icon: Eraser },
+  { id: 'background-remover', label: 'Image Editor', icon: SlidersHorizontal },
   { id: 'exports', label: 'Exports', icon: FolderKanban },
 ] as const;

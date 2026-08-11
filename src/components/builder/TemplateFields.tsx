@@ -334,12 +334,15 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           onChange={round => setDetails({ round })}
         />
         <RangeField label="Move days up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
+        <RangeField label="Space below day heading" min={0} max={120} step={2} value={project.details.scheduleHeaderPadding ?? 0} onChange={scheduleHeaderPadding => setDetails({ scheduleHeaderPadding })} />
         <RangeField label="Space after sessions" min={0} max={120} step={2} value={project.details.scheduleSessionPadding ?? 0} onChange={scheduleSessionPadding => setDetails({ scheduleSessionPadding })} />
       </div>
 
       <div className="schedule-day-grid" data-days={dayCount}>
         {days.map((scheduleDay, dayIndex) => (
-          <fieldset className="schedule-day" key={dayIndex}>
+          <details className="schedule-day" key={dayIndex} open={dayIndex === 0 || undefined}>
+          <summary>{scheduleDay.day || `Day ${dayIndex + 1}`}</summary>
+          <fieldset className="schedule-day-fields">
           {dayIndex > 0 && (
             <button
               type="button"
@@ -438,6 +441,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
             ))}
           </div>
           </fieldset>
+          </details>
         ))}
       </div>
     </div>

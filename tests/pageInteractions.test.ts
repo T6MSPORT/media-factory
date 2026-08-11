@@ -167,14 +167,15 @@ test('sidebar exposes every approved destination and reports navigation', () => 
   );
 });
 
-test('background remover is available from the main menu with a local upload flow', () => {
+test('image editor is available from the main menu with removal and filter controls', () => {
   assert.ok(NAVIGATION_ITEMS.some((item: { id: string }) => item.id === 'background-remover'));
   const source = readFileSync(
     new URL('../src/pages/BackgroundRemoverPage.tsx', import.meta.url),
     'utf8',
   );
-  assert.match(source, /title="Background remover"/);
+  assert.match(source, /title="Image editor"/);
   assert.match(source, /Upload image/);
+  assert.match(source, /Black and white/);
   assert.match(source, /accept="image\/jpeg,image\/png,image\/webp"/);
 });
 

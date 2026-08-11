@@ -315,6 +315,7 @@ export function getScheduleTemplateLayout(
   }));
   const contentWidth = w - margin * 2;
   const scheduleY = project.details.scheduleY ?? 0;
+  const headerPadding = project.details.scheduleHeaderPadding ?? 0;
   const sessionPadding = project.details.scheduleSessionPadding ?? 0;
   const titleY = isCompact ? 235 : isStory ? 350 : 310;
   const titleSize = isCompact ? 72 : isStory ? 112 : 94;
@@ -348,7 +349,7 @@ export function getScheduleTemplateLayout(
     Math.min(
       isCompact ? 42 : isStory ? 62 : 52,
       totalRows
-        ? (availableHeight - dayCount * dayHeadingHeight - (dayCount - 1) * dayGap) /
+        ? (availableHeight - dayCount * (dayHeadingHeight + headerPadding) - (dayCount - 1) * dayGap) /
             totalRows
         : isCompact ? 42 : isStory ? 62 : 52,
     ),
@@ -369,7 +370,7 @@ export function getScheduleTemplateLayout(
       width: contentWidth,
     };
     nextDayY +=
-      dayHeadingHeight + day.sessions.length * rowHeight + dayGap;
+      dayHeadingHeight + headerPadding + day.sessions.length * rowHeight + dayGap;
     return positionedDay;
   });
 
@@ -388,6 +389,7 @@ export function getScheduleTemplateLayout(
     daysY,
     dayHeadingSize,
     dayHeadingHeight,
+    headerPadding,
     sessionSize,
     chevronStartX,
     chevronEndX,

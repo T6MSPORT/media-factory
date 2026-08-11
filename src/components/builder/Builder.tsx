@@ -106,6 +106,7 @@ export function Builder({
               <UserRound size={17} /> Driver
             </button>
           </div>
+          <div className="control-column control-column-primary">
           <div className={`control-section ${mobileSection === 'details' ? 'mobile-active' : ''}`}>
           <h3>Graphic details</h3>
           <label className="mobile-project-name">
@@ -231,6 +232,8 @@ export function Builder({
           )}
 
           </div>
+          </div>
+          <div className="control-column control-column-secondary">
           <div className={`control-section background-control-section ${mobileSection === 'background' ? 'mobile-active' : ''}`}>
           <h3>Background hero image</h3>
           <BackgroundUpload
@@ -351,6 +354,7 @@ export function Builder({
           ) : (
             <p className="control-hint">Add your driver image on the Profile page to enable these controls.</p>
           )}
+          </div>
           </div>
           <button
             type="button"

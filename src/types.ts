@@ -73,7 +73,7 @@ export type GraphicDetails = {
   sponsorLogoScale?:number; sponsorLogoY?:number;
   productImages?:string[];
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
-  scheduleY?:number; scheduleSessionPadding?:number;
+  scheduleY?:number; scheduleHeaderPadding?:number; scheduleSessionPadding?:number;
   resultSession?:ResultSessionType; raceNumber?:string;
   wreathVisible?:boolean; wreathColour?:'gold'|'silver'|'bronze'|'custom'; wreathCustomColour?:string;
 };
