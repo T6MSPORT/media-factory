@@ -36,12 +36,12 @@ test('mobile home hides the sponsors summary card', () => {
 test('profile driver and logo preview containers use compact dimensions', () => {
   assert.match(
     styles,
-    /\.profile-previews\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*360px\)\s+minmax\(0,\s*280px\)/,
+    /\.profile-previews\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*280px\)\)/,
   );
   assert.match(
     styles,
-    /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?height:\s*186px/,
+    /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?height:\s*180px/,
   );
-  assert.match(styles, /\.logo-preview-stack[\s\S]*?height:\s*81px/);
-  assert.match(styles, /@media \(max-width:\s*700px\)[\s\S]*?height:\s*138px/);
+  assert.match(styles, /\.logo-preview-stack\s*\{[\s\S]*?display:\s*contents/);
+  assert.match(styles, /\.logo-preview-stack[\s\S]*?height:\s*180px/);
 });

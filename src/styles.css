@@ -1204,18 +1204,18 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 
 /* Compact Profile asset containers without changing artwork asset sizing. */
 .profile-previews {
-  grid-template-columns: minmax(0, 360px) minmax(0, 280px);
+  grid-template-columns: repeat(3, minmax(0, 280px));
   justify-content: start;
   gap: 18px;
 }
 
 .profile-previews > .driver-asset-preview {
-  max-width: 360px;
+  max-width: 280px;
 }
 
 .profile-previews > .driver-asset-preview .asset-preview-image {
-  height: 186px;
-  min-height: 186px;
+  height: 180px;
+  min-height: 180px;
   overflow: hidden;
 }
 
@@ -1227,21 +1227,21 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 }
 
 .profile-previews > .logo-preview-stack {
-  max-width: 280px;
+  display: contents;
 }
 
 .profile-previews > .logo-preview-stack .asset-preview-image {
-  height: 81px;
+  height: 180px;
 }
 
 @media (max-width: 700px) {
   .profile-previews {
-    grid-template-columns: minmax(0, 360px);
+    grid-template-columns: minmax(0, 280px);
   }
 
   .profile-previews > .driver-asset-preview .asset-preview-image {
-    height: 138px;
-    min-height: 138px;
+    height: 180px;
+    min-height: 180px;
   }
 
   .profile-previews > .driver-asset-preview .asset-preview-image img {
