@@ -1236,7 +1236,14 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 
 @media (max-width: 700px) {
   .profile-previews {
-    grid-template-columns: minmax(0, 280px);
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .profile-previews > .driver-asset-preview,
+  .profile-previews > .logo-preview-stack > .asset-preview-card {
+    width: 100%;
+    max-width: none;
   }
 
   .profile-previews > .driver-asset-preview .asset-preview-image {

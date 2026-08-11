@@ -44,4 +44,8 @@ test('profile driver and logo preview containers use compact dimensions', () => 
   );
   assert.match(styles, /\.logo-preview-stack\s*\{[\s\S]*?display:\s*contents/);
   assert.match(styles, /\.logo-preview-stack[\s\S]*?height:\s*180px/);
+  assert.match(
+    styles,
+    /@media \(max-width:\s*700px\)[\s\S]*?\.profile-previews\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/,
+  );
 });
