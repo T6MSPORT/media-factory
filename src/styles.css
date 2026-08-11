@@ -1203,6 +1203,12 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 .saved-design-name small{color:var(--muted);font-size:11px;text-transform:none;letter-spacing:0}
 
 /* Compact Profile asset containers without changing artwork asset sizing. */
+.profile-previews {
+  grid-template-columns: minmax(0, 360px) minmax(0, 280px);
+  justify-content: start;
+  gap: 18px;
+}
+
 .profile-previews > .driver-asset-preview {
   max-width: 360px;
 }
@@ -1229,6 +1235,10 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 }
 
 @media (max-width: 700px) {
+  .profile-previews {
+    grid-template-columns: minmax(0, 360px);
+  }
+
   .profile-previews > .driver-asset-preview .asset-preview-image {
     height: 138px;
     min-height: 138px;

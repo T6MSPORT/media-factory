@@ -36,6 +36,10 @@ test('mobile home hides the sponsors summary card', () => {
 test('profile driver and logo preview containers use compact dimensions', () => {
   assert.match(
     styles,
+    /\.profile-previews\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*360px\)\s+minmax\(0,\s*280px\)/,
+  );
+  assert.match(
+    styles,
     /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?height:\s*186px/,
   );
   assert.match(styles, /\.logo-preview-stack[\s\S]*?height:\s*81px/);
