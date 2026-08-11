@@ -125,6 +125,22 @@ export function DriverLayer({
         clipPath="url(#driverZone)"
         mask="url(#driverMask)"
       />
+      {(project.driverOverlayOpacity ?? 0) > 0 && (
+        <image
+          data-driver-black-overlay="true"
+          href={driverImage}
+          x={w * 0.3}
+          y={h * 0.05}
+          width={w * 0.72}
+          height={h * 0.82}
+          preserveAspectRatio="xMidYMax meet"
+          clipPath="url(#driverZone)"
+          mask="url(#driverMask)"
+          opacity={(project.driverOverlayOpacity ?? 0) / 100}
+          style={{ filter: 'brightness(0)' }}
+          pointerEvents="none"
+        />
+      )}
     </g>
   );
 }

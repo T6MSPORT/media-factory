@@ -213,7 +213,7 @@ export function getAnnouncementTemplateLayout(
 ) {
   const isStory = isStoryLayout(project);
   const margin = 70;
-  const title = templateTitles.announcement;
+  const title = project.details.announcementHeading?.trim().toUpperCase() || templateTitles.announcement;
   const titleMaxWidth = w - margin * 2;
   const titleSize = fitTextSize(
     title,
@@ -222,9 +222,9 @@ export function getAnnouncementTemplateLayout(
     isStory ? 82 : 70,
     0.59,
   );
-  const titleY = isStory ? 350 : 310;
+  const titleY = (isStory ? 350 : 310) + (project.details.announcementHeaderY ?? 0);
   const textX = margin;
-  const textY = titleY + titleSize + (isStory ? 46 : 38);
+  const textY = (isStory ? 350 : 310) + titleSize + (isStory ? 46 : 38) + (project.details.announcementBodyY ?? 0);
   const textBoxWidth = w - margin * 2;
   const textBoxHeight = isStory ? 520 : 340;
   const copy =
@@ -313,7 +313,8 @@ export function getScheduleTemplateLayout(
       })),
   }));
   const contentWidth = w - margin * 2;
-  const titleY = isCompact ? 235 : isStory ? 350 : 310;
+  const scheduleY = project.details.scheduleY ?? 0;
+  const titleY = (isCompact ? 235 : isStory ? 350 : 310) + scheduleY;
   const titleSize = isCompact ? 72 : isStory ? 112 : 94;
   const trackY = titleY + titleSize + (isCompact ? 14 : isStory ? 26 : 20);
   const trackText =

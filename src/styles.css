@@ -631,8 +631,10 @@ input[type=color]{padding:3px;height:39px;cursor:pointer}
 input[type=range]{padding:0;accent-color:var(--brand-primary)}
 textarea{min-height:100px;resize:vertical;font:inherit}
 .controls textarea{min-height:92px}
-.controls input[type=date]{color-scheme:dark}
-.controls input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer}
+.controls input[type=date]{color-scheme:light;background:#fff;color:#111}
+.controls input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:1;cursor:pointer}
+.results-session-field{padding:10px;border:2px solid var(--brand-primary);border-radius:8px;background:color-mix(in srgb,var(--brand-primary) 12%,transparent)}
+.results-session-field select{font-size:15px;font-weight:800}
 
 .upload{position:relative;display:grid;gap:6px}
 .upload span{

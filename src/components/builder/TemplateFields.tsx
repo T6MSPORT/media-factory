@@ -1,4 +1,3 @@
-import { TEMPLATE_FIELDS } from '../../config/templates';
 import type {
   Project,
   ResultSessionType,
@@ -158,39 +157,29 @@ export function TemplateFields({
     );
   }
 
-  const standardFields = (
-    <>
-      {TEMPLATE_FIELDS[project.template].map(field =>
-        field.type === 'textarea' ? (
-          <label key={field.key}>
-            {field.label}
-            <textarea
-              value={String(project.details[field.key] ?? '')}
-              placeholder={field.placeholder}
-              onChange={event =>
-                setDetails({
-                  [field.key]:
-                    project.template === 'announcement'
-                      ? event.target.value.toUpperCase()
-                      : event.target.value,
-                })
-              }
-            />
-          </label>
-        ) : (
-          <TextField
-            key={field.key}
-            label={field.label}
-            value={String(project.details[field.key] ?? '')}
-            type={field.type}
-            onChange={value => setDetails({ [field.key]: value })}
+  if (project.template === 'announcement') {
+    return (
+      <>
+        <TextField
+          label="Announcement heading"
+          value={project.details.announcementHeading || 'ANNOUNCEMENT'}
+          onChange={announcementHeading => setDetails({ announcementHeading: announcementHeading.toUpperCase() })}
+        />
+        <RangeField label="Move heading up / down" min={-500} max={500} step={5} value={project.details.announcementHeaderY ?? 0} onChange={announcementHeaderY => setDetails({ announcementHeaderY })} />
+        <label>
+          Text
+          <textarea
+            value={project.details.subheadline}
+            placeholder="Enter the announcement text"
+            onChange={event => setDetails({ subheadline: event.target.value.toUpperCase() })}
           />
-        ),
-      )}
-    </>
-  );
+        </label>
+        <RangeField label="Move body text up / down" min={-500} max={500} step={5} value={project.details.announcementBodyY ?? 0} onChange={announcementBodyY => setDetails({ announcementBodyY })} />
+      </>
+    );
+  }
 
-  return standardFields;
+  return null;
 }
 
 function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
@@ -198,7 +187,7 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
 
   return (
     <>
-      <label>
+      <label className="results-session-field">
         Session
         <select
           value={resultSession}
@@ -212,6 +201,36 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
           <option value="race">Race</option>
         </select>
       </label>
+      <label className="toggle-row results-wreath-toggle">
+        <input
+          type="checkbox"
+          checked={project.details.wreathVisible !== false}
+          onChange={event => setDetails({ wreathVisible: event.target.checked })}
+        />
+        Show wreath graphic
+      </label>
+      {project.details.wreathVisible !== false && (
+        <>
+          <label>
+            Wreath colour
+            <select
+              value={project.details.wreathColour || 'gold'}
+              onChange={event => setDetails({ wreathColour: event.target.value as 'gold'|'silver'|'bronze'|'custom' })}
+            >
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+              <option value="bronze">Bronze</option>
+              <option value="custom">Custom colour</option>
+            </select>
+          </label>
+          {project.details.wreathColour === 'custom' && (
+            <label>
+              Custom wreath colour
+              <input type="color" value={project.details.wreathCustomColour || '#d9aa24'} onChange={event => setDetails({ wreathCustomColour: event.target.value })} />
+            </label>
+          )}
+        </>
+      )}
       <TextField
         label="Track name"
         value={project.details.circuit}
@@ -250,6 +269,7 @@ const DAY_OPTIONS: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
 const SESSION_OPTIONS: ScheduleSessionType[] = [
   '',
   'Practice',
+  'Testing',
   'Qualifying',
   'Race',
 ];
@@ -309,6 +329,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           value={project.details.circuit}
           onChange={circuit => setDetails({ circuit })}
         />
+        <RangeField label="Move schedule up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
         <TextField
           label="Round(s)"
           value={project.details.round}

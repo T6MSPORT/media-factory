@@ -48,6 +48,7 @@ const scheduleDayNames: ScheduleDayName[] = ['', 'Friday', 'Saturday', 'Sunday']
 const scheduleSessionTypes: ScheduleSessionType[] = [
   '',
   'Practice',
+  'Testing',
   'Qualifying',
   'Race',
 ];
@@ -122,6 +123,9 @@ function normaliseScheduleDays(details: Partial<GraphicDetails>): ScheduleDay[] 
 
     return {
       day,
+      ...(typeof suppliedDay?.date === 'string' && suppliedDay.date
+        ? { date: suppliedDay.date }
+        : {}),
       sessions: Array.from({ length: 5 }, (_, sessionIndex) => {
         const suppliedSession = suppliedDay?.sessions?.[sessionIndex];
         return {
@@ -274,6 +278,9 @@ export function normaliseData(value: unknown): Data {
     driverY: Number.isFinite(project.driverY) ? project.driverY! : 0,
     driverScale: Number.isFinite(project.driverScale) ? project.driverScale! : 1,
     driverVisible: project.driverVisible !== false,
+    ...(Number.isFinite(project.driverOverlayOpacity)
+      ? { driverOverlayOpacity: Math.min(100, Math.max(0, project.driverOverlayOpacity!)) }
+      : {}),
     graphicElement: graphicElementIds.includes(project.graphicElement as GraphicElementId)
       ? project.graphicElement as GraphicElementId
       : 'none',

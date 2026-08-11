@@ -315,6 +315,7 @@ export function Builder({
                 checked={project.driverVisible !== false}
                 onChange={driverVisible => patch({ driverVisible })}
               />
+              {project.driverVisible !== false && <>
               <RangeField
                 label="Move left / right"
                 min={-500}
@@ -337,9 +338,18 @@ export function Builder({
                 value={project.driverScale}
                 onChange={driverScale => patch({ driverScale })}
               />
+              <RangeField
+                label="Black overlay opacity"
+                min={0}
+                max={100}
+                step={1}
+                value={project.driverOverlayOpacity ?? 0}
+                onChange={driverOverlayOpacity => patch({ driverOverlayOpacity })}
+              />
               <button onClick={() => patch(resetDriverPatch)}>
                 Reset driver image
               </button>
+              </>}
             </>
           ) : (
             <p className="control-hint">Upload a driver image to enable positioning and scale controls.</p>

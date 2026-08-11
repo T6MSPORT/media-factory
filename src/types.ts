@@ -56,7 +56,7 @@ export type Branding = {
 };
 export type Sponsor = {id:string; name:string; logo?:string; logoWidth?:number; logoHeight?:number};
 export type ScheduleDayName = ''|'Friday'|'Saturday'|'Sunday';
-export type ScheduleSessionType = ''|'Practice'|'Qualifying'|'Race';
+export type ScheduleSessionType = ''|'Practice'|'Testing'|'Qualifying'|'Race';
 export type ScheduleSession = { type:ScheduleSessionType; time:string };
 export type ScheduleDay = {
   day: ScheduleDayName;
@@ -69,17 +69,20 @@ export type GraphicDetails = {
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;
   announcementBackgroundOpacity?:number;
+  announcementHeading?:string; announcementHeaderY?:number; announcementBodyY?:number;
   sponsorLogoScale?:number; sponsorLogoY?:number;
   productImages?:string[];
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
+  scheduleY?:number;
   resultSession?:ResultSessionType; raceNumber?:string;
+  wreathVisible?:boolean; wreathColour?:'gold'|'silver'|'bronze'|'custom'; wreathCustomColour?:string;
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];
   customWidth?:number; customHeight?:number;
   textAlignment?: 'left' | 'right';
   createdAt:string; updatedAt:string; heroImage?:string; heroImageWidth?:number; heroImageHeight?:number; heroX:number; heroY:number; heroScale:number; heroFlip:boolean; heroOverlayOpacity?:number;
-  driverX:number; driverY:number; driverScale:number; driverVisible:boolean;
+  driverX:number; driverY:number; driverScale:number; driverVisible:boolean; driverOverlayOpacity?:number;
   savedAt?:string; exportedAt?:string;
   graphicElement?:GraphicElementId; graphicElementX?:number; graphicElementY?:number; graphicElementSize?:number;
   details:GraphicDetails;

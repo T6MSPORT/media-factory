@@ -74,6 +74,11 @@ function ResultsTemplate({
   bodyFont,
 }: TemplateSharedProps & { w: number; h: number }) {
   const layout = getResultsTemplateLayout(w, h, project);
+  const wreathPalette = { gold: '#d9aa24', silver: '#c3c8cf', bronze: '#b8753f' } as const;
+  const wreathChoice = project.details.wreathColour;
+  const wreathColour = wreathChoice === 'custom'
+    ? project.details.wreathCustomColour || wreathPalette.gold
+    : wreathChoice ? wreathPalette[wreathChoice] : undefined;
   const rightAligned = project.textAlignment === 'right';
 const mainTextX = rightAligned ? w - layout.margin : layout.margin;
 const secondaryTextX = mainTextX + (rightAligned ? -2 : 2);
@@ -132,13 +137,15 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
           {layout.roundText}
         </text>
       )}
-      <PodiumWreath
-        x={layout.positionX}
-        y={layout.positionY}
-        position={layout.podiumPosition}
-        size={layout.laurelSize}
-        colour={layout.session === 'qualifying' ? '#8b5cf6' : undefined}
-      />
+      {project.details.wreathVisible !== false && (
+        <PodiumWreath
+          x={layout.positionX}
+          y={layout.positionY}
+          position={layout.podiumPosition}
+          size={layout.laurelSize}
+          colour={wreathColour || (layout.session === 'qualifying' ? '#8b5cf6' : undefined)}
+        />
+      )}
       <g
         transform={`translate(${layout.positionX} ${layout.positionY}) skewX(-12)`}
         fontFamily={headingFont}
