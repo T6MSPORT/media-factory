@@ -29,14 +29,15 @@ export function BackgroundUpload({ on }: { on: ImageUploadHandler }) {
         type="file"
         accept="image/jpeg,image/png,image/webp"
         onChange={async event => {
-          const file = event.target.files?.[0];
+          const input = event.currentTarget;
+          const file = input.files?.[0];
           if (!file) return;
           try {
             await uploadImage(file, 'background', on);
           } catch (error) {
             reportUploadError(error);
           } finally {
-            event.currentTarget.value = '';
+            input.value = '';
           }
         }}
       />
@@ -64,14 +65,15 @@ export function Upload({
         type="file"
         accept="image/jpeg,image/png,image/webp"
         onChange={async event => {
-          const file = event.target.files?.[0];
+          const input = event.currentTarget;
+          const file = input.files?.[0];
           if (!file) return;
           try {
             await uploadImage(file, purpose, on);
           } catch (error) {
             reportUploadError(error);
           } finally {
-            event.currentTarget.value = '';
+            input.value = '';
           }
         }}
       />

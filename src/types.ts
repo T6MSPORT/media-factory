@@ -69,11 +69,11 @@ export type GraphicDetails = {
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;
   announcementBackgroundOpacity?:number;
-  announcementHeading?:string; announcementHeaderY?:number; announcementBodyY?:number;
+  announcementHeading?:string; announcementY?:number; announcementHeaderY?:number; announcementBodyY?:number;
   sponsorLogoScale?:number; sponsorLogoY?:number;
   productImages?:string[];
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
-  scheduleY?:number;
+  scheduleY?:number; scheduleSessionPadding?:number;
   resultSession?:ResultSessionType; raceNumber?:string;
   wreathVisible?:boolean; wreathColour?:'gold'|'silver'|'bronze'|'custom'; wreathCustomColour?:string;
 };

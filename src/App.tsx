@@ -138,10 +138,6 @@ export default function App() {
               applyBackgroundGraphicToAll={applyBackgroundGraphicToAll}
               archiveExport={archiveExport}
               resetTemplate={resetActiveTemplate}
-              setDriverImage={driverImage => setData(current => ({
-                ...current,
-                profile: { ...current.profile, driverImage },
-              }))}
               back={() => setPage('templates')}
             />
           )}

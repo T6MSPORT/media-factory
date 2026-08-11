@@ -603,7 +603,7 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
             </text>
             {day.sessions.map((session, sessionIndex) => {
               const rowTop =
-                layout.dayHeadingHeight + sessionIndex * layout.rowHeight;
+                layout.dayHeadingHeight + layout.sessionPadding + sessionIndex * layout.rowHeight;
               const y = rowTop + layout.rowHeight / 2;
               return (
                 <g key={sessionIndex}>

@@ -222,9 +222,10 @@ export function getAnnouncementTemplateLayout(
     isStory ? 82 : 70,
     0.59,
   );
-  const titleY = (isStory ? 350 : 310) + (project.details.announcementHeaderY ?? 0);
+  const announcementY = project.details.announcementY ?? 0;
+  const titleY = (isStory ? 350 : 310) + announcementY;
   const textX = margin;
-  const textY = (isStory ? 350 : 310) + titleSize + (isStory ? 46 : 38) + (project.details.announcementBodyY ?? 0);
+  const textY = (isStory ? 350 : 310) + titleSize + (isStory ? 46 : 38) + announcementY;
   const textBoxWidth = w - margin * 2;
   const textBoxHeight = isStory ? 520 : 340;
   const copy =
@@ -314,7 +315,8 @@ export function getScheduleTemplateLayout(
   }));
   const contentWidth = w - margin * 2;
   const scheduleY = project.details.scheduleY ?? 0;
-  const titleY = (isCompact ? 235 : isStory ? 350 : 310) + scheduleY;
+  const sessionPadding = project.details.scheduleSessionPadding ?? 0;
+  const titleY = isCompact ? 235 : isStory ? 350 : 310;
   const titleSize = isCompact ? 72 : isStory ? 112 : 94;
   const trackY = titleY + titleSize + (isCompact ? 14 : isStory ? 26 : 20);
   const trackText =
@@ -330,7 +332,7 @@ export function getScheduleTemplateLayout(
   const roundText = formatRoundLabel(project.details.round);
   const roundSize = isCompact ? 22 : isStory ? 31 : 26;
   const roundY = trackY + trackSize + (isCompact ? 10 : isStory ? 22 : 16);
-  const daysY =
+  const daysY = scheduleY +
     roundY + (roundText
       ? roundSize + (isCompact ? 18 : isStory ? 42 : 32)
       : isCompact ? 12 : isStory ? 24 : 20);
@@ -346,7 +348,7 @@ export function getScheduleTemplateLayout(
     Math.min(
       isCompact ? 42 : isStory ? 62 : 52,
       totalRows
-        ? (availableHeight - dayCount * dayHeadingHeight - (dayCount - 1) * dayGap) /
+        ? (availableHeight - dayCount * (dayHeadingHeight + sessionPadding) - (dayCount - 1) * dayGap) /
             totalRows
         : isCompact ? 42 : isStory ? 62 : 52,
     ),
@@ -367,7 +369,7 @@ export function getScheduleTemplateLayout(
       width: contentWidth,
     };
     nextDayY +=
-      dayHeadingHeight + day.sessions.length * rowHeight + dayGap;
+      dayHeadingHeight + sessionPadding + day.sessions.length * rowHeight + dayGap;
     return positionedDay;
   });
 
@@ -386,6 +388,7 @@ export function getScheduleTemplateLayout(
     daysY,
     dayHeadingSize,
     dayHeadingHeight,
+    sessionPadding,
     sessionSize,
     chevronStartX,
     chevronEndX,

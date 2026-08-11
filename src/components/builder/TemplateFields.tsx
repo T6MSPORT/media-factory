@@ -165,7 +165,6 @@ export function TemplateFields({
           value={project.details.announcementHeading || 'ANNOUNCEMENT'}
           onChange={announcementHeading => setDetails({ announcementHeading: announcementHeading.toUpperCase() })}
         />
-        <RangeField label="Move heading up / down" min={-500} max={500} step={5} value={project.details.announcementHeaderY ?? 0} onChange={announcementHeaderY => setDetails({ announcementHeaderY })} />
         <label>
           Text
           <textarea
@@ -174,7 +173,7 @@ export function TemplateFields({
             onChange={event => setDetails({ subheadline: event.target.value.toUpperCase() })}
           />
         </label>
-        <RangeField label="Move body text up / down" min={-500} max={500} step={5} value={project.details.announcementBodyY ?? 0} onChange={announcementBodyY => setDetails({ announcementBodyY })} />
+        <RangeField label="Move heading and text up / down" min={-500} max={500} step={5} value={project.details.announcementY ?? 0} onChange={announcementY => setDetails({ announcementY })} />
       </>
     );
   }
@@ -329,12 +328,13 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           value={project.details.circuit}
           onChange={circuit => setDetails({ circuit })}
         />
-        <RangeField label="Move schedule up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
         <TextField
           label="Round(s)"
           value={project.details.round}
           onChange={round => setDetails({ round })}
         />
+        <RangeField label="Move days up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
+        <RangeField label="Space between day and sessions" min={0} max={120} step={2} value={project.details.scheduleSessionPadding ?? 0} onChange={scheduleSessionPadding => setDetails({ scheduleSessionPadding })} />
       </div>
 
       <div className="schedule-day-grid" data-days={dayCount}>
