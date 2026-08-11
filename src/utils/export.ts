@@ -160,8 +160,12 @@ export async function exportSvgAsPng(
 
 export function downloadPngResult(result: PngExportResult): void {
   const anchor = document.createElement('a');
-  anchor.href = URL.createObjectURL(result.blob);
+  const url = URL.createObjectURL(result.blob);
+  anchor.href = url;
   anchor.download = result.fileName;
+  anchor.hidden = true;
+  document.body.appendChild(anchor);
   anchor.click();
-  URL.revokeObjectURL(anchor.href);
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

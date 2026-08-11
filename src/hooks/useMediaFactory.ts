@@ -42,6 +42,16 @@ import { starter } from '../store';
 import type { Account, Data, Project, TemplateId } from '../types';
 import type { PngExportResult } from '../utils/export';
 
+async function cacheAccountData(accountId: string, data: Data): Promise<void> {
+  try {
+    await saveAccountData(accountId, data);
+  } catch (error) {
+    // IndexedDB is only an offline cache. Safari can temporarily deny it during
+    // downloads or in restricted browsing modes, while the cloud save is healthy.
+    console.warn('Media Factory could not update its local cache.', error);
+  }
+}
+
 export function useMediaFactory() {
   const initial = useRef(loadResult()).current;
   const [data, setData] = useState<Data>(() =>
@@ -63,6 +73,7 @@ export function useMediaFactory() {
   const dataRef = useRef(data);
   const legacyRef = useRef<Data | undefined>(undefined);
   const cloudRevisionRef = useRef('');
+  const cloudSavedDataRef = useRef<Data | undefined>(undefined);
   dataRef.current = data;
 
   const clearLegacyStorage = () => {
@@ -82,7 +93,7 @@ export function useMediaFactory() {
       const cloudWorkspace = await loadCloudWorkspace(account.id);
       saved = cloudWorkspace?.data;
       cloudRevisionRef.current = cloudWorkspace?.updatedAt || '';
-      if (saved) await saveAccountData(account.id, saved);
+      if (saved) await cacheAccountData(account.id, saved);
       setStorageIssue(undefined);
     } catch (error) {
       setStorageIssue({ operation: 'load', error });
@@ -110,7 +121,7 @@ export function useMediaFactory() {
         setData(migrated);
         try {
           cloudRevisionRef.current = await saveCloudWorkspace(account.id, migrated);
-          await saveAccountData(account.id, migrated);
+          await cacheAccountData(account.id, migrated);
           await deleteLegacyData();
           clearLegacyStorage();
           legacyRef.current = undefined;
@@ -132,7 +143,7 @@ export function useMediaFactory() {
     setData(fresh);
     try {
       cloudRevisionRef.current = await saveCloudWorkspace(account.id, fresh);
-      await saveAccountData(account.id, fresh);
+      await cacheAccountData(account.id, fresh);
     } catch (error) {
       setStorageIssue({ operation: 'save', error });
     }
@@ -205,13 +216,15 @@ export function useMediaFactory() {
 
   useEffect(() => {
     if (!activeWorkspaceId || !data.authentication.signedIn || migrationCandidate) return;
+    if (data === cloudSavedDataRef.current) return;
 
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       try {
         const updatedAt = await saveCloudWorkspace(activeWorkspaceId, data);
-        await saveAccountData(activeWorkspaceId, data);
+        await cacheAccountData(activeWorkspaceId, data);
         cloudRevisionRef.current = updatedAt;
+        cloudSavedDataRef.current = data;
         if (!cancelled) setStorageIssue(undefined);
       } catch (error) {
         if (!cancelled) setStorageIssue({ operation: 'save', error });
@@ -263,7 +276,7 @@ export function useMediaFactory() {
     try {
       if (!activeWorkspaceId) throw new Error('Sign in before retrying browser storage.');
       await saveCloudWorkspace(activeWorkspaceId, dataRef.current);
-      await saveAccountData(activeWorkspaceId, dataRef.current);
+      await cacheAccountData(activeWorkspaceId, dataRef.current);
       setStorageIssue(undefined);
     } catch (error) {
       setStorageIssue({
@@ -377,7 +390,7 @@ export function useMediaFactory() {
     setData(migrated);
     try {
       await saveCloudWorkspace(account.id, migrated);
-      await saveAccountData(account.id, migrated);
+      await cacheAccountData(account.id, migrated);
       await deleteLegacyData();
       clearLegacyStorage();
       legacyRef.current = undefined;
@@ -395,7 +408,7 @@ export function useMediaFactory() {
     setData(fresh);
     try {
       await saveCloudWorkspace(account.id, fresh);
-      await saveAccountData(account.id, fresh);
+      await cacheAccountData(account.id, fresh);
       await deleteLegacyData();
       clearLegacyStorage();
       legacyRef.current = undefined;
@@ -447,8 +460,9 @@ export function useMediaFactory() {
     const current = dataRef.current;
     const next = { ...current, exports: [record, ...current.exports].slice(0, 100) };
     const updatedAt = await saveCloudWorkspace(accountId, next);
-    await saveAccountData(accountId, next);
+    await cacheAccountData(accountId, next);
     cloudRevisionRef.current = updatedAt;
+    cloudSavedDataRef.current = next;
     dataRef.current = next;
     setData(next);
   };
