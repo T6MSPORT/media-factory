@@ -444,7 +444,13 @@ export function useMediaFactory() {
     const accountId = dataRef.current.authentication.account?.id;
     if (!accountId) throw new Error('Sign in before exporting.');
     const record = await uploadCloudExport(accountId, project, result);
-    setData(current => ({ ...current, exports: [record, ...current.exports].slice(0, 100) }));
+    const current = dataRef.current;
+    const next = { ...current, exports: [record, ...current.exports].slice(0, 100) };
+    const updatedAt = await saveCloudWorkspace(accountId, next);
+    await saveAccountData(accountId, next);
+    cloudRevisionRef.current = updatedAt;
+    dataRef.current = next;
+    setData(next);
   };
 
   return {

@@ -145,11 +145,6 @@ export async function exportSvgAsPng(
           return;
         }
 
-        const anchor = document.createElement('a');
-        anchor.href = URL.createObjectURL(blob);
-        anchor.download = plan.fileName;
-        anchor.click();
-        URL.revokeObjectURL(anchor.href);
         resolve({ blob, fileName: plan.fileName });
       }, plan.mimeType);
     };
@@ -161,4 +156,12 @@ export async function exportSvgAsPng(
 
     image.src = svgUrl;
   });
+}
+
+export function downloadPngResult(result: PngExportResult): void {
+  const anchor = document.createElement('a');
+  anchor.href = URL.createObjectURL(result.blob);
+  anchor.download = result.fileName;
+  anchor.click();
+  URL.revokeObjectURL(anchor.href);
 }

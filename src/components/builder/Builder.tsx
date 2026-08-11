@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { ChevronLeft, Download, Image, Layers3, RotateCcw, SlidersHorizontal, UserRound } from 'lucide-react';
 import { useBackgroundDrag } from '../../hooks/useBackgroundDrag';
 import type { Data, Project } from '../../types';
-import { exportSvgAsPng } from '../../utils/export';
+import { downloadPngResult, exportSvgAsPng } from '../../utils/export';
 import { getImageDimensions } from '../../utils/images';
 import { BackgroundUpload } from '../forms/ImageUpload';
 import {
@@ -63,7 +63,12 @@ export function Builder({
   const exportPng = async () => {
     if (!svg.current) return;
     const result = await exportProjectPng(svg.current, project, exportSvgAsPng);
-    if (result) await archiveExport(project, result);
+    if (!result) return;
+    try {
+      await archiveExport(project, result);
+    } finally {
+      downloadPngResult(result);
+    }
   };
 
   return (
