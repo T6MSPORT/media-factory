@@ -429,6 +429,38 @@ test('schedule layout keeps the title and track at the top with selected days un
   assert.ok(schedule.chevronGap > 0);
   assert.equal(schedule.days[0].x, schedule.days[1].x);
   assert.ok(schedule.days[1].y > schedule.days[0].y);
+
+  const spaced = getScheduleTemplateLayout(1080, 1920, {
+    ...project,
+    template: 'schedule',
+    details: {
+      ...details,
+      circuit: 'Silverstone National',
+      round: '3 & 4',
+      scheduleDayCount: 2,
+      scheduleSessionPadding: 60,
+      scheduleDays: [
+        {
+          day: 'Saturday',
+          sessions: [
+            { type: 'Practice', time: '18:00' },
+            { type: '', time: '' },
+            { type: 'Qualifying', time: '19:00' },
+            { type: '', time: '' },
+            { type: '', time: '' },
+          ],
+        },
+        {
+          day: 'Sunday',
+          sessions: Array.from({ length: 5 }, () => ({ type: 'Race' as const, time: '19:30' })),
+        },
+      ],
+    },
+  });
+  assert.equal(spaced.titleY, schedule.titleY);
+  assert.equal(spaced.trackY, schedule.trackY);
+  assert.equal(spaced.days[0].y, schedule.days[0].y);
+  assert.equal(spaced.days[1].y - schedule.days[1].y, 60);
 });
 
 test('square schedules keep three full five-session days inside the canvas', () => {

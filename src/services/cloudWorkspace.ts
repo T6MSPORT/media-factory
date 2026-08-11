@@ -34,15 +34,17 @@ export async function saveCloudWorkspace(
   accountId: string,
   data: Data,
   cloudClient: SupabaseClient = getCloudClient(),
-): Promise<void> {
+): Promise<string> {
+  const updatedAt = new Date().toISOString();
   const { error } = await cloudClient
     .from('user_workspaces')
     .upsert({
       user_id: accountId,
       workspace_data: data,
       schema_version: 1,
-      updated_at: new Date().toISOString(),
+      updated_at: updatedAt,
     }, { onConflict: 'user_id' });
 
   if (error) throw new Error('Your latest changes could not be synced to the cloud.');
+  return updatedAt;
 }

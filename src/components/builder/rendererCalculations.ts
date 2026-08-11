@@ -340,7 +340,7 @@ export function getScheduleTemplateLayout(
     ? dayCount === 3 ? 23 : 28
     : dayCount === 3 ? (isStory ? 34 : 26) : isStory ? 40 : 32;
   const dayHeadingHeight = dayHeadingSize + (isCompact ? 12 : isStory ? 22 : 18);
-  const dayGap = isCompact ? 10 : isStory ? 26 : 18;
+  const dayGap = (isCompact ? 10 : isStory ? 26 : 18) + sessionPadding;
   const totalRows = days.reduce((count, day) => count + day.sessions.length, 0);
   const availableHeight = h - daysY - (isCompact ? 112 : isStory ? 170 : 145);
   const rowHeight = Math.max(
@@ -348,7 +348,7 @@ export function getScheduleTemplateLayout(
     Math.min(
       isCompact ? 42 : isStory ? 62 : 52,
       totalRows
-        ? (availableHeight - dayCount * (dayHeadingHeight + sessionPadding) - (dayCount - 1) * dayGap) /
+        ? (availableHeight - dayCount * dayHeadingHeight - (dayCount - 1) * dayGap) /
             totalRows
         : isCompact ? 42 : isStory ? 62 : 52,
     ),
@@ -369,7 +369,7 @@ export function getScheduleTemplateLayout(
       width: contentWidth,
     };
     nextDayY +=
-      dayHeadingHeight + sessionPadding + day.sessions.length * rowHeight + dayGap;
+      dayHeadingHeight + day.sessions.length * rowHeight + dayGap;
     return positionedDay;
   });
 
@@ -388,7 +388,6 @@ export function getScheduleTemplateLayout(
     daysY,
     dayHeadingSize,
     dayHeadingHeight,
-    sessionPadding,
     sessionSize,
     chevronStartX,
     chevronEndX,

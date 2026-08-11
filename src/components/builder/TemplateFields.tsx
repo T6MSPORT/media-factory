@@ -334,7 +334,7 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
           onChange={round => setDetails({ round })}
         />
         <RangeField label="Move days up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
-        <RangeField label="Space between day and sessions" min={0} max={120} step={2} value={project.details.scheduleSessionPadding ?? 0} onChange={scheduleSessionPadding => setDetails({ scheduleSessionPadding })} />
+        <RangeField label="Space after sessions" min={0} max={120} step={2} value={project.details.scheduleSessionPadding ?? 0} onChange={scheduleSessionPadding => setDetails({ scheduleSessionPadding })} />
       </div>
 
       <div className="schedule-day-grid" data-days={dayCount}>

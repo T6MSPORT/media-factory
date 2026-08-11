@@ -103,6 +103,7 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
         fontSize={layout.titleSize}
         fontWeight="900"
         letterSpacing="-3"
+        wordSpacing="12"
       >
         {layout.title}
       </text>
@@ -603,18 +604,18 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
             </text>
             {day.sessions.map((session, sessionIndex) => {
               const rowTop =
-                layout.dayHeadingHeight + layout.sessionPadding + sessionIndex * layout.rowHeight;
+                layout.dayHeadingHeight + sessionIndex * layout.rowHeight;
               const y = rowTop + layout.rowHeight / 2;
               return (
                 <g key={sessionIndex}>
-                  <line
+                  {sessionIndex > 0 && <line
                     x1="0"
                     x2={day.width}
                     y1={rowTop}
                     y2={rowTop}
                     stroke={branding.accent}
                     strokeOpacity=".22"
-                  />
+                  />}
                   <text
                     x="4"
                     y={y}

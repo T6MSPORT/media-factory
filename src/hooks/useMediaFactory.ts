@@ -62,6 +62,7 @@ export function useMediaFactory() {
   const [activeId, setActiveId] = useState<string>();
   const dataRef = useRef(data);
   const legacyRef = useRef<Data | undefined>(undefined);
+  const cloudRevisionRef = useRef('');
   dataRef.current = data;
 
   const clearLegacyStorage = () => {
@@ -80,6 +81,7 @@ export function useMediaFactory() {
     try {
       const cloudWorkspace = await loadCloudWorkspace(account.id);
       saved = cloudWorkspace?.data;
+      cloudRevisionRef.current = cloudWorkspace?.updatedAt || '';
       if (saved) await saveAccountData(account.id, saved);
       setStorageIssue(undefined);
     } catch (error) {
@@ -107,7 +109,7 @@ export function useMediaFactory() {
         setActiveWorkspaceId(account.id);
         setData(migrated);
         try {
-          await saveCloudWorkspace(account.id, migrated);
+          cloudRevisionRef.current = await saveCloudWorkspace(account.id, migrated);
           await saveAccountData(account.id, migrated);
           await deleteLegacyData();
           clearLegacyStorage();
@@ -129,7 +131,7 @@ export function useMediaFactory() {
     setActiveWorkspaceId(account.id);
     setData(fresh);
     try {
-      await saveCloudWorkspace(account.id, fresh);
+      cloudRevisionRef.current = await saveCloudWorkspace(account.id, fresh);
       await saveAccountData(account.id, fresh);
     } catch (error) {
       setStorageIssue({ operation: 'save', error });
@@ -207,8 +209,9 @@ export function useMediaFactory() {
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       try {
-        await saveCloudWorkspace(activeWorkspaceId, data);
+        const updatedAt = await saveCloudWorkspace(activeWorkspaceId, data);
         await saveAccountData(activeWorkspaceId, data);
+        cloudRevisionRef.current = updatedAt;
         if (!cancelled) setStorageIssue(undefined);
       } catch (error) {
         if (!cancelled) setStorageIssue({ operation: 'save', error });
@@ -231,9 +234,10 @@ export function useMediaFactory() {
       loading = true;
       try {
         const remote = await loadCloudWorkspace(activeWorkspaceId);
-        if (!cancelled && remote) {
+        if (!cancelled && remote && remote.updatedAt > cloudRevisionRef.current) {
           const account = dataRef.current.authentication.account;
           const next = account ? applyCloudAccount(remote.data, account) : remote.data;
+          cloudRevisionRef.current = remote.updatedAt;
           if (JSON.stringify(next) !== JSON.stringify(dataRef.current)) setData(next);
         }
       } catch {

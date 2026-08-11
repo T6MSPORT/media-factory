@@ -108,13 +108,13 @@ const expectedHashes: Record<string, string> = {
   'announcement:feed':
     'c4c6e44394a431f1966c1b3b74b0ef8e421b8a0f6f3bb1160c505ca80991ec7f',
   'schedule:story':
-    'cd5ad09cf7c0a7cccb229e29d3d76966d66e7842665ae6a77018bad69ec469e2',
+    'ac3a9b670c665ebe762d4041e61aaa9dec8aa7dc24a85a16cff75696d1763919',
   'schedule:feed':
-    '1721d5f4eb15ab3addfb5d3c41f9ff3e73dcc658af4b9f12cb0db45a3ed44071',
+    'af6d0a02ce07a42113d23b70cb5e44b760e330b1c8bbb1f13eefa62600f12660',
   'results:story':
-    '6a00e03a5910c0e70f3be86b5650f6069fdcc4cdfcf861c5c17086d919c38b96',
+    '93f79469e97da967214e7cc6e80036e2e33783f2695ef34a35a6182c74807a6b',
   'results:feed':
-    '16cef98870dfba1e37e0a891dd6ec9c1273b0f4c1a1c1b933ceb6ba7a3af8bf3',
+    'd6fe81fb34878b3d10cdf0ee866a3145774c71c0487e3ab907ca759dff7597c7',
   'sponsor:story':
     '513a6ac0df65d67908645d8fa5a98a65366e6b5bf88b6db8c92ab89128412d3a',
   'sponsor:feed':
