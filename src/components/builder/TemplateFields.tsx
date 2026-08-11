@@ -174,6 +174,12 @@ export function TemplateFields({
           />
         </label>
         <RangeField label="Move heading and text up / down" min={-500} max={500} step={5} value={project.details.announcementY ?? 0} onChange={announcementY => setDetails({ announcementY })} />
+        <button
+          type="button"
+          onClick={() => setDetails({ announcementY: 0 })}
+        >
+          Reset announcement position
+        </button>
       </>
     );
   }
@@ -336,6 +342,16 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
         <RangeField label="Move days up / down" min={-600} max={600} step={5} value={project.details.scheduleY ?? 0} onChange={scheduleY => setDetails({ scheduleY })} />
         <RangeField label="Space below day heading" min={0} max={120} step={2} value={project.details.scheduleHeaderPadding ?? 0} onChange={scheduleHeaderPadding => setDetails({ scheduleHeaderPadding })} />
         <RangeField label="Space after sessions" min={0} max={120} step={2} value={project.details.scheduleSessionPadding ?? 0} onChange={scheduleSessionPadding => setDetails({ scheduleSessionPadding })} />
+        <button
+          type="button"
+          onClick={() => setDetails({
+            scheduleY: 0,
+            scheduleHeaderPadding: 0,
+            scheduleSessionPadding: 0,
+          })}
+        >
+          Reset schedule layout
+        </button>
       </div>
 
       <div className="schedule-day-grid" data-days={dayCount}>

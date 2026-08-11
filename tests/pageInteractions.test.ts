@@ -343,6 +343,15 @@ test('schedule fields show only the selected days and five inline session rows p
       .length,
     15,
   );
+  const resetSchedule = findElements(threeDayTree, 'button').find(
+    button => textContent(button) === 'Reset schedule layout',
+  );
+  (resetSchedule?.props?.onClick as () => void)();
+  assert.deepEqual(updates.at(-1), {
+    scheduleY: 0,
+    scheduleHeaderPadding: 0,
+    scheduleSessionPadding: 0,
+  });
   const removeButtons = findElements(threeDayTree, 'button').filter(
     button => textContent(button) === 'Remove day',
   );
@@ -353,6 +362,26 @@ test('schedule fields show only the selected days and five inline session rows p
     updates.at(-1)?.scheduleDays?.map(day => day.day),
     ['Friday', 'Sunday'],
   );
+});
+
+test('announcement position can be restored without resetting its content', () => {
+  const updates: Array<Partial<Project['details']>> = [];
+  const project = {
+    id: 'announcement', name: 'Announcement', template: 'announcement', format: 'feed',
+    sponsorIds: [], createdAt: '', updatedAt: '', heroX: 0, heroY: 0, heroScale: 1,
+    heroFlip: false, driverX: 0, driverY: 0, driverScale: 1, driverVisible: true,
+    details: {
+      eventName: '', round: '', circuit: '', date: '', time: '', headline: '',
+      subheadline: 'IMPORTANT NEWS', result: '', position: '', scheduleLines: '',
+      sponsorName: '', announcementHeading: 'TEAM UPDATE', announcementY: 185,
+    },
+  } as Project;
+  const tree = TemplateFields({ project, setDetails: details => updates.push(details) });
+  const reset = findElements(tree, 'button').find(
+    button => textContent(button) === 'Reset announcement position',
+  );
+  (reset?.props?.onClick as () => void)();
+  assert.deepEqual(updates, [{ announcementY: 0 }]);
 });
 
 test('event fields accept a single date or an optional date range', () => {
