@@ -75,7 +75,7 @@ export type GraphicDetails = {
   scheduleDayCount?:number; scheduleDays?:ScheduleDay[];
   scheduleY?:number; scheduleHeaderPadding?:number; scheduleSessionPadding?:number;
   resultSession?:ResultSessionType; raceNumber?:string;
-  wreathVisible?:boolean; wreathColour?:'gold'|'silver'|'bronze'|'custom'; wreathCustomColour?:string;
+  wreathVisible?:boolean; wreathColour?:'gold'|'silver'|'bronze'|'primary'|'custom'; wreathCustomColour?:string;
 };
 export type Project = {
   id:string; name:string; template:TemplateId; format:FormatId; sponsorIds:string[];

@@ -1204,9 +1204,15 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 
 /* Keep the full driver portrait visible at a calmer scale on every screen. */
 .profile-previews > .driver-asset-preview .asset-preview-image img {
-  width: min(72%, 560px);
-  max-width: 72%;
+  width: min(21.6%, 168px);
+  max-width: 21.6%;
   margin: 0 auto;
+}
+
+.profile-previews .profile-asset-teamLogo .asset-preview-image img {
+  width: 21.6%;
+  height: 21.6%;
+  margin: auto;
 }
 
 @media (max-width: 700px) {
@@ -1215,8 +1221,8 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
   }
 
   .profile-previews > .driver-asset-preview .asset-preview-image img {
-    width: 68%;
-    max-width: 68%;
+    width: 20.4%;
+    max-width: 20.4%;
   }
 }
 

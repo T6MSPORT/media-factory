@@ -220,11 +220,12 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
             Wreath colour
             <select
               value={project.details.wreathColour || 'gold'}
-              onChange={event => setDetails({ wreathColour: event.target.value as 'gold'|'silver'|'bronze'|'custom' })}
+              onChange={event => setDetails({ wreathColour: event.target.value as 'gold'|'silver'|'bronze'|'primary'|'custom' })}
             >
               <option value="gold">Gold</option>
               <option value="silver">Silver</option>
               <option value="bronze">Bronze</option>
+              <option value="primary">Primary branding colour</option>
               <option value="custom">Custom colour</option>
             </select>
           </label>

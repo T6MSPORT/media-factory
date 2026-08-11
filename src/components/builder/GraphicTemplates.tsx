@@ -78,7 +78,9 @@ function ResultsTemplate({
   const wreathChoice = project.details.wreathColour;
   const wreathColour = wreathChoice === 'custom'
     ? project.details.wreathCustomColour || wreathPalette.gold
-    : wreathChoice ? wreathPalette[wreathChoice] : undefined;
+    : wreathChoice === 'primary'
+      ? branding.primary
+      : wreathChoice ? wreathPalette[wreathChoice] : undefined;
   const rightAligned = project.textAlignment === 'right';
 const mainTextX = rightAligned ? w - layout.margin : layout.margin;
 const secondaryTextX = mainTextX + (rightAligned ? -2 : 2);
