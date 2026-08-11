@@ -5,14 +5,17 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
+drop policy if exists "Drivers can read their own exports" on storage.objects;
 create policy "Drivers can read their own exports" on storage.objects
 for select to authenticated
 using (bucket_id = 'media-exports' and (storage.foldername(name))[1] = (select auth.uid())::text);
 
+drop policy if exists "Drivers can create their own exports" on storage.objects;
 create policy "Drivers can create their own exports" on storage.objects
 for insert to authenticated
 with check (bucket_id = 'media-exports' and (storage.foldername(name))[1] = (select auth.uid())::text);
 
+drop policy if exists "Drivers can delete their own exports" on storage.objects;
 create policy "Drivers can delete their own exports" on storage.objects
 for delete to authenticated
 using (bucket_id = 'media-exports' and (storage.foldername(name))[1] = (select auth.uid())::text);
