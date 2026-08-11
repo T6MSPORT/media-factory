@@ -91,11 +91,11 @@ test('event layout preserves the approved story positions and round wording', ()
     eventBlockX: 70,
     eventIdentityRight: 1010,
     eventNameY: 70,
-    eventIdentityGap: 4,
+    eventIdentityGap: 8,
     eventIdentityLineHeightFactor: 0.76,
     eventNumberW: 330,
     eventNumberH: 88,
-    eventNumberY: 108.96000000000001,
+    eventNumberY: 112.96000000000001,
     eventNumberText: '#46',
     eventNumberSize: 84,
     eventNameSize: 46,
@@ -103,7 +103,7 @@ test('event layout preserves the approved story positions and round wording', ()
     eventTeamW: 260,
     eventTeamOpticalOffset: 0,
     eventTeamX: 750,
-    eventTeamY: 176.8,
+    eventTeamY: 184.8,
     eventCompetitionY: 34,
     eventHeadingY: 540,
     eventNextSize: 96,
@@ -157,7 +157,7 @@ test('event identity rows use tight spacing without overlapping', () => {
           layout.eventNumberSize * layout.eventIdentityLineHeightFactor),
       layout.eventIdentityGap - layout.eventTeamOpticalOffset,
     );
-    assert.equal(layout.eventIdentityGap, 4);
+    assert.equal(layout.eventIdentityGap, 8);
     assert.equal(layout.eventIdentityLineHeightFactor, 0.76);
     assert.equal(layout.eventTeamOpticalOffset, 0);
     assert.ok(layout.eventTeamY > layout.eventNumberY);

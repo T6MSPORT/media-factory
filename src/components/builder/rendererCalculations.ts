@@ -478,7 +478,7 @@ export function getEventTemplateLayout(
   const eventNameY = eventTop;
   const eventNumberW = isStory ? 330 : 280;
   const eventNumberH = isStory ? 88 : 76;
-  const eventIdentityGap = 4;
+  const eventIdentityGap = 8;
   const eventNameSize = isStory ? 46 : 40;
   // Microgramma's visible capitals occupy less height than the CSS font-size.
   // Use the rendered line height here so the Next Race identity rows have

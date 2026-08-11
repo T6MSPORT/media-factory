@@ -1202,27 +1202,41 @@ input[type="date"]::-webkit-date-and-time-value,input[type="time"]::-webkit-date
 .saved-design-name input{margin:0;font-weight:700;border-color:color-mix(in srgb,var(--brand-primary) 55%,var(--line-strong))}
 .saved-design-name small{color:var(--muted);font-size:11px;text-transform:none;letter-spacing:0}
 
-/* Keep the full driver portrait visible at a calmer scale on every screen. */
+/* Compact Profile asset containers without changing artwork asset sizing. */
+.profile-previews > .driver-asset-preview {
+  max-width: 360px;
+}
+
+.profile-previews > .driver-asset-preview .asset-preview-image {
+  height: 186px;
+  min-height: 186px;
+  overflow: hidden;
+}
+
 .profile-previews > .driver-asset-preview .asset-preview-image img {
-  width: min(21.6%, 168px);
-  max-width: 21.6%;
+  width: min(72%, 560px);
+  height: 100%;
+  max-width: 72%;
   margin: 0 auto;
 }
 
-.profile-previews .profile-asset-teamLogo .asset-preview-image img {
-  width: 21.6%;
-  height: 21.6%;
-  margin: auto;
+.profile-previews > .logo-preview-stack {
+  max-width: 280px;
+}
+
+.profile-previews > .logo-preview-stack .asset-preview-image {
+  height: 81px;
 }
 
 @media (max-width: 700px) {
   .profile-previews > .driver-asset-preview .asset-preview-image {
-    min-height: 0;
+    height: 138px;
+    min-height: 138px;
   }
 
   .profile-previews > .driver-asset-preview .asset-preview-image img {
-    width: 20.4%;
-    max-width: 20.4%;
+    width: 68%;
+    max-width: 68%;
   }
 }
 

@@ -33,11 +33,11 @@ test('mobile home hides the sponsors summary card', () => {
   assert.match(styles, /\.sponsors-stat\s*\{\s*display:\s*none/);
 });
 
-test('profile driver and team logo previews use thirty percent scale', () => {
+test('profile driver and logo preview containers use compact dimensions', () => {
   assert.match(
     styles,
-    /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?width:\s*min\(21\.6%,\s*168px\)/,
+    /\.profile-previews\s*>\s*\.driver-asset-preview[\s\S]*?height:\s*186px/,
   );
-  assert.match(styles, /\.profile-asset-teamLogo[\s\S]*?width:\s*21\.6%/);
-  assert.match(styles, /@media \(max-width:\s*700px\)[\s\S]*?width:\s*20\.4%/);
+  assert.match(styles, /\.logo-preview-stack[\s\S]*?height:\s*81px/);
+  assert.match(styles, /@media \(max-width:\s*700px\)[\s\S]*?height:\s*138px/);
 });
