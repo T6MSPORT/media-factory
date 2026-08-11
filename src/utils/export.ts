@@ -169,3 +169,25 @@ export function downloadPngResult(result: PngExportResult): void {
   anchor.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+export async function shareOrDownloadPngResult(result: PngExportResult): Promise<void> {
+  const file = new File([result.blob], result.fileName, { type: 'image/png' });
+  const shareData: ShareData = {
+    files: [file],
+    title: result.fileName.replace(/\.png$/i, ''),
+  };
+
+  const mobilePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false;
+  if (mobilePointer && navigator.share && navigator.canShare?.(shareData)) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (error) {
+      // Cancelling the native sheet is a completed user choice, not a reason to
+      // start an unexpected browser download as well.
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+    }
+  }
+
+  downloadPngResult(result);
+}
