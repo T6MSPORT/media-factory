@@ -271,7 +271,15 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
   );
 }
 
-const DAY_OPTIONS: ScheduleDayName[] = ['Friday', 'Saturday', 'Sunday'];
+const DAY_OPTIONS: ScheduleDayName[] = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
 const SESSION_OPTIONS: ScheduleSessionType[] = [
   '',
   'Practice',

@@ -314,6 +314,10 @@ test('schedule fields show only the selected days and five inline session rows p
   );
   assert.equal(daySelect?.props?.value, '');
   assert.equal(textContent(daySelect?.props?.children?.[0]), 'SELECT DAY');
+  assert.deepEqual(
+    findElements(daySelect, 'option').slice(1).map(option => option.props?.value),
+    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  );
   assert.equal(
     findElements(oneDayTree, 'input').filter(input => input.props?.type === 'time')
       .length,

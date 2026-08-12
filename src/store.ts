@@ -44,7 +44,16 @@ export const emptyDetails: GraphicDetails = {
   ],
 };
 
-const scheduleDayNames: ScheduleDayName[] = ['', 'Friday', 'Saturday', 'Sunday'];
+const scheduleDayNames: ScheduleDayName[] = [
+  '',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
 const scheduleSessionTypes: ScheduleSessionType[] = [
   '',
   'Practice',
