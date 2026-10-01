@@ -74,6 +74,8 @@ function ResultsTemplate({
   bodyFont,
 }: TemplateSharedProps & { w: number; h: number }) {
   const layout = getResultsTemplateLayout(w, h, project);
+  const classPosition = (project.details.classPosition || '').trim().replace(/^p/i, '');
+  const showClassPosition = /^[1-9]\d*$/.test(classPosition);
   const wreathPalette = { gold: '#d9aa24', silver: '#c3c8cf', bronze: '#b8753f' } as const;
   const wreathChoice = project.details.wreathColour;
   const wreathColour = wreathChoice === 'custom'
@@ -162,6 +164,20 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
           <tspan dx={layout.positionGap}>{layout.positionNumber}</tspan>
         </text>
       </g>
+      {showClassPosition && (
+        <text
+          data-class-position
+          x={layout.positionX}
+          y={layout.positionY + layout.positionSize * 0.55}
+          textAnchor="middle"
+          dominantBaseline="hanging"
+          fontFamily={bodyFont}
+          fontSize={layout.positionSize * 0.12}
+          fontWeight="700"
+        >
+          {`P${classPosition} in class`}
+        </text>
+      )}
     </g>
   );
 }
