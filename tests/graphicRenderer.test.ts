@@ -153,6 +153,28 @@ function hash(markup: string) {
   return createHash('sha256').update(markup).digest('hex');
 }
 
+test('optional class position renders beneath the overall position at a smaller size', () => {
+  for (const format of ['feed', 'story', 'square', 'custom'] as FormatId[]) {
+    for (const resultSession of ['race', 'qualifying'] as const) {
+      for (const classPosition of [undefined, '', '0', '-1', '3']) {
+        const project = makeProject('results', format);
+        project.details = { ...project.details, resultSession, classPosition };
+        const markup = renderToStaticMarkup(createElement(Graphic, { project, data, sponsors, ref: null }));
+        if (classPosition !== '3') {
+          assert.doesNotMatch(markup, /data-class-position/);
+          continue;
+        }
+        const label = markup.match(/<text data-class-position="true"[^>]*>P3 in class<\/text>/)?.[0];
+        assert.ok(label);
+        const main = markup.match(/translate\([\d.]+ ([\d.]+)\) skewX\(-12\)"[^>]*font-size="([\d.]+)"/);
+        assert.ok(main);
+        assert.ok(Number(label.match(/y="([\d.]+)"/)?.[1]) > Number(main[1]));
+        assert.ok(Number(label.match(/font-size="([\d.]+)"/)?.[1]) < Number(main[2]));
+      }
+    }
+  }
+});
+
 for (const template of templates) {
   for (const format of formats) {
     const key = `${template}:${format}`;
@@ -454,3 +476,5 @@ test('chequered panel uses transparent gaps rather than white squares', () => {
   assert.doesNotMatch(elementMarkup, /#ffffff/);
   assert.doesNotMatch(elementMarkup, /white/);
 });
+
+
