@@ -267,6 +267,17 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
         value={project.details.position}
         onChange={position => setDetails({ position })}
       />
+      <label>
+        <span className="field-label-row">Class position <span className="optional-label">Optional</span></span>
+        <input
+          type="number"
+          min="1"
+          step="1"
+          placeholder="e.g. 3"
+          value={project.details.classPosition || ''}
+          onChange={event => setDetails({ classPosition: event.target.value })}
+        />
+      </label>
     </>
   );
 }
