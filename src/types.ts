@@ -65,7 +65,7 @@ export type ScheduleDay = {
 };
 export type GraphicDetails = {
   eventName:string; round:string; circuit:string; date:string; dateEnd?:string; time:string;
-  headline:string; subheadline:string; result:string; position:string;
+  headline:string; subheadline:string; result:string; position:string; classPosition?:string;
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;
   announcementBackgroundOpacity?:number;
