@@ -65,7 +65,7 @@ export type ScheduleDay = {
 };
 export type GraphicDetails = {
   eventName:string; round:string; circuit:string; date:string; dateEnd?:string; time:string;
-  headline:string; subheadline:string; result:string; position:string; classPosition?:string;
+  headline:string; subheadline:string; result:string; position:string; classPosition?:string; classPositionScale?:number;
   scheduleLines:string; sponsorName:string;
   sponsorId?:string;
   announcementBackgroundOpacity?:number;
@@ -98,3 +98,5 @@ export type Data = {
   backgroundGraphic:BackgroundGraphicSettings;
   authentication:Authentication;
 };
+
+

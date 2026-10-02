@@ -278,6 +278,14 @@ function ResultsFields({ project, setDetails }: TemplateFieldsProps) {
           onChange={event => setDetails({ classPosition: event.target.value })}
         />
       </label>
+      <RangeField
+        label="Class position text size"
+        min={0.5}
+        max={3}
+        step={0.05}
+        value={project.details.classPositionScale ?? 1}
+        onChange={classPositionScale => setDetails({ classPositionScale })}
+      />
     </>
   );
 }
@@ -483,3 +491,5 @@ function ScheduleFields({ project, setDetails }: TemplateFieldsProps) {
     </div>
   );
 }
+
+
