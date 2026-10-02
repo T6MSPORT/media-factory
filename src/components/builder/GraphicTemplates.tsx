@@ -1,6 +1,6 @@
 import type { Branding, DriverProfile, Project, Sponsor } from '../../types';
 import { formatEventDateRange } from '../../utils/format';
-import podiumWreath from '../../assets/wreath.png';
+import podiumWreath from '../../assets/wreath.png?inline';
 import {
   fitTextSize,
   formatScheduleDayHeading,
@@ -76,6 +76,7 @@ function ResultsTemplate({
   const layout = getResultsTemplateLayout(w, h, project);
   const classPosition = (project.details.classPosition || '').trim().replace(/^p/i, '');
   const showClassPosition = /^[1-9]\d*$/.test(classPosition);
+  const classPositionScale = Math.min(3, Math.max(0.5, project.details.classPositionScale ?? 1));
   const wreathPalette = { gold: '#d9aa24', silver: '#c3c8cf', bronze: '#b8753f' } as const;
   const wreathChoice = project.details.wreathColour;
   const wreathColour = wreathChoice === 'custom'
@@ -146,7 +147,7 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
         <PodiumWreath
           x={layout.positionX}
           y={layout.positionY}
-          position={layout.podiumPosition}
+          position={layout.podiumPosition || Number(layout.positionNumber) || 1}
           size={layout.laurelSize}
           colour={wreathColour || (layout.session === 'qualifying' ? '#8b5cf6' : undefined)}
         />
@@ -172,7 +173,7 @@ const mainTextAnchor = rightAligned ? 'end' : 'start';
           textAnchor="middle"
           dominantBaseline="hanging"
           fontFamily={bodyFont}
-          fontSize={layout.positionSize * 0.12}
+          fontSize={layout.positionSize * 0.12 * classPositionScale}
           fontWeight="700"
         >
           {`P${classPosition} in class`}
@@ -840,3 +841,5 @@ export function TemplateExtras({
     </>
   );
 }
+
+
