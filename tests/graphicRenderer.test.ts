@@ -112,9 +112,9 @@ const expectedHashes: Record<string, string> = {
   'schedule:feed':
     'c3848779c5594962e9162907d6ad2794aa9948390658eec9c3a00d2f443a1ce4',
   'results:story':
-    'af9159c8bad3ea64baac99017dfc0587a5765a015b6d0ef1b69068e10db7c7d3',
+    '6ae17706303d656b34ca7b5535315e4be101742614a844b4eec6117f7fac72b1',
   'results:feed':
-    '026d0e302c96480f5e685ece40f77563d8567405989b8584edde2209724f2efe',
+    '4ca63f365e62ac6e7404600e086e3b772de00a0e475bee5a1e1ba9ff585c5ccc',
   'sponsor:story':
     '65c4f534cff3f40698d9f9c61d456198214655e24c66757d8b78512c554ad2ca',
   'sponsor:feed':
@@ -152,6 +152,35 @@ function makeProject(template: TemplateId, format: FormatId): Project {
 function hash(markup: string) {
   return createHash('sha256').update(markup).digest('hex');
 }
+
+test('class position size follows the slider and remains smaller than the main position', () => {
+  for (const scale of [0.5, 1, 2, 3]) {
+    const project = makeProject('results', 'feed');
+    project.details = { ...project.details, classPosition: '2', classPositionScale: scale };
+    const markup = renderToStaticMarkup(createElement(Graphic, {project, data, sponsors, ref: null}));
+    const label = markup.match(/<text data-class-position="true"[^>]*>/)?.[0];
+    assert.ok(label);
+    assert.equal(Number(label.match(/font-size="([\d.]+)"/)?.[1]), 420 * 0.12 * scale);
+  }
+});
+
+test('wreath toggle controls visibility outside podium positions in both sessions', () => {
+  for (const resultSession of ['race', 'qualifying'] as const) {
+    for (const position of ['1', '2', '8']) {
+      for (const wreathVisible of [true, false]) {
+        const project = makeProject('results', 'feed');
+        project.details = {...project.details, resultSession, position, wreathVisible};
+        const markup = renderToStaticMarkup(createElement(Graphic, {project, data, sponsors, ref: null}));
+        if (wreathVisible) {
+          assert.match(markup, new RegExp(`data-podium-wreath="${position}"`));
+          assert.match(markup, /href="data:image\/png;base64,/);
+        } else {
+          assert.doesNotMatch(markup, /data-podium-wreath/);
+        }
+      }
+    }
+  }
+});
 
 test('optional class position renders beneath the overall position at a smaller size', () => {
   for (const format of ['feed', 'story', 'square', 'custom'] as FormatId[]) {
@@ -476,5 +505,6 @@ test('chequered panel uses transparent gaps rather than white squares', () => {
   assert.doesNotMatch(elementMarkup, /#ffffff/);
   assert.doesNotMatch(elementMarkup, /white/);
 });
+
 
 
